@@ -3,10 +3,17 @@ import { useChatStore } from "../lib/chatStore";
 import { auth, db } from "../lib/firebase";
 import { useUserStore } from "../lib/userStore";
 import "./detail.css";
+
 const Detail = () => {
 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock } = useChatStore();
     const { currentUser } = useUserStore();
+
+    const openItem = (e) =>  {
+        const item = e.currentTarget;
+        item.classList.toggle("active");
+    }
+
     const handleBlock = async () => {
         if (!user) return;
 
@@ -29,19 +36,19 @@ const Detail = () => {
                 <p>Lorem ipsum dolor sit amet.</p>
             </div>
             <div className="info">
-                <div className="option">
+                <div className="option" onClick={openItem}>
                     <div className="title">
                         <span>Chat settings</span>
                         <img src="./arrowUp.png" alt="icon" />
                     </div>
                 </div>
-                <div className="option">
+                <div className="option" onClick={openItem}>
                     <div className="title">
                         <span>Privacy & help</span>
                         <img src="./arrowUp.png" alt="icon" />
                     </div>
                 </div>
-                <div className="option">
+                <div className="option" onClick={openItem}>
                     <div className="title">
                         <span>Share photos</span>
                         <img src="./arrowDown.png" alt="icon" />
@@ -66,11 +73,11 @@ const Detail = () => {
                                 <img src="https://picsum.photos/200" alt="picsum image" />
                                 <span>photo_2024_2.png</span>
                             </div>
-                        <img src="./download.png" alt="icon" className="icon" />
+                            <img src="./download.png" alt="icon" className="icon" />
                         </div>
                     </div>
                 </div>
-                <div className="option">
+                <div className="option" onClick={openItem}>
                     <div className="title">
                         <span>Shared files</span>
                         <img src="./arrowUp.png" alt="icon" />
@@ -84,4 +91,4 @@ const Detail = () => {
         </div>
     )
 }
-export default Detail
+export default Detail;
