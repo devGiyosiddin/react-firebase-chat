@@ -18,6 +18,7 @@ const Chat = () => {
     });
     const [audioFile, setAudioFile] = useState(null); // Для голосовых
     const endRef = useRef(null);
+    const emojiPickerRef = useRef(null); // Создаем ref для emoji-picker
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
     const { currentUser } = useUserStore();
     
@@ -38,9 +39,21 @@ const Chat = () => {
     }, [chatId]);
 
     const handleEmoji = (e) => {
-        setText(prev => prev + e.emoji);
-        setOpen(false)
+        setText(prev => prev + e.emoji); // Добавляем эмодзи к тексту
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+                setOpen(false); // Закрываем emoji-picker при клике вне его области
+            }
+        };
+    
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const handleImg = e => {
         if (e.target.files[0]) {
@@ -112,7 +125,6 @@ const Chat = () => {
         let audioUrl = null;
 
         try {
-
             if (img.file) {
                 imgUrl = await upload(img.file);
             }
@@ -130,7 +142,6 @@ const Chat = () => {
                     ...(audioUrl && { audio: audioUrl }), // Добавляем аудио
                 })
             });
-
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
@@ -142,7 +153,6 @@ const Chat = () => {
 
         setAudioFile(null);
         setText('');
-
     };
 
     return (
@@ -195,12 +205,16 @@ const Chat = () => {
                     onChange={(e) => setText(e.target.value)}
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
-                <div className="emoji">
-                    <img src="./emoji.png"
-                        alt="icon" onClick={() => setOpen(prev => !prev)} />
-                    <div className="picker">
-                        <EmojiPicker open={open} onEmojiClick={handleEmoji} theme={Theme.DARK} />
-                    </div>
+                <div className="emoji" ref={emojiPickerRef}>
+                    <img src="./emoji.png" alt="icon" onClick={() => setOpen(prev => !prev)} />
+                    {open && (
+                        <div className="picker">
+                            <EmojiPicker 
+                                onEmojiClick={handleEmoji} 
+                                theme={Theme.DARK} 
+                            />
+                        </div>
+                    )}
                 </div>
                 <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
             </div>
