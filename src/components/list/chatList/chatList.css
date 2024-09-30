@@ -42,6 +42,7 @@
     }
 
     .item {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 20px;
@@ -60,15 +61,32 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            width: max-content;
 
             span {
+                font-size: 20px;
                 font-weight: 500;
             }
 
             p {
                 font-size: 14px;
                 font-weight: 300;
+                border-radius: 10px;
+                border-top-left-radius: 0;
+                background-color: rgba(17, 25, 40, 0.5);
+                padding: 5px;
             }
+        }
+        .delete-btn {
+            position: absolute;
+            right: 5%;
+            float: right;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(17, 25, 40, 0.5);
+            padding: 5px;
         }
     }
 }

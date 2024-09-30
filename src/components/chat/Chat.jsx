@@ -6,6 +6,7 @@ import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
+
 const Chat = () => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
@@ -14,6 +15,7 @@ const Chat = () => {
         file: null,
         url: '',
     });
+    const [audioFile, setAudioFile] = useState(null); // Для голосовых
     const endRef = useRef(null);
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
     const { currentUser } = useUserStore();
@@ -34,8 +36,6 @@ const Chat = () => {
         }
     }, [chatId]);
 
-    console.log(chat);
-    
     const handleEmoji = (e) => {
         setText(prev => prev + e.emoji);
         setOpen(false)
@@ -50,10 +50,65 @@ const Chat = () => {
         }
     };
 
+    const handleCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+
+            // Делание снимка
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            video.pause();
+            stream.getTracks().forEach(track => track.stop()); // Останавливаем камеру
+
+            const imgDataUrl = canvas.toDataURL('image/jpeg');
+            const response = await fetch(imgDataUrl);
+            const blob = await response.blob();
+            setImg({
+                file: blob,
+                url: imgDataUrl,
+            });
+        } catch (err) {
+            console.log("Camera error:", err);
+        }
+    };
+
+    const handleVoice = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            let audioChunks = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                setAudioFile(audioBlob);
+            };
+
+            mediaRecorder.start();
+
+            setTimeout(() => {
+                mediaRecorder.stop(); // Останавливаем запись через 5 секунд (или по другому условию)
+            }, 5000);
+        } catch (err) {
+            console.log("Voice error:", err);
+        }
+    };
+
     const handleSend = async () => {
-        if (text === '') return;
+        if (text === '' && !img.file && !audioFile) return;
 
         let imgUrl = null;
+        let audioUrl = null;
 
         try {
 
@@ -61,37 +116,18 @@ const Chat = () => {
                 imgUrl = await upload(img.file);
             }
 
+            if (audioFile) {
+                audioUrl = await upload(audioFile); // Логика загрузки аудио
+            }
+
             await updateDoc(doc(db, 'chats', chatId), {
                 messages: arrayUnion({
                     senderId: currentUser.id,
                     text,
                     createdAt: new Date(),
-                    ...(imgUrl && {img: imgUrl}),
+                    ...(imgUrl && { img: imgUrl }),
+                    ...(audioUrl && { audio: audioUrl }), // Добавляем аудио
                 })
-            });
-
-            const userIds = [currentUser.id, user.id]
-            userIds.forEach(async (id) => {
-
-                const userChatsRef = doc(db, 'userchats', id);
-                const userChatSnapshot = await getDoc(userChatsRef);
-                
-                if (userChatSnapshot.exists()) {
-                    const userChatsData = userChatSnapshot.data();
-                    const chatIndex = userChatsData.chats.findIndex(c => c.chatId === chatId);
-                    
-                    userChatsData.chats[chatIndex] = {
-                        ...userChatsData.chats[chatIndex],
-                        lastMessage: text,
-                        isSeen: id === currentUser.id ? true : false,
-                        updatedAt: Date.now(),
-                    };
-                    
-                    
-                    await updateDoc(userChatsRef, {
-                        chats: userChatsData.chats,
-                    })
-                }
             });
 
         } catch (err) {
@@ -100,13 +136,14 @@ const Chat = () => {
 
         setImg({
             file: null,
-            ulr: ''
-        })
+            url: ''
+        });
 
+        setAudioFile(null);
         setText('');
 
-    }
-    
+    };
+
     return (
         <div className="chat">
             <div className="top">
@@ -128,6 +165,7 @@ const Chat = () => {
                     <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
                         <div className="texts">
                             {message.img && <img src={message.img} alt="User image" />}
+                            {message.audio && <audio controls src={message.audio}></audio>} {/* Воспроизведение аудио */}
                             <p>{message.text}</p>
                         </div>
                     </div>
@@ -145,26 +183,27 @@ const Chat = () => {
                     <label htmlFor="file">
                         <img src="./img.png" alt="icon" />
                     </label>
-                    <input type="file"  id='file' style={{display:'none'}} onChange={handleImg} />
-                    <img src="./camera.png" alt="icon" />
-                    <img src="./mic.png" alt="icon" />
+                    <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
+                    <img src="./camera.png" alt="icon" onClick={handleCamera} />
+                    <img src="./mic.png" alt="icon" onClick={handleVoice} />
                 </div>
                 <input
                     type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
                     value={text}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     onChange={(e) => setText(e.target.value)}
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
                 <div className="emoji">
                     <img src="./emoji.png"
                         alt="icon" onClick={() => setOpen(prev => !prev)} />
-                        <div className="picker">
-                            <EmojiPicker open={open} onEmojiClick={handleEmoji} />
-                        </div>
+                    <div className="picker">
+                        <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+                    </div>
                 </div>
-                <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked} >Send</button>
+                <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
             </div>
         </div>
     )
 }
-export default Chat
+export default Chat;

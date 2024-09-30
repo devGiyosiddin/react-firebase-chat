@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react"
-import "./chatList.css"
+import { useEffect, useState } from "react";
+import "./chatList.css";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
+import { FaRegTrashCan } from "react-icons/fa6";
+
 const ChatList = () => {
     const [chats, setChats] = useState([]);
     const [addMode, setAddMode] = useState(false);
@@ -15,29 +17,28 @@ const ChatList = () => {
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
-            const items = res.data().chats; 
+            const items = res.data().chats;
 
             const promises = items.map(async (item) => {
                 const userDocRef = doc(db, 'users', item.receiverId);
                 const userDocSnap = await getDoc(userDocRef);
 
-                const user = userDocSnap.data()
+                const user = userDocSnap.data();
 
-                return { ...item, user }
+                return { ...item, user };
             });
 
-            const chatData = await Promise.all(promises)
+            const chatData = await Promise.all(promises);
 
             setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
         });
 
         return () => {
-            unSub()
-        }
+            unSub();
+        };
     }, [currentUser.id]);
 
     const handleSelect = async (chat) => {
-
         const userChats = chats.map(item => {
             const { user, ...rest } = item;
             return rest;
@@ -45,18 +46,36 @@ const ChatList = () => {
 
         const chatIndex = userChats.findIndex(item => item.chatId === chat.chatId);
         userChats[chatIndex].isSeen = true;
-        
+
         const userChatsRef = doc(db, 'userchats', currentUser.id);
-        
+
         try {
             await updateDoc(userChatsRef, {
                 chats: userChats,
-            })
-            changeChat(chat.chatId, chat.user)
+            });
+            changeChat(chat.chatId, chat.user);
         } catch (err) {
             console.log(err);
         }
-        
+    };
+
+    const handleDelete = async (chatId) => {
+        const userChatsRef = doc(db, 'userchats', currentUser.id);
+
+        const filteredChats = chats.filter(chat => chat.chatId !== chatId);
+        const updatedChats = filteredChats.map(item => {
+            const { user, ...rest } = item;
+            return rest;
+        });
+
+        try {
+            await updateDoc(userChatsRef, {
+                chats: updatedChats,
+            });
+            setChats(filteredChats); // Обновляем состояние после удаления
+        } catch (err) {
+            console.log("Error while deleting chat: ", err);
+        }
     };
 
     const filteredChats = chats.filter(c =>
@@ -88,16 +107,20 @@ const ChatList = () => {
                             : chat.user.avatar || "./avatar.png"}
                         alt="user image"
                     />
-                <div className="texts">
+                    <div className="texts">
                         <span>
                             {chat.user.blocked.includes(currentUser.id)
                                 ? "Blocked"
                                 : chat.user.username}
                         </span>
-                    <p>{chat.lastMessage}</p>
+                        <p>{chat.lastMessage}</p>
+                    </div>
+                    <button className="delete-btn" onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(chat.chatId);
+                    }}>{<FaRegTrashCan />}</button>
                 </div>
-            </div>
-        ) )}
+            ))}
             {addMode && <AddUser />}
         </div>
     );
