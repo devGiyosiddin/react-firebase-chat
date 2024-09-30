@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
+import { Theme } from "emoji-picker-react";
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
@@ -198,7 +199,7 @@ const Chat = () => {
                     <img src="./emoji.png"
                         alt="icon" onClick={() => setOpen(prev => !prev)} />
                     <div className="picker">
-                        <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+                        <EmojiPicker open={open} onEmojiClick={handleEmoji} theme={Theme.DARK} />
                     </div>
                 </div>
                 <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
