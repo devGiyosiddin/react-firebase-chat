@@ -121,7 +121,7 @@ const ChatList = () => {
                     }}>{<FaRegTrashCan />}</button>
                 </div>
             ))}
-            {addMode && <AddUser />}
+            {addMode && <AddUser setAddMode={setAddMode} />}
         </div>
     );
 };
