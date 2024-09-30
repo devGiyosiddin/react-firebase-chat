@@ -113,7 +113,7 @@ const ChatList = () => {
                                 ? "Blocked"
                                 : chat.user.username}
                         </span>
-                        <p>{chat.lastMessage}</p>
+                        {chat.lastMessage && <p>{chat.lastMessage}</p>}
                     </div>
                     <button className="delete-btn" onClick={(e) => {
                         e.stopPropagation();
