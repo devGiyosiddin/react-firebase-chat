@@ -25,6 +25,7 @@
 
         .option {
             overflow: hidden;
+            cursor: pointer;
             
             &.active {
                 .photos {
