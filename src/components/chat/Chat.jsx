@@ -7,6 +7,7 @@ import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
+import { FiDelete  } from "react-icons/fi";
 
 const Chat = () => {
     const [chat, setChat] = useState("");
@@ -118,6 +119,14 @@ const Chat = () => {
         }
     };
 
+    const removeText = () => {
+        // remove last character from input value
+        setText(prev => prev.slice(0, -1));
+
+        // remove last emoji
+        setText(prev => prev.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, ''))
+    }
+
     const handleSend = async () => {
         if (text === '' && !img.file && !audioFile) return;
 
@@ -205,6 +214,7 @@ const Chat = () => {
                     onChange={(e) => setText(e.target.value)}
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
                 />
+                <FiDelete onClick={removeText} className="removeText" />
                 <div className="emoji" ref={emojiPickerRef}>
                     <img src="./emoji.png" alt="icon" onClick={() => setOpen(prev => !prev)} />
                     {open && (
