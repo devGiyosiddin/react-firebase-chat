@@ -7,7 +7,7 @@ import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
-import { FiDelete  } from "react-icons/fi";
+import { FiDelete } from "react-icons/fi";
 
 const Chat = () => {
     const [chat, setChat] = useState("");
@@ -32,7 +32,9 @@ const Chat = () => {
             doc(db, 'chats', chatId),
             (res) => {
                 setChat(res.data());
-            })
+                endRef.current?.scrollIntoView({ behavior: 'smooth' }); // Скролл вниз при получении сообщения
+            }
+        );
 
         return () => {
             unSub();
@@ -61,7 +63,7 @@ const Chat = () => {
             setImg({
                 file: e.target.files[0],
                 url: URL.createObjectURL(e.target.files[0])
-            })
+            });
         }
     };
 
@@ -122,10 +124,7 @@ const Chat = () => {
     const removeText = () => {
         // remove last character from input value
         setText(prev => prev.slice(0, -1));
-
-        // remove last emoji
-        setText(prev => prev.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, ''))
-    }
+    };
 
     const handleSend = async () => {
         if (text === '' && !img.file && !audioFile) return;
@@ -151,6 +150,8 @@ const Chat = () => {
                     ...(audioUrl && { audio: audioUrl }), // Добавляем аудио
                 })
             });
+
+            endRef.current?.scrollIntoView({ behavior: 'smooth' }); // Скролл вниз при отправке сообщения
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
@@ -229,6 +230,7 @@ const Chat = () => {
                 <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
             </div>
         </div>
-    )
-}
+    );
+};
+
 export default Chat;
