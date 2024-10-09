@@ -1,3 +1,8 @@
+:root {
+  --bg-color: #181818;
+  --container-color: #212121;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,9 +15,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("../public/bg.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: var(--bg-color);
   height: 100vh;
   color: #fff;
   overflow-x: hidden;
@@ -22,7 +25,7 @@ body {
   display: flex;
   width: 80vw;
   height: 90vh;
-  background: rgba(17, 25, 40, 0.75);
+  background: --container-color;
   border-radius: 12px;
   backdrop-filter: blur(19px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.125);
