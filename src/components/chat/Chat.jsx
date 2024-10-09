@@ -169,23 +169,23 @@ const Chat = () => {
         <div className="chat">
             <div className="top">
                 <div className="user">
-                    <img src={user?.avatar || "./avatar.png"} alt="user img" />
+                    <img src={user?.avatar || "./avatar.png"} alt="" />
                     <div className="texts">
                         <span>{user?.username}</span>
                         <p>Lorem ipsum dolor sit amet consectetur</p>
                     </div>
                 </div>
                 <div className="icons">
-                    <img src="./phone.png" alt="icon" />
-                    <img src="./video.png" alt="icon" />
-                    <img src="./info.png" alt="icon" />
+                    <img src="./phone.png" alt="" />
+                    <img src="./video.png" alt="" />
+                    <img src="./info.png" alt="" />
                 </div>
             </div>
             <div className="center">
                 {chat?.messages?.map(message => (
                     <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
                         <div className="texts">
-                            {message.img && <img src={message.img} alt="User image" />}
+                            {message.img && <img src={message.img} alt="" />}
                             {message.audio && <audio controls src={message.audio}></audio>} {/* Воспроизведение аудио */}
                             <p>{message.text}</p>
                         </div>
@@ -202,11 +202,11 @@ const Chat = () => {
             <div className="bottom">
                 <div className="icons">
                     <label htmlFor="file">
-                        <img src="./img.png" alt="icon" />
+                        <img src="./img.png" alt="" />
                     </label>
                     <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                    <img src="./camera.png" alt="icon" onClick={handleCamera} />
-                    <img src="./mic.png" alt="icon" onClick={handleVoice} />
+                    <img src="./camera.png" alt="" onClick={handleCamera} />
+                    <img src="./mic.png" alt="" onClick={handleVoice} />
                 </div>
                 <input
                     type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
@@ -217,7 +217,7 @@ const Chat = () => {
                 />
                 <FiDelete onClick={removeText} className="removeText" />
                 <div className="emoji" ref={emojiPickerRef}>
-                    <img src="./emoji.png" alt="icon" onClick={() => setOpen(prev => !prev)} />
+                    <img src="./emoji.png" alt="" onClick={() => setOpen(prev => !prev)} />
                     {open && (
                         <div className="picker">
                             <EmojiPicker 
