@@ -9,7 +9,7 @@ import {
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import upload from "../lib/upload";
-    
+
 const Login = () => {
     const [avatar, setAvatar] = useState({
         file: null,
@@ -17,6 +17,7 @@ const Login = () => {
     });
 
     const [loading, setLoading] = useState(false);
+    const [isLogin, setIsLogin] = useState(true); // Состояние для переключения между формами
     const navigate = useNavigate(); // Инициализируем useNavigate
 
     const handleAvatar = e => {
@@ -82,29 +83,35 @@ const Login = () => {
 
     return (
         <div className="login">
-            <div className="item">
-                <h2>Welcome back!</h2>
-                <form onSubmit={handleLogin}>
-                    <input type="email" placeholder="Email" name="email" />
-                    <input type="password" placeholder="Password" name="password" />
-                    <button>{loading ? "loading" : "Sign In"}</button>
-                </form>
-            </div>
-            <div className="seperator"></div>
-            <div className="item">
-                <h2>Create an Account</h2>
-                <form onSubmit={handleRegister}>
-                    <label htmlFor="file">
-                        <img src={avatar.url || "./avatar.png"} alt="" />
-                        Upload an image
-                    </label>
-                    <input type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
-                    <input type="username" placeholder="Username" name="username" />
-                    <input type="email" placeholder="Email" name="email" />
-                    <input type="password" placeholder="Password" name="password" />
-                    <button>{loading ? "loading" : "Sign Up"}</button>
-                </form>
-            </div>
+            {isLogin ? (
+                <div className={`item login-item ${isLogin ? "active" : ""}`}>
+                    <h2>Welcome back!</h2>
+                    <form onSubmit={handleLogin}>
+                        <input type="email" placeholder="Email" name="email" required />
+                        <input type="password" placeholder="Password" name="password" required />
+                        <button>{loading ? "loading" : "Sign In"}</button>
+                        <span className="or">or</span>
+                        <button onClick={() => setIsLogin(false)} className="toggle-button">Register</button>
+                    </form>
+                </div>
+            ) : (
+                <div className={`item register-item ${!isLogin ? "active" : ""}`}>
+                    <h2>Create an Account</h2>
+                    <form onSubmit={handleRegister}>
+                        <label htmlFor="file">
+                            <img src={avatar.url || "./avatar.png"} alt="" />
+                            <span>Upload an image</span>
+                        </label>
+                        <input required type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
+                        <input required type="username" placeholder="Username" name="username" />
+                        <input required type="email" placeholder="Email" name="email" />
+                        <input required type="password" placeholder="Password" name="password" />
+                        <button>{loading ? "loading" : "Sign Up"}</button>
+                        <span className="or">or</span>
+                        <button onClick={() => setIsLogin(true)} className="toggle-button">Login</button>
+                    </form>
+                </div>
+            )}
         </div>
     );
 };

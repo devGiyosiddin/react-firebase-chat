@@ -3,7 +3,7 @@ import Chat from "./components/chat/Chat";
 import Detail from "./components/detail/Detail";
 import Login from "./components/login/Login";
 import Notification from "./components/notification/Notification";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./components/lib/firebase";
 import { useUserStore } from "./components/lib/userStore";
@@ -13,6 +13,7 @@ const App = () => {
 
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   const { chatId } = useChatStore();
+  const [showDetail, setShowDetail] = useState(false); // Новое состояние для отображения Detail
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
@@ -23,17 +24,16 @@ const App = () => {
       unSub();
     };
   }, [fetchUserInfo]);
-  
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (isLoading) return <div className="loader"></div>
 
   return (
     <div className='container'>
       {currentUser ? (
             <>
           <List />
-          {chatId && <Chat />}
-          {chatId && <Detail />}
+          {chatId && <Chat onInfoClick={() => setShowDetail(prev => !prev)} />} {/* Передаем обработчик клика */}
+          {chatId && showDetail && <Detail />} {/* Условный рендеринг Detail */}
           </>
         ) : (
             <Login />
@@ -43,4 +43,4 @@ const App = () => {
   )
 }
 
-export default App
+export default App;

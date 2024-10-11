@@ -22,6 +22,9 @@ body {
 #root {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
@@ -36,9 +39,20 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.125);
 }
 
-.loading {
-  padding: 59px;
-  font-size: 36px;
-  border-radius: 10px;
-  background-color: rgba(17, 25, 0, 0.9);
+.loader {
+  width: 85px;
+  height: 50px;
+  --g1:conic-gradient(from  90deg at left   3px top   3px,#0000 90deg,#fff 0);
+  --g2:conic-gradient(from -90deg at bottom 3px right 3px,#0000 90deg,#fff 0);
+  background:var(--g1),var(--g1),var(--g1), var(--g2),var(--g2),var(--g2);
+  background-position: left,center,right;
+  background-repeat: no-repeat;
+  animation: l9 1s infinite;
+}
+@keyframes l9 {
+  0%   {background-size:25px 50% ,25px 50% ,25px 50%}
+  25%  {background-size:25px 100%,25px 50% ,25px 50%}
+  50%  {background-size:25px 50% ,25px 100%,25px 50%}
+  75%  {background-size:25px 50% ,25px 50% ,25px 100%}
+  100% {background-size:25px 50% ,25px 50% ,25px 50%}
 }

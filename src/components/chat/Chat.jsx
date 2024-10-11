@@ -9,7 +9,7 @@ import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
 import { FiDelete } from "react-icons/fi";
 
-const Chat = () => {
+const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
     const [text, setText] = useState("");
@@ -122,7 +122,6 @@ const Chat = () => {
     };
 
     const removeText = () => {
-        // remove last character from input value
         setText(prev => prev.slice(0, -1));
     };
 
@@ -178,7 +177,7 @@ const Chat = () => {
                 <div className="icons">
                     <img src="./phone.png" alt="" />
                     <img src="./video.png" alt="" />
-                    <img src="./info.png" alt="" />
+                    <img src="./info.png" alt="" onClick={onInfoClick} /> {/* Обработчик клика */}
                 </div>
             </div>
             <div className="center">
