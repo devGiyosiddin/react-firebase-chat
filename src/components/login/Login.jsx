@@ -1,10 +1,11 @@
 import { toast } from "react-toastify";
 import "./login.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
@@ -20,6 +21,16 @@ const Login = () => {
     const [isLogin, setIsLogin] = useState(true); // Состояние для переключения между формами
     const navigate = useNavigate(); // Инициализируем useNavigate
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                navigate("/chat"); // Перенаправление на чат при успешной авторизации
+            }
+        });
+
+        return () => unsubscribe();
+    }, [navigate]);
+
     const handleAvatar = e => {
         if (e.target.files[0]) {
             setAvatar({
@@ -34,11 +45,11 @@ const Login = () => {
         setLoading(true);
         const formData = new FormData(e.target);
         const { username, email, password } = Object.fromEntries(formData);
-        
+    
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             const imgUrl = await upload(avatar.file);
-
+    
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
                 email,
@@ -46,22 +57,25 @@ const Login = () => {
                 id: res.user.uid,
                 blocked: [],
             });
-
+    
             await setDoc(doc(db, "userchats", res.user.uid), {
                 chats: [],
             });
-
-            toast.success("Account created successfully! You can login now )");
-
-            navigate("/chat"); // Перенаправление на чат после регистрации
-
+    
+            toast.success("Account created successfully! You can login now");
+    
+            setIsLogin(true); // Переключение на форму логина после успешной регистрации
+    
         } catch (err) {
-            console.log(err);
-            toast.error(err.message);
+            if (err.code === "auth/email-already-in-use") {
+                toast.error("This email is already registered. Please use another email or login.");
+            } else {
+                toast.error(err.message);
+            }
         } finally {
             setLoading(false);
         }
-    };
+    };    
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -72,7 +86,6 @@ const Login = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            navigate("/chat"); // Перенаправление на чат после логина
         } catch (err) {
             console.log(err);
             toast.error(err.message);
