@@ -24,7 +24,7 @@ const Login = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // navigate("/chat"); // Перенаправление на чат при успешной авторизации
+                navigate("/chat"); // Перенаправление на чат при успешной авторизации
             }
         });
 
