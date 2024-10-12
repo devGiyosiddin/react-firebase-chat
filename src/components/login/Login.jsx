@@ -8,7 +8,7 @@ import {
     onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
 import upload from "../lib/upload";
 
 const Login = () => {
@@ -19,6 +19,9 @@ const Login = () => {
 
     const [loading, setLoading] = useState(false);
     const [isLogin, setIsLogin] = useState(true); // Состояние для переключения между формами
+    const [usernameAvailable, setUsernameAvailable] = useState(true); // Состояние для доступности имени
+    const [checkingUsername, setCheckingUsername] = useState(false); // Для показа статуса проверки
+
     const navigate = useNavigate(); // Инициализируем useNavigate
 
     useEffect(() => {
@@ -31,6 +34,13 @@ const Login = () => {
         return () => unsubscribe();
     }, [navigate]);
 
+    const checkUsernameAvailability = async (username) => {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.empty; // Возвращает true, если имя пользователя доступно
+    };
+
     const handleAvatar = e => {
         if (e.target.files[0]) {
             setAvatar({
@@ -40,6 +50,15 @@ const Login = () => {
         }
     };
 
+    const handleUsernameChange = async (e) => {
+        const username = e.target.value;
+        setCheckingUsername(true); // Показываем, что идет проверка
+
+        const available = await checkUsernameAvailability(username);
+        setUsernameAvailable(available);
+        setCheckingUsername(false); // Скрываем статус проверки
+    };
+
     const handleRegister = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -47,6 +66,12 @@ const Login = () => {
         const { username, email, password } = Object.fromEntries(formData);
     
         try {
+            if (!usernameAvailable) {
+                toast.error("Username is already taken. Please choose another one.");
+                setLoading(false);
+                return;
+            }
+
             const res = await createUserWithEmailAndPassword(auth, email, password);
             const imgUrl = await upload(avatar.file);
     
@@ -63,7 +88,6 @@ const Login = () => {
             });
     
             toast.success("Account created successfully! You can login now");
-    
             setIsLogin(true); // Переключение на форму логина после успешной регистрации
     
         } catch (err) {
@@ -116,7 +140,20 @@ const Login = () => {
                             <span>Upload an image</span>
                         </label>
                         <input required type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
-                        <input required type="username" placeholder="Username" name="username" />
+                        <input required type="text" placeholder="Username" name="username" onChange={handleUsernameChange} />
+                        <span className={
+                            checkingUsername 
+                                ? "checking" 
+                                : usernameAvailable 
+                                    ? "available" 
+                                    : "unavailable"
+                        }>
+                            {checkingUsername 
+                                ? "Checking..." 
+                                : (usernameAvailable 
+                                    ? "Username is available" 
+                                    : "Username is taken")}
+                        </span>
                         <input required type="email" placeholder="Email" name="email" />
                         <input required type="password" placeholder="Password" name="password" />
                         <button>{loading ? "loading" : "Sign Up"}</button>

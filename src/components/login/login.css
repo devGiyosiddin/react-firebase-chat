@@ -34,6 +34,23 @@
                 padding: 20px;
             }
 
+            span {
+                font-size: 14px;
+                margin-right: auto;
+            }
+            .checking {
+                color: orange;
+            }
+            
+            .available {
+                color: green;
+            }
+            
+            .unavailable {
+                color: red;
+            }
+            
+
             label {
                 width: 100%;
                 display: flex;
