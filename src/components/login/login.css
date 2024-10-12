@@ -24,32 +24,7 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
-
-            input {
-                color: #fff;
-                border: none;
-                outline: none;
-                border-radius: 5px;
-                background-color: rgba(17, 25, 40, 0.6);
-                padding: 20px;
-            }
-
-            span {
-                font-size: 14px;
-                margin-right: auto;
-            }
-            .checking {
-                color: orange;
-            }
-            
-            .available {
-                color: green;
-            }
-            
-            .unavailable {
-                color: red;
-            }
-            
+            max-width: 220px;
 
             label {
                 width: 100%;
@@ -74,6 +49,102 @@
                 }
             }
 
+            input {
+                color: #fff;
+                border: none;
+                outline: none;
+                border-radius: 5px;
+                background-color: rgba(17, 25, 40, 0.6);
+                padding: 15px;
+                width: 100%;
+            }
+            
+            input::placeholder {
+                color: #aaa;
+            }
+            
+            /* Стили для username */
+            .username-input {
+                border: 1px solid transparent;
+                transition: border-color 0.3s ease;
+            }
+            
+            .username-input.valid {
+                border-color: green;
+            }
+            
+            .username-input.invalid {
+                border-color: red;
+            }
+            
+            /* Стили для статуса доступности username */
+            .username-check {
+                font-size: 14px;
+                transition: color 0.3s ease;
+            }
+            
+            .username-check.checking {
+                color: gray;
+            }
+            
+            .username-check.valid {
+                color: green;
+            }
+            
+            .username-check.invalid {
+                color: red;
+            }
+            
+            /* Стили для пароля */
+            .password-input {
+                border: 1px solid #ccc;
+                transition: border-color 0.3s ease;
+            }
+            
+            .password-input.valid {
+                border-color: green;
+            }
+            
+            .password-input.invalid {
+                border-color: red;
+            }
+            
+            .password-rules {
+                list-style: none;
+                padding: 0;
+                font-size: 14px;
+            }
+            
+            .password-rules li {
+                transition: color 0.3s ease;
+            }
+            
+            .password-rules .rule-valid {
+                color: green;
+            }
+            
+            .password-rules .rule-invalid {
+                color: red;
+            }
+
+            .email-input {
+                border: 1px solid #ccc;
+                transition: border-color 0.3s ease;
+            }
+            /* Стили для email */
+            .email-input.valid {
+                border-color: green;
+            }
+            
+            .email-input.invalid {
+                border-color: red;
+            }
+            
+            .or {
+                margin-top: 10px;
+                color: white;
+                font-weight: 500;
+            }
             button {
                 width: 100%;
                 padding: 20px;
@@ -89,11 +160,6 @@
                     background-color: #1f8ff192;
                 }
                 
-            }
-            .or {
-                margin-top: 10px;
-                color: white;
-                font-weight: 500;
             }
             .toggle-button {
                 width: 50%;
