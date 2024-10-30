@@ -10,6 +10,7 @@ import upload from "../lib/upload";
 import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
+import { BsEmojiSmile } from "react-icons/bs";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -238,7 +239,7 @@ const Chat = ({ onInfoClick }) => {
             <div className="send-wrapper">
                 <div className="input-inner">
                     <div className="emoji" ref={emojiPickerRef}>
-                        <img src="./emoji.png" alt="" onClick={() => setOpen(prev => !prev)} />
+                        <BsEmojiSmile className="emoji-icon"  onClick={() => setOpen(prev => !prev)} />
                         {open && (
                             <div className="picker">
                                 <EmojiPicker

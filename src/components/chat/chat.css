@@ -93,6 +93,7 @@
                 padding: 15px;
                 border-radius: 50%;
                 background-color: var(--container-color);
+                transition: all 3s eas;
     
                 &:hover {
                     background-color: #555;
@@ -216,6 +217,12 @@
     
             .emoji {
                 position: relative;
+
+                .emoji-icon {
+                    width: 20px;
+                    height: 20px;
+                    cursor: pointer;
+                }
     
                 .picker {
                     position: absolute;
