@@ -2,16 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
 import { FiDelete } from "react-icons/fi";
+import { FaArrowDown } from "react-icons/fa";
+import { MdAttachFile } from "react-icons/md";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
+    const [openFileList, setOpenFileList] = useState(false); // Состояние для видимости листа
     const [text, setText] = useState("");
     const [img, setImg] = useState({
         file: null,
@@ -19,12 +22,18 @@ const Chat = ({ onInfoClick }) => {
     });
     const [audioFile, setAudioFile] = useState(null); // Для голосовых
     const endRef = useRef(null);
-    const emojiPickerRef = useRef(null); // Создаем ref для emoji-picker
+    const emojiPickerRef = useRef(null); 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
     const { currentUser } = useUserStore();
+    const [showScrollDown, setShowScrollDown] = useState(false);
+    const messagesRef = useRef(null);
+
+    const scrollToDown = () => {
+        endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
     
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: 'smooth' });
+        scrollToDown();
     }, []);
 
     useEffect(() => {
@@ -32,7 +41,7 @@ const Chat = ({ onInfoClick }) => {
             doc(db, 'chats', chatId),
             (res) => {
                 setChat(res.data());
-                endRef.current?.scrollIntoView({ behavior: 'smooth' }); // Скролл вниз при получении сообщения
+                scrollToDown();
             }
         );
 
@@ -162,7 +171,28 @@ const Chat = ({ onInfoClick }) => {
 
         setAudioFile(null);
         setText('');
+        setOpenFileList(false); // Закрываем лист после отправки сообщения
     };
+
+    const handleScroll = () => {
+        const scrollTop = messagesRef.current.scrollTop;
+        const scrollHeight = messagesRef.current.scrollHeight;
+        const clientHeight = messagesRef.current.clientHeight;
+    
+        if (scrollTop + clientHeight < scrollHeight - 100) {
+            setShowScrollDown(true);
+        } else {
+            setShowScrollDown(false);
+        }
+    };
+    useEffect(() => {
+        const messagesElement = messagesRef.current;
+        messagesElement?.addEventListener("scroll", handleScroll);
+    
+        return () => {
+            messagesElement?.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     return (
         <div className="chat">
@@ -181,55 +211,72 @@ const Chat = ({ onInfoClick }) => {
                 </div>
             </div>
             <div className="center">
-                {chat?.messages?.map(message => (
-                    <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
-                        <div className="texts">
-                            {message.img && <img src={message.img} alt="" />}
-                            {message.audio && <audio controls src={message.audio}></audio>} {/* Воспроизведение аудио */}
-                            <p>{message.text}</p>
+                <div className="messages" ref={messagesRef}>
+                    {chat?.messages?.map(message => (
+                        <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
+                            <div className="texts">
+                                {message.img && <img src={message.img} alt="" />}
+                                {message.audio && <audio controls src={message.audio}></audio>} {/* Воспроизведение аудио */}
+                                <p>{message.text}</p>
+                            </div>
                         </div>
-                    </div>
-                ))}
-                {img.url && <div className="message own">
-                    <div className="texts">
-                        <img src={img.url} alt="" />
-                    </div>
-                </div>}
-                <div ref={endRef}></div>
-            </div>
+                    ))}
+                    {img.url && <div className="message own">
+                        <div className="texts">
+                            <img src={img.url} alt="" />
+                        </div>
+                    </div>}
+                    <div ref={endRef}></div>
+                    {showScrollDown && (
+                        <button onClick={scrollToDown} id="scrollDownBtn">
+                            <FaArrowDown />
+                        </button>
+                    )}
 
-            <div className="bottom">
-                <div className="icons">
-                    <label htmlFor="file">
-                        <img src="./img.png" alt="" />
-                    </label>
-                    <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                    <img src="./camera.png" alt="" onClick={handleCamera} />
-                    <img src="./mic.png" alt="" onClick={handleVoice} />
                 </div>
-                <input
-                    type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
-                    value={text}
-                    onKeyDown={(e) => e.key  === 'Enter' && handleSend()}
-                    onChange={(e) => setText(e.target.value)}
-                    disabled={isCurrentUserBlocked || isReceiverBlocked}
-                />
-                <FiDelete onClick={removeText} className="removeText" />
-                <div className="emoji" ref={emojiPickerRef}>
-                    <img src="./emoji.png" alt="" onClick={() => setOpen(prev => !prev)} />
-                    {open && (
-                        <div className="picker">
-                            <EmojiPicker 
-                                onEmojiClick={handleEmoji} 
-                                theme={Theme.DARK} 
-                            />
+
+            <div className="send-wrapper">
+                <div className="input-inner">
+                    <div className="emoji" ref={emojiPickerRef}>
+                        <img src="./emoji.png" alt="" onClick={() => setOpen(prev => !prev)} />
+                        {open && (
+                            <div className="picker">
+                                <EmojiPicker
+                                    onEmojiClick={handleEmoji}
+                                    theme={Theme.DARK}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <input
+                        type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
+                        value={text}
+                        onKeyDown={(e) => e.key  === 'Enter' && handleSend()}
+                        onChange={(e) => setText(e.target.value)}
+                        disabled={isCurrentUserBlocked || isReceiverBlocked}
+                        />
+                    <MdAttachFile 
+                        onClick={() => setOpenFileList(!openFileList)} // Открываем/закрываем лист по клику
+                        className="file" 
+                    />
+                    {openFileList && ( // Показываем лист только если состояние openFileList true
+                        <div className="icons">
+                            <label htmlFor="file">
+                                <img src="./img.png" alt="" />
+                            </label>
+                            <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
+                            <img src="./camera.png" alt="" onClick={handleCamera} />
+                            <img src="./mic.png" alt="" onClick={handleVoice} />
                         </div>
                     )}
+                    <FiDelete onClick={removeText} className="removeText" />
+                    
                 </div>
-                <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
+                    <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
+                </div>
             </div>
         </div>
     );
-};
+}
 
 export default Chat;
