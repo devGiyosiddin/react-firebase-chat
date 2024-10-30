@@ -47,7 +47,7 @@ const Login = () => {
     };
 
     const handleUsernameChange = async (e) => {
-        const username = e.target.value.trim();
+        const username = e.target.value.trim().toLowerCase();
         setUsernameInput(username);
 
         const isNotOnlyDigits = /\D/.test(username);
