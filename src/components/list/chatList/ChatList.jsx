@@ -39,25 +39,32 @@ const ChatList = () => {
     }, [currentUser.id]);
 
     const handleSelect = async (chat) => {
-        const userChats = chats.map(item => {
+        const updatedChats = chats.map(item => {
+            if (item.chatId === chat.chatId) {
+                return { ...item, isSeen: true };
+            }
+            return item;
+        });
+    
+        const userChats = updatedChats.map(item => {
             const { user, ...rest } = item;
             return rest;
         });
-
+    
         const chatIndex = userChats.findIndex(item => item.chatId === chat.chatId);
-        userChats[chatIndex].isSeen = true;
-
+    
         const userChatsRef = doc(db, 'userchats', currentUser.id);
-
+    
         try {
             await updateDoc(userChatsRef, {
                 chats: userChats,
             });
+            setChats(updatedChats);
             changeChat(chat.chatId, chat.user);
         } catch (err) {
             console.log(err);
         }
-    };
+    };    
 
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
@@ -93,12 +100,12 @@ const ChatList = () => {
                 </div>
                 <img src={addMode ? "./minus.png" : "./plus.png"} alt="" className="add" onClick={() => setAddMode(prev => !prev)} />
             </div>
-            {filteredChats.map(chat => (
+            {filteredChats.map((chat, index) => (
                 <div className="item"
-                    key={chat.chatId}
+                    key={`${chat.chatId}-${index}`} // Генерация уникального ключа с использованием chatId и индекса
                     onClick={() => handleSelect(chat)}
                     style={{
-                        backgroundColor: chat?.isSeen =='#5183fe' 
+                        backgroundColor: chat?.isSeen ? '#5183fe' : 'transparent' 
                     }}
                 >
                     <img src={
