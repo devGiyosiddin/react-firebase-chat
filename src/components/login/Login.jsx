@@ -10,6 +10,7 @@ import {
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
 import upload from "../lib/upload";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Login = () => {
     const [avatar, setAvatar] = useState({ file: null, url: "" });
@@ -21,12 +22,14 @@ const Login = () => {
     const [usernameInput, setUsernameInput] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(true);
     const [emailInput, setEmailInput] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) navigate("/chat");
+            if (user) navigate();
         });
 
         return () => unsubscribe();
@@ -77,33 +80,38 @@ const Login = () => {
         setLoading(true);
         const formData = new FormData(e.target);
         const { username, email, password } = Object.fromEntries(formData);
-
+    
         if (!usernameAvailable) {
             toast.error("Username must be at least 3 characters long and cannot be only numbers.");
             setLoading(false);
             return;
         }
-
+    
         if (!passwordRules.length || !passwordRules.uppercase || !passwordRules.number) {
             toast.error("Password does not meet the requirements.");
             setLoading(false);
             return;
         }
-
+    
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
-            const imgUrl = await upload(avatar.file);
-
+            console.log("User UID:", res.user.uid);
+    
+            // Закомментируем загрузку аватара
+            // const imgUrl = await upload(avatar.file);
+            // console.log("Uploaded image URL:", imgUrl);
+    
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
                 email,
-                avatar: imgUrl,
+                // avatar: imgUrl,  // Уберем аватар из сохраняемых данных
                 id: res.user.uid,
                 blocked: [],
             });
-
+            console.log("User data saved:", { username, email });  // Логируем сохранённые данные без аватара
+    
             await setDoc(doc(db, "userchats", res.user.uid), { chats: [] });
-
+    
             toast.success("Account created successfully! You can login now.");
             setIsLogin(true);
         } catch (err) {
@@ -115,16 +123,17 @@ const Login = () => {
         } finally {
             setLoading(false);
         }
-    };
+    };    
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         const formData = new FormData(e.target);
         const { email, password } = Object.fromEntries(formData);
-
+    
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            toast.success("Logged in successfully!");
         } catch (err) {
             toast.error(err.message);
         } finally {
@@ -147,8 +156,22 @@ const Login = () => {
                     <h2>Welcome back!</h2>
                     <form onSubmit={handleLogin}>
                         <input type="email" placeholder="Email" name="email" required />
-                        <input type="password" placeholder="Password" name="password" required />
-                        <button>{loading ? "loading" : "Sign In"}</button>
+                        <div className="password">
+                            <input
+                                required
+                                type={showLoginPassword ? "text" : "password"}
+                                placeholder="Password"
+                                name="password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowLoginPassword((prev) => !prev)}
+                                className="show-password-btn"
+                            >
+                                {showLoginPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                            </button>
+                        </div>
+                        <button>{loading ? "Loading..." : "Sign In"}</button>
                         <span className="or">or</span>
                         <button onClick={() => setIsLogin(false)} className="toggle-button">Register</button>
                     </form>
@@ -169,7 +192,7 @@ const Login = () => {
                             placeholder="Username"
                             name="username"
                             onChange={handleUsernameChange}
-                            className={`username-input ${usernameInput && (usernameAvailable === null ? '' : usernameAvailable ? 'valid' : 'invalid')}`}
+                            className={`username-input ${usernameInput && (usernameAvailable ? 'valid' : 'invalid')}`}
                         />
                         <span className={`username-check ${checkingUsername ? 'checking' : usernameAvailable ? 'valid' : 'invalid'}`}>
                             {usernameInput === ""
@@ -180,14 +203,24 @@ const Login = () => {
                                 ? "Username is available"
                                 : "Username is already taken"}
                         </span>
-                        <input
-                            required
-                            type="password"
-                            placeholder="Password"
-                            name="password"
-                            onChange={handlePasswordChange}
-                            className={`password-input ${passwordRules.length && passwordRules.uppercase && passwordRules.number ? 'valid' : 'invalid'}`}
-                        />
+                        
+                        <div className="password">
+                            <input
+                                required
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password"
+                                name="password"
+                                onChange={handlePasswordChange}
+                                className={`password-input ${passwordRules.length && passwordRules.uppercase && passwordRules.number ? 'valid' : 'invalid'}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="show-password-btn"
+                            >
+                                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                            </button>
+                        </div>
 
                         <ul className="password-rules">
                             <li className={passwordRules.length ? "rule-valid" : "rule-invalid"}>At least 8 characters</li>
@@ -203,7 +236,7 @@ const Login = () => {
                             onChange={handleEmailChange}
                             className={`email-input ${isEmailValid ? 'valid' : 'invalid'}`}
                         />
-                        <button>{loading ? "loading" : "Sign Up"}</button>
+                        <button>{loading ? "Loading..." : "Sign Up"}</button>
                         <span className="or">or</span>
                         <button onClick={() => setIsLogin(true)} className="toggle-button">Login</button>
                     </form>
