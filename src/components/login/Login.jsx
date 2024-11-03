@@ -97,14 +97,13 @@ const Login = () => {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             console.log("User UID:", res.user.uid);
     
-            // Закомментируем загрузку аватара
-            // const imgUrl = await upload(avatar.file);
-            // console.log("Uploaded image URL:", imgUrl);
+            const imgUrl = await upload(avatar.file);
+            console.log("Uploaded image URL:", imgUrl);
     
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
                 email,
-                // avatar: imgUrl,  // Уберем аватар из сохраняемых данных
+                avatar: imgUrl,
                 id: res.user.uid,
                 blocked: [],
             });
