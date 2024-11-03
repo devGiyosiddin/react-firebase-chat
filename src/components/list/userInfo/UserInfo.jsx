@@ -3,7 +3,6 @@ import { useUserStore } from "../../../components/lib/userStore";
 
 const UserInfo = () => {
     const { currentUser } = useUserStore();
-
     return (
         <div className="userInfo">
             <div className="user">
