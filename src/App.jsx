@@ -10,37 +10,41 @@ import { useUserStore } from "./components/lib/userStore";
 import { useChatStore } from "./components/lib/chatStore";
 
 const App = () => {
-
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   const { chatId } = useChatStore();
-  const [showDetail, setShowDetail] = useState(false); // Новое состояние для отображения Detail
+  const [showDetail, setShowDetail] = useState(false);
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
-      fetchUserInfo(user?.uid)
+      if (user) {
+        fetchUserInfo(user.uid);
+        console.log("user", user.uid);
+        
+      } else {
+        fetchUserInfo(null);
+        console.log("no user");
+      }
     });
 
-    return () => {
-      unSub();
-    };
+    return () => unSub();
   }, [fetchUserInfo]);
 
-  if (isLoading) return <div className="loader"></div>
+  if (isLoading) return <div className="loader"></div>;
 
   return (
-    <div className='container'>
+    <div className="container">
       {currentUser ? (
-            <>
+        <>
           <List />
-          {chatId && <Chat onInfoClick={() => setShowDetail(prev => !prev)} />} {/* Передаем обработчик клика */}
-          {chatId && showDetail && <Detail />} {/* Условный рендеринг Detail */}
-          </>
-        ) : (
-            <Login />
-        )}
+          {chatId && <Chat onInfoClick={() => setShowDetail(prev => !prev)} />}
+          {chatId && showDetail && <Detail />}
+        </>
+      ) : (
+        <Login />
+      )}
       <Notification />
     </div>
-  )
-}
+  );
+};
 
 export default App;
