@@ -80,7 +80,7 @@
             overscroll-behavior: none;
 
             #scrollDownBtn {
-                display: block;
+                display: flex;
                 position: fixed;
                 bottom: 90px;
                 right: 15%;
@@ -93,7 +93,7 @@
                 padding: 15px;
                 border-radius: 50%;
                 background-color: var(--container-color);
-                transition: all 3s eas;
+                transition: all 3s ease;
     
                 &:hover {
                     background-color: #555;
@@ -155,7 +155,6 @@
         position: fixed;
         display: flex;
         justify-content: center;
-        width: 100%;
         bottom: 20px;
         gap: 20px;
         background-color: transparent;
