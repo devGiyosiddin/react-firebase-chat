@@ -117,7 +117,7 @@
       
                       .texts {
                           p {
-                              background-color: var(--own-msg-color);
+                              background-color: var(--purple);
                           }
                       }
                   }

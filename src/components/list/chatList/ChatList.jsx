@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./chatList.css";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
@@ -14,9 +14,11 @@ const ChatList = () => {
     const [addMode, setAddMode] = useState(false);
     const [input, setInput] = useState('');
     const [selectedChatId, setSelectedChatId] = useState(null);
+    const [isFocused, setIsFocused] = useState(false);
 
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
+    const inputRef = useRef(null);
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
@@ -95,6 +97,10 @@ const ChatList = () => {
         setInput('');
     };
 
+    const handleIconClick = () => {
+        inputRef.current.focus();
+    };
+
     const filteredChats = chats.filter(c =>
         c.user.username.toLowerCase().includes(input.toLowerCase())
     );
@@ -102,13 +108,18 @@ const ChatList = () => {
     return (
         <div className="chatList">
             <div className="search">
-                <div className="searchBar">
-                    <IoMdSearch className="searchIcon" />
+                <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
+                    <IoMdSearch
+                        onClick={handleIconClick}
+                        className="searchIcon" />
                     <input 
                         type="text" 
                         placeholder="Search"
                         value={input}
+                        ref={inputRef}
                         onChange={(e) => setInput(e.target.value)}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
                     />
                     {input && (
                         <CiCircleRemove 
