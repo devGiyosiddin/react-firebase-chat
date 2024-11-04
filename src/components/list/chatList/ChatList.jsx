@@ -6,6 +6,8 @@ import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { IoMdSearch } from "react-icons/io";
+import { CiCircleRemove } from "react-icons/ci";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -89,6 +91,10 @@ const ChatList = () => {
         }
     };
 
+    const clearInput = () => {
+        setInput('');
+    };
+
     const filteredChats = chats.filter(c =>
         c.user.username.toLowerCase().includes(input.toLowerCase())
     );
@@ -97,10 +103,19 @@ const ChatList = () => {
         <div className="chatList">
             <div className="search">
                 <div className="searchBar">
-                    <img src="./search.png" alt="" />
-                    <input type="text" placeholder="Search"
+                    <IoMdSearch className="searchIcon" />
+                    <input 
+                        type="text" 
+                        placeholder="Search"
+                        value={input}
                         onChange={(e) => setInput(e.target.value)}
                     />
+                    {input && (
+                        <CiCircleRemove 
+                            className="clearIcon" 
+                            onClick={clearInput}
+                        />
+                    )}
                 </div>
                 <img src={addMode ? "./minus.png" : "./plus.png"} alt="" className="add" onClick={() => setAddMode(prev => !prev)} />
             </div>

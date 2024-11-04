@@ -10,6 +10,7 @@
         padding: 20px;
 
         .searchBar {
+            min-width: 276px;
             display: flex;
             align-items: center;
             gap: 20px;
@@ -17,6 +18,12 @@
             border-radius: 10px;
             background-color: var(--bg-color);
             padding: 10px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+
+            &:hover {
+                border-color: #666a6e;
+            }
 
             input {
                 flex: 1;
@@ -26,10 +33,10 @@
                 border: none;
             }
 
-            img {
+            .searchIcon {
                 width: 20px;
                 height: 20px;
-
+                color: var(--icons-color);
             }
         }
         .add {
