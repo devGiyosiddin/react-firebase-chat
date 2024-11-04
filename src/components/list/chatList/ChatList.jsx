@@ -100,34 +100,36 @@ const ChatList = () => {
                 </div>
                 <img src={addMode ? "./minus.png" : "./plus.png"} alt="" className="add" onClick={() => setAddMode(prev => !prev)} />
             </div>
-            {filteredChats.map((chat, index) => (
-                <div className="item"
-                    key={`${chat.chatId}-${index}`} // Генерация уникального ключа с использованием chatId и индекса
-                    onClick={() => handleSelect(chat)}
-                    style={{
-                        backgroundColor: chat?.isSeen ? '#5183fe' : 'transparent' 
-                    }}
-                >
-                    <img src={
-                        chat.user.blocked.includes(currentUser.id)
-                            ? "./avatar.png"
-                            : chat.user.avatar || "./avatar.png"}
-                        alt=""
-                    />
-                    <div className="texts">
-                        <span>
-                            {chat.user.blocked.includes(currentUser.id)
-                                ? "Blocked"
-                                : chat.user.username}
-                        </span>
-                        {chat.lastMessage && <p>{chat.lastMessage}</p>}
+            <div className="chats">
+                {filteredChats.map((chat, index) => (
+                    <div className="item"
+                        key={`${chat.chatId}-${index}`} // Генерация уникального ключа с использованием chatId и индекса
+                        onClick={() => handleSelect(chat)}
+                        style={{
+                            backgroundColor: chat?.isSeen ? '#766ac8' : 'transparent' 
+                        }}
+                    >
+                        <img src={
+                            chat.user.blocked.includes(currentUser.id)
+                                ? "./avatar.png"
+                                : chat.user.avatar || "./avatar.png"}
+                            alt=""
+                        />
+                        <div className="texts">
+                            <span>
+                                {chat.user.blocked.includes(currentUser.id)
+                                    ? "Blocked"
+                                    : chat.user.username}
+                            </span>
+                            {chat.lastMessage && <p>{chat.lastMessage}</p>}
+                        </div>
+                        <button className="delete-btn" onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(chat.chatId);
+                        }}>{<FaRegTrashCan />}</button>
                     </div>
-                    <button className="delete-btn" onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(chat.chatId);
-                    }}>{<FaRegTrashCan />}</button>
-                </div>
-            ))}
+                ))}
+            </div>
             {addMode && <AddUser setAddMode={setAddMode} />}
         </div>
     );
