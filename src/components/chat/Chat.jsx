@@ -52,13 +52,13 @@ const Chat = ({ onInfoClick }) => {
     }, [chatId]);
 
     const handleEmoji = (e) => {
-        setText(prev => prev + e.emoji); // Добавляем эмодзи к тексту
+        setText(prev => prev + e.emoji);
     };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-                setOpen(false); // Закрываем emoji-picker при клике вне его области
+                setOpen(false);
             }
         };
     
@@ -92,7 +92,7 @@ const Chat = ({ onInfoClick }) => {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             video.pause();
-            stream.getTracks().forEach(track => track.stop()); // Останавливаем камеру
+            stream.getTracks().forEach(track => track.stop());
 
             const imgDataUrl = canvas.toDataURL('image/jpeg');
             const response = await fetch(imgDataUrl);
@@ -124,7 +124,7 @@ const Chat = ({ onInfoClick }) => {
             mediaRecorder.start();
 
             setTimeout(() => {
-                mediaRecorder.stop(); // Останавливаем запись через 5 секунд (или по другому условию)
+                mediaRecorder.stop();
             }, 5000);
         } catch (err) {
             console.log("Voice error:", err);
@@ -147,7 +147,7 @@ const Chat = ({ onInfoClick }) => {
             }
 
             if (audioFile) {
-                audioUrl = await upload(audioFile); // Логика загрузки аудио
+                audioUrl = await upload(audioFile);
             }
 
             await updateDoc(doc(db, 'chats', chatId), {
@@ -156,11 +156,11 @@ const Chat = ({ onInfoClick }) => {
                     text,
                     createdAt: new Date(),
                     ...(imgUrl && { img: imgUrl }),
-                    ...(audioUrl && { audio: audioUrl }), // Добавляем аудио
+                    ...(audioUrl && { audio: audioUrl }),
                 })
             });
 
-            endRef.current?.scrollIntoView({ behavior: 'smooth' }); // Скролл вниз при отправке сообщения
+            endRef.current?.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
@@ -172,7 +172,7 @@ const Chat = ({ onInfoClick }) => {
 
         setAudioFile(null);
         setText('');
-        setOpenFileList(false); // Закрываем лист после отправки сообщения
+        setOpenFileList(false);
     };
 
     const handleScroll = () => {
@@ -208,7 +208,7 @@ const Chat = ({ onInfoClick }) => {
                 <div className="icons">
                     <img src="./phone.png" alt="" />
                     <img src="./video.png" alt="" />
-                    <img src="./info.png" alt="" onClick={onInfoClick} /> {/* Обработчик клика */}
+                    <img src="./info.png" alt="" onClick={onInfoClick} />
                 </div>
             </div>
             <div className="center">
