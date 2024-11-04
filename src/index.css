@@ -2,6 +2,9 @@
   --bg-color: #181818;
   --container-color: #212121;
   --own-msg-color: #8774e1;
+  --icons-color: #aaa;
+  --purple: #8774e1;
+  --purple-2: rgb(118, 106, 200);
 }
 
 * {
