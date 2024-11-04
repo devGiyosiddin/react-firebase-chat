@@ -11,9 +11,10 @@ const ChatList = () => {
     const [chats, setChats] = useState([]);
     const [addMode, setAddMode] = useState(false);
     const [input, setInput] = useState('');
+    const [selectedChatId, setSelectedChatId] = useState(null);
 
     const { currentUser } = useUserStore();
-    const { chatId, changeChat } = useChatStore();    
+    const { chatId, changeChat } = useChatStore();
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
@@ -39,32 +40,35 @@ const ChatList = () => {
     }, [currentUser.id]);
 
     const handleSelect = async (chat) => {
+        setSelectedChatId(chat.chatId);
+
         const updatedChats = chats.map(item => {
             if (item.chatId === chat.chatId) {
                 return { ...item, isSeen: true };
             }
             return item;
         });
-    
+
         const userChats = updatedChats.map(item => {
             const { user, ...rest } = item;
             return rest;
         });
-    
+
         const chatIndex = userChats.findIndex(item => item.chatId === chat.chatId);
-    
+        userChats[chatIndex].isSeen = true;
+
         const userChatsRef = doc(db, 'userchats', currentUser.id);
-    
+
         try {
             await updateDoc(userChatsRef, {
                 chats: userChats,
             });
-            setChats(updatedChats);
-            changeChat(chat.chatId, chat.user);
+            setChats(updatedChats); 
+            changeChat(chat.chatId, chat.user); 
         } catch (err) {
             console.log(err);
         }
-    };    
+    };
 
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
@@ -79,7 +83,7 @@ const ChatList = () => {
             await updateDoc(userChatsRef, {
                 chats: updatedChats,
             });
-            setChats(filteredChats); // Обновляем состояние после удаления
+            setChats(filteredChats); 
         } catch (err) {
             console.log("Error while deleting chat: ", err);
         }
@@ -103,10 +107,10 @@ const ChatList = () => {
             <div className="chats">
                 {filteredChats.map((chat, index) => (
                     <div className="item"
-                        key={`${chat.chatId}-${index}`} // Генерация уникального ключа с использованием chatId и индекса
+                        key={`${chat.chatId}-${index}`} 
                         onClick={() => handleSelect(chat)}
                         style={{
-                            backgroundColor: chat?.isSeen ? '#766ac8' : 'transparent' 
+                            backgroundColor: chat.chatId === selectedChatId ? '#766ac8' : 'transparent'
                         }}
                     >
                         <img src={
