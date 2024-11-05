@@ -1,10 +1,12 @@
 :root {
   --bg-color: #181818;
   --container-color: #212121;
-  --own-msg-color: #8774e1;
   --icons-color: #aaa;
   --purple: #8774e1;
   --purple-2: #766ac8;
+  --purple-3: #7261e1;
+  --btn-blue: #1a73e8;
+  --red-btn: #dc143ccb;
 }
 
 * {
