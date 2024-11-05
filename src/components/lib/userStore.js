@@ -8,7 +8,6 @@ export const useUserStore = create((set) => ({
     fetchUserInfo: async (uid) => {
         console.log("Fetching user info for UID:", uid);
         if (!uid) {
-            console.log("No UID provided, setting currentUser to null");
             return set({ currentUser: null, isLoading: false });
         }
         
@@ -16,14 +15,11 @@ export const useUserStore = create((set) => ({
             const docRef = doc(db, 'users', uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                console.log("User data found:", docSnap.data());
                 set({ currentUser: docSnap.data(), isLoading: false });
             } else {
-                console.log("No user data found for UID:", uid);
                 set({ currentUser: null, isLoading: false });
             }
         } catch (err) {
-            console.error("Error fetching user info:", err);
             set({ currentUser: null, isLoading: false });
         }
     },
