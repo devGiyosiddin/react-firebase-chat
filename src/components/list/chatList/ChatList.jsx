@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import "./chatList.css";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
+import { auth} from "../../lib/firebase";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
@@ -16,6 +17,7 @@ const ChatList = () => {
     const [input, setInput] = useState('');
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [isFocused, setIsFocused] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
@@ -43,6 +45,10 @@ const ChatList = () => {
             unSub();
         };
     }, [currentUser.id]);
+
+    const toggleMenu = (e) => {
+        setIsMenuOpen(prev => !prev);
+    };
 
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
@@ -109,7 +115,14 @@ const ChatList = () => {
     return (
         <div className="chatList">
             <div className="search">
-                <MenuIcon />
+                <MenuIcon isOpen={isMenuOpen} toggleMenu={toggleMenu} />
+                {isMenuOpen && (
+                    <div className="dropdown-menu">
+                        <p>Пункт 1</p>
+                        <p>Пункт 2</p>
+                        <button className="logout" onClick={() => auth.signOut()}>Log out</button>
+                    </div>
+                )}
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
                     <IoMdSearch
                         onClick={handleIconClick}
