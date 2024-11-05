@@ -180,7 +180,7 @@ const Login = () => {
                     <h2>Create an Account</h2>
                     <form onSubmit={handleRegister}>
                         <label htmlFor="file">
-                            <img src={avatar.url || "./avatar.png"} alt="avatar" />
+                            <img src={avatar.url || "./avatar.png"} alt="" />
                             <span>Upload an image</span>
                         </label>
                         <input required type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
