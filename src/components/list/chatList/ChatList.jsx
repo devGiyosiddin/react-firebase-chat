@@ -8,6 +8,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 import { CiCircleRemove } from "react-icons/ci";
+import MenuIcon from "../../icons/menuIcon";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -108,6 +109,7 @@ const ChatList = () => {
     return (
         <div className="chatList">
             <div className="search">
+                <MenuIcon />
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
                     <IoMdSearch
                         onClick={handleIconClick}
