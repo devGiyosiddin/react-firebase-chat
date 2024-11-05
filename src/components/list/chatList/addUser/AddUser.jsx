@@ -41,6 +41,7 @@ const AddUser = ({ setAddMode }) => {
                     lastMessage: '',
                     receiverId: currentUser.id,
                     updatedAt: Date.now(),
+                    isSeen: false,
                 })
             });
 
@@ -50,10 +51,10 @@ const AddUser = ({ setAddMode }) => {
                     lastMessage: '',
                     receiverId: user.id,
                     updatedAt: Date.now(),
+                    isSeen: false,
                 })
             });
 
-            // Закрываем окно после добавления пользователя
             setAddMode(false);
 
         } catch (err) {
