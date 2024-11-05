@@ -137,19 +137,27 @@ const Chat = ({ onInfoClick }) => {
 
     const handleSend = async () => {
         if (text === '' && !img.file && !audioFile) return;
-
+    
         let imgUrl = null;
         let audioUrl = null;
-
+    
         try {
             if (img.file) {
                 imgUrl = await upload(img.file);
             }
-
+    
             if (audioFile) {
                 audioUrl = await upload(audioFile);
             }
-
+    
+            const newMessage = {
+                senderId: currentUser.id,
+                text,
+                createdAt: new Date(),
+                ...(imgUrl && { img: imgUrl }),
+                ...(audioUrl && { audio: audioUrl }),
+            };
+    
             await updateDoc(doc(db, 'chats', chatId), {
                 messages: arrayUnion({
                     senderId: currentUser.id,
@@ -157,23 +165,24 @@ const Chat = ({ onInfoClick }) => {
                     createdAt: new Date(),
                     ...(imgUrl && { img: imgUrl }),
                     ...(audioUrl && { audio: audioUrl }),
-                })
-            });
-
+                }),
+                lastMessage: text || "Медиа",
+                updatedAt: new Date()
+            });            
+    
             endRef.current?.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
-
+    
         setImg({
             file: null,
             url: ''
         });
-
         setAudioFile(null);
         setText('');
         setOpenFileList(false);
-    };
+    };    
 
     const handleScroll = () => {
         const scrollTop = messagesRef.current.scrollTop;
@@ -217,7 +226,7 @@ const Chat = ({ onInfoClick }) => {
                         <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
                             <div className="texts">
                                 {message.img && <img src={message.img} alt="" />}
-                                {message.audio && <audio controls src={message.audio}></audio>} {/* Воспроизведение аудио */}
+                                {message.audio && <audio controls src={message.audio}></audio>}
                                 <p>{message.text}</p>
                             </div>
                         </div>
@@ -257,10 +266,10 @@ const Chat = ({ onInfoClick }) => {
                         disabled={isCurrentUserBlocked || isReceiverBlocked}
                         />
                     <MdAttachFile 
-                        onClick={() => setOpenFileList(!openFileList)} // Открываем/закрываем лист по клику
+                        onClick={() => setOpenFileList(!openFileList)}
                         className="file" 
                     />
-                    {openFileList && ( // Показываем лист только если состояние openFileList true
+                    {openFileList && (
                         <div className="icons">
                             <label htmlFor="file">
                                 <img src="./img.png" alt="" />
