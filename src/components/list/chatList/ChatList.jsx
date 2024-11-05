@@ -30,7 +30,7 @@ const ChatList = () => {
 
                 const user = userDocSnap.data();
 
-                return { ...item, user };
+                return { ...item, user, lastMessage: item.lastMessage };
             });
 
             const chatData = await Promise.all(promises);
@@ -136,8 +136,8 @@ const ChatList = () => {
                         key={`${chat.chatId}-${index}`} 
                         onClick={() => handleSelect(chat)}
                         style={{
-                            backgroundColor: chat.chatId === selectedChatId ? '#766ac8' : 'transparent'
-                        }}
+                            backgroundColor: chat.chatId === selectedChatId ? '#766ac8' : chat.isSeen ? 'transparent' : '#766ac8'
+                        }}                        
                     >
                         <img src={
                             chat.user.blocked.includes(currentUser.id)
