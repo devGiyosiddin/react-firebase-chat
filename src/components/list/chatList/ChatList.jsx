@@ -19,6 +19,7 @@ const ChatList = () => {
     const [isFocused, setIsFocused] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
+    const menuToggleRef = useRef(false);
 
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
@@ -48,12 +49,14 @@ const ChatList = () => {
     }, [currentUser.id]);
 
     const toggleMenu = (e) => {
+        e.stopPropagation();
         setIsMenuOpen(prev => !prev);
     };
     const handleClickOutside = (event) => {
-        if (menuRef.current && !menuRef.current.contains(event.target)) {
+        if (!menuToggleRef.current && menuRef.current && !menuRef.current.contains(event.target)) {
             setIsMenuOpen(false);
         }
+        menuToggleRef.current = false; // Сбрасываем флаг
     };
 
     useEffect(() => {
@@ -128,12 +131,15 @@ const ChatList = () => {
     return (
         <div className="chatList">
             <div className="search">
-                <MenuIcon isOpen={isMenuOpen} toggleMenu={toggleMenu} />
+                <MenuIcon 
+                    isOpen={isMenuOpen} 
+                    toggleMenu={(e) => {
+                        menuToggleRef.current = true; // Устанавливаем флаг
+                        toggleMenu(e);
+                    }} 
+                />
                 {isMenuOpen && (
-                    <div
-                        className="dropdown-menu"
-                        ref={menuRef}
-                    >
+                    <div className="dropdown-menu" ref={menuRef}>
                         <p>Profile</p>
                         <p>Set chat theme</p>
                         <p>Settings</p>
