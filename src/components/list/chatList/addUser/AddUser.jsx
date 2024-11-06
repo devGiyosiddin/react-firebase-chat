@@ -1,13 +1,14 @@
 import "./addUser.css";
 import { collection, where, query, getDoc, getDocs, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUserStore } from "../../../lib/userStore";
 import { toast } from "react-toastify";
 
 const AddUser = ({ setAddMode, handleSelect }) => {
     const [user, setUser] = useState(null);
     const { currentUser } = useUserStore();
+    const addUserRef = useRef(null);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -70,7 +71,6 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     
             setAddMode(false);
             
-            // Выбираем и открываем новый чат, добавляем проверку chatRef.id
             handleSelect({
                 chatId: chatRef.id,
                 user: user,
@@ -81,10 +81,27 @@ const AddUser = ({ setAddMode, handleSelect }) => {
         } catch (err) {
             console.log("Error on handleAdd:", err);
         }
-    };    
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (addUserRef.current && !addUserRef.current.contains(event.target)) {
+                setAddMode(false); // Закрывает окно
+            }
+        };
+    
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [setAddMode]);
 
     return (
-        <div className="addUser" onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}>
+        <div
+            className="addUser"
+            onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}
+            ref={addUserRef}
+        >
             <form onSubmit={handleSearch}>
                 <input type="text" autoFocus placeholder="Username" name="username" />
                 <button>Search</button>
