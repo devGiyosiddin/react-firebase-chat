@@ -18,6 +18,7 @@ const ChatList = () => {
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [isFocused, setIsFocused] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
@@ -49,6 +50,18 @@ const ChatList = () => {
     const toggleMenu = (e) => {
         setIsMenuOpen(prev => !prev);
     };
+    const handleClickOutside = (event) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setIsMenuOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
@@ -117,8 +130,12 @@ const ChatList = () => {
             <div className="search">
                 <MenuIcon isOpen={isMenuOpen} toggleMenu={toggleMenu} />
                 {isMenuOpen && (
-                    <div className="dropdown-menu">
+                    <div
+                        className="dropdown-menu"
+                        ref={menuRef}
+                    >
                         <p>Profile</p>
+                        <p>Set chat theme</p>
                         <p>Settings</p>
                         <button className="logout" onClick={() => auth.signOut()}>Log out</button>
                     </div>
