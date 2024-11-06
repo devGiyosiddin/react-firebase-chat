@@ -1,10 +1,11 @@
 import "./addUser.css";
-import { collection, where, query, getDocs, getDoc, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, where, query, getDoc, getDocs, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { useState } from "react";
 import { useUserStore } from "../../../lib/userStore";
+import { toast } from "react-toastify";
 
-const AddUser = ({ setAddMode }) => {
+const AddUser = ({ setAddMode, handleSelect }) => {
     const [user, setUser] = useState(null);
     const { currentUser } = useUserStore();
 
@@ -28,25 +29,25 @@ const AddUser = ({ setAddMode }) => {
 
     const handleAdd = async () => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
-
+    
         try {
             const userChatsSnap = await getDoc(userChatsRef);
             const userChatsData = userChatsSnap.exists() ? userChatsSnap.data().chats : [];
-
+    
             const isAlreadyInChats = userChatsData.some(chat => chat.receiverId === user.id);
-
+    
             if (isAlreadyInChats) {
-                alert("This user is already added to your chats.");
+                toast.error("User is already in your chats.");
                 return;
             }
-
+    
             const chatRef = doc(db, 'chats', user.id);
-
+    
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
                 messages: []
             });
-
+    
             await updateDoc(userChatsRef, {
                 chats: arrayUnion({
                     chatId: chatRef.id,
@@ -56,7 +57,7 @@ const AddUser = ({ setAddMode }) => {
                     isSeen: false,
                 })
             });
-
+    
             await updateDoc(doc(db, 'userchats', user.id), {
                 chats: arrayUnion({
                     chatId: chatRef.id,
@@ -66,13 +67,21 @@ const AddUser = ({ setAddMode }) => {
                     isSeen: false,
                 })
             });
-
+    
             setAddMode(false);
-
+            
+            // Выбираем и открываем новый чат, добавляем проверку chatRef.id
+            handleSelect({
+                chatId: chatRef.id,
+                user: user,
+                isSeen: false,
+                lastMessage: ''
+            });
+    
         } catch (err) {
             console.log("Error on handleAdd:", err);
         }
-    };
+    };    
 
     return (
         <div className="addUser">
