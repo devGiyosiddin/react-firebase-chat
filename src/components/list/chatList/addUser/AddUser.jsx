@@ -94,7 +94,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [setAddMode]);       
+    }, [setAddMode]);
 
     return (
         <div

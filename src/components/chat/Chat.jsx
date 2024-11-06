@@ -218,7 +218,7 @@ const Chat = ({ onInfoClick }) => {
                     <img src="./info.png" alt="" onClick={onInfoClick} />
                 </div>
             </div>
-            <div className="center">
+            <div id="center-bgImg" className="center">
                 <div className="messages" ref={messagesRef}>
                     {chat?.messages?.map(message => (
                         <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
