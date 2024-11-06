@@ -1,5 +1,5 @@
 import "./addUser.css";
-import { collection, where, query, getDocs, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, where, query, getDocs, getDoc, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { useState } from "react";
 import { useUserStore } from "../../../lib/userStore";
@@ -27,29 +27,41 @@ const AddUser = ({ setAddMode }) => {
     };
 
     const handleAdd = async () => {
-        const chatRef = doc(db, 'chats', user.id);
-        const userChatsRef = collection(db, 'userchats');
+        const userChatsRef = doc(db, 'userchats', currentUser.id);
+
         try {
+            const userChatsSnap = await getDoc(userChatsRef);
+            const userChatsData = userChatsSnap.exists() ? userChatsSnap.data().chats : [];
+
+            const isAlreadyInChats = userChatsData.some(chat => chat.receiverId === user.id);
+
+            if (isAlreadyInChats) {
+                alert("This user is already added to your chats.");
+                return;
+            }
+
+            const chatRef = doc(db, 'chats', user.id);
+
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
                 messages: []
             });
 
-            await updateDoc(doc(userChatsRef, user.id), {
+            await updateDoc(userChatsRef, {
                 chats: arrayUnion({
                     chatId: chatRef.id,
                     lastMessage: '',
-                    receiverId: currentUser.id,
+                    receiverId: user.id,
                     updatedAt: Date.now(),
                     isSeen: false,
                 })
             });
 
-            await updateDoc(doc(userChatsRef, currentUser.id), {
+            await updateDoc(doc(db, 'userchats', user.id), {
                 chats: arrayUnion({
                     chatId: chatRef.id,
                     lastMessage: '',
-                    receiverId: user.id,
+                    receiverId: currentUser.id,
                     updatedAt: Date.now(),
                     isSeen: false,
                 })
