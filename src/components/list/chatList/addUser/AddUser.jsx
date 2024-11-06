@@ -84,9 +84,9 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     };    
 
     return (
-        <div className="addUser">
+        <div className="addUser" onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}>
             <form onSubmit={handleSearch}>
-                <input type="text" placeholder="Username" name="username" />
+                <input type="text" autoFocus placeholder="Username" name="username" />
                 <button>Search</button>
             </form>
             {user && (
