@@ -118,8 +118,8 @@ const ChatList = () => {
                 <MenuIcon isOpen={isMenuOpen} toggleMenu={toggleMenu} />
                 {isMenuOpen && (
                     <div className="dropdown-menu">
-                        <p>Пункт 1</p>
-                        <p>Пункт 2</p>
+                        <p>Profile</p>
+                        <p>Settings</p>
                         <button className="logout" onClick={() => auth.signOut()}>Log out</button>
                     </div>
                 )}
