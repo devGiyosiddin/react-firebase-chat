@@ -143,7 +143,15 @@ const ChatList = () => {
                         />
                     )}
                 </div>
-                <img src={addMode ? "./minus.png" : "./plus.png"} alt="" className="add" onClick={() => setAddMode(prev => !prev)} />
+                <img
+                    src={addMode ? "./minus.png" : "./plus.png"}
+                    alt=""
+                    className="add"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setAddMode(prev => !prev)
+                    }}
+                />
             </div>
             <div className="chats">
                 {filteredChats.map((chat, index) => (

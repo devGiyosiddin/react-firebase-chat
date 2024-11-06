@@ -86,7 +86,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (addUserRef.current && !addUserRef.current.contains(event.target)) {
-                setAddMode(false); // Закрывает окно
+                setTimeout(() => setAddMode(false), 100);
             }
         };
     
@@ -94,7 +94,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [setAddMode]);
+    }, [setAddMode]);       
 
     return (
         <div
