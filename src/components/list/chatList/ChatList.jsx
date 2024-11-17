@@ -10,6 +10,9 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 import { CiCircleRemove } from "react-icons/ci";
 import MenuIcon from "../../icons/menuIcon";
+import { CgProfile } from "react-icons/cg";
+import { IoImagesOutline } from "react-icons/io5";
+import { MdOutlineSettings } from "react-icons/md";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -20,10 +23,34 @@ const ChatList = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const menuToggleRef = useRef(false);
+    const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+    const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
+    const contextMenuRef = useRef(null);
 
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
     const inputRef = useRef(null);
+    const [ setBgImgUrl] = useState("");
+
+    // Показать меню и задать позицию
+    const handleContextMenu = (event) => {
+        event.preventDefault(); // Предотвращаем стандартное контекстное меню
+        setMenuPosition({ x: event.pageX, y: event.pageY });
+        setIsContextMenuVisible(true);
+    };
+
+    // Скрыть меню при клике вне его
+    const handleClickOutsideMenu = (event) => {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+            setIsContextMenuVisible(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
@@ -134,17 +161,24 @@ const ChatList = () => {
                 <MenuIcon 
                     isOpen={isMenuOpen} 
                     toggleMenu={(e) => {
-                        menuToggleRef.current = true; // Устанавливаем флаг
+                        menuToggleRef.current = true;
                         toggleMenu(e);
                     }} 
                 />
                 {isMenuOpen && (
-                    <div className="dropdown-menu" ref={menuRef}>
-                        <p>Profile</p>
-                        <p>Set chat theme</p>
-                        <p>Settings</p>
+                    <ul className="dropdown-menu" ref={menuRef}>
+                        <li>
+                            <span>Profile</span>
+                            <CgProfile />
+                        </li>
+                        <li>
+                            <IoImagesOutline /></li>
+                        <li>
+                            <span>Settings</span>
+                            <MdOutlineSettings />
+                        </li>
                         <button className="logout" onClick={() => auth.signOut()}>Log out</button>
-                    </div>
+                    </ul>
                 )}
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
                     <IoMdSearch

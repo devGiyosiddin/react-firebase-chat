@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ChatBgImg from "../list/chatList/chatBgImg";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
@@ -15,24 +16,29 @@ import { BsEmojiSmile } from "react-icons/bs";
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
-    const [openFileList, setOpenFileList] = useState(false); // Состояние для видимости листа
+    const [openFileList, setOpenFileList] = useState(false);
     const [text, setText] = useState("");
     const [img, setImg] = useState({
         file: null,
         url: '',
     });
-    const [audioFile, setAudioFile] = useState(null); // Для голосовых
+    const [audioFile, setAudioFile] = useState(null);
     const endRef = useRef(null);
     const emojiPickerRef = useRef(null); 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
     const { currentUser } = useUserStore();
     const [showScrollDown, setShowScrollDown] = useState(false);
     const messagesRef = useRef(null);
+    const [bgImgUrl, setBgImgUrl] = useState("");
+
+    const handleBgImgUpload = (url) => {
+        setBgImgUrl(url);
+    };
 
     const scrollToDown = () => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-    
+
     useEffect(() => {
         scrollToDown();
     }, []);
@@ -84,7 +90,6 @@ const Chat = ({ onInfoClick }) => {
             video.srcObject = stream;
             video.play();
 
-            // Делание снимка
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -195,6 +200,7 @@ const Chat = ({ onInfoClick }) => {
             setShowScrollDown(false);
         }
     };
+
     useEffect(() => {
         const messagesElement = messagesRef.current;
         messagesElement?.addEventListener("scroll", handleScroll);
@@ -206,6 +212,7 @@ const Chat = ({ onInfoClick }) => {
 
     return (
         <div className="chat">
+            <ChatBgImg onUploadComplete={handleBgImgUpload} />
             <div className="top">
                 <div className="user">
                     <img src={user?.avatar || "./avatar.png"} alt="" />
@@ -218,7 +225,18 @@ const Chat = ({ onInfoClick }) => {
                     <img src="./info.png" alt="" onClick={onInfoClick} />
                 </div>
             </div>
-            <div id="center-bgImg" className="center">
+            <div className="chat">
+                <div 
+                    id="center-bgImg" 
+                    className="center" 
+                    style={{ 
+                        backgroundImage: bgImgUrl ? `url(${bgImgUrl})` : `url('../../../public/chat-bg-img.jpg')`, 
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat"
+                    }}
+                >
+
                 <div className="messages" ref={messagesRef}>
                     {chat?.messages?.map(message => (
                         <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
@@ -282,6 +300,7 @@ const Chat = ({ onInfoClick }) => {
                 </div>
                     <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
                 </div>
+            </div>
             </div>
         </div>
     );
