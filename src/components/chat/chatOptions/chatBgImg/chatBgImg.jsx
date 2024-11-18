@@ -3,7 +3,8 @@ import { IoTrashOutline } from "react-icons/io5";
 import "./chatBgImg.css";
 import { toast } from "react-toastify";
 import { IoIosArrowBack } from "react-icons/io";
-import upload from "../../lib/upload";
+import upload from "../../../lib/upload";
+import { IoImagesOutline } from "react-icons/io5";
 
 const ChatBgImg = ({ onUploadComplete }) => {
   const [file, setFile] = useState(null);
@@ -56,6 +57,7 @@ const ChatBgImg = ({ onUploadComplete }) => {
         setIsFormVisible(false);
         setImgUrl(uploadedImgUrl);
       toast.success("Image uploaded successfully!");
+      handleRemoveFile();
     } catch (error) {
         setError("Ошибка при загрузке файла: " + error);
     }
@@ -74,7 +76,8 @@ const ChatBgImg = ({ onUploadComplete }) => {
 
   return (
     <>
-      <div onClick={() => setIsFormVisible(!isFormVisible)}>
+      <div className="option" onClick={() => setIsFormVisible(!isFormVisible)}>
+        <IoImagesOutline className="option-icon" />
         {isFormVisible ? "Close Form" : "Background Image"}
       </div>
       {isFormVisible && (

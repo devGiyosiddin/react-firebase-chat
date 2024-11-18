@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import ChatBgImg from "../list/chatList/chatBgImg";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
@@ -215,7 +214,6 @@ const Chat = ({ onInfoClick }) => {
 
     return (
         <div className="chat">
-            {/* <ChatBgImg onUploadComplete={handleBgImgUpload} /> */}
             <div className="top">
                 <div className="user">
                     <img src={user?.avatar || "./avatar.png"} alt="" onClick={onInfoClick} />

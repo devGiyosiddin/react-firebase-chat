@@ -1,5 +1,4 @@
 .chat-options {
-
     position: absolute;
     width: 200px;
     top: 65px;
@@ -17,11 +16,9 @@
             justify-content: space-between;
             padding: 4px 12px;
             font-size: 14px;
-            .option-icon {
-                width: 20px;
-                height: 20px;
-                margin-right: 5px;
-                color: var(--icons-color);
+
+            &:hover {
+                background-color: var(--secondary-textColor);
             }
             .option-text {
                 color: var(--icons-color);
