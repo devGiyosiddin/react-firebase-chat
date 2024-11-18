@@ -43,18 +43,6 @@
                 }
             }
         }
-        
-        .icons {
-            display: flex;
-            gap: 20px;
-            
-            .options-icon {
-                color: var(--icons-color);
-                width: 20px;
-                height: 20px;
-                cursor: pointer;
-            }
-        }
     }
     
     .center {

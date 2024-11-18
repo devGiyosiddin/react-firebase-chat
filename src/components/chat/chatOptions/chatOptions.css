@@ -7,31 +7,29 @@
     border-radius: 10px;
     padding: 5px;
     z-index: 100;
-    .options {
-        .option {
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            padding: 4px 12px;
-            font-size: 14px;
-            
-            .option-icon {
-                width: 20px;
-                height: 20px;
-                margin-right: 20px;
-                color: var(--icons-color);
-            }            
-            .option-block-icon {
-                color: tomato;
-            }
-
-            &:hover {
-                background-color: var(--secondary-textColor);
-            }
-            .option-text {
-                color: var(--icons-color);
-            }
+    .option {
+        margin-bottom: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 4px 12px;
+        font-size: 14px;
+        
+        .option-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 20px;
+            color: var(--icons-color);
+        }            
+        .option-block-icon {
+            color: tomato;
+        }
+        
+        &:hover {
+            background-color: var(--secondary-textColor);
+        }
+        .option-text {
+            color: var(--icons-color);
         }
     }
 }

@@ -223,13 +223,7 @@ const Chat = ({ onInfoClick }) => {
                     </div>
                 </div>
                 <div className="icons">
-                    <SlOptionsVertical
-                        className="options-icon"
-                        onClick={() => setShowOptions(!showOptions)}
-                    />
-                    {showOptions && (
-                        <ChatOptions onUploadComplete={handleBgImgUpload} />
-                    )}
+                    <ChatOptions onUploadComplete={handleBgImgUpload} />
                 </div>
             </div>
             <div className="chat">
