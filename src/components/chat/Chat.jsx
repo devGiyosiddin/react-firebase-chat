@@ -244,7 +244,7 @@ const Chat = ({ onInfoClick }) => {
                             <div className="texts">
                                 {message.img && <img src={message.img} alt="" />}
                                 {message.audio && <audio controls src={message.audio}></audio>}
-                                <p>{message.text}</p>
+                                {message.text &&<p>{message.text}</p>}
                             </div>
                         </div>
                     ))}
