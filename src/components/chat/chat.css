@@ -23,6 +23,7 @@
                 height: 40px;
                 border-radius: 50%;
                 object-fit: cover;
+                cursor: pointer;
             }
             
             .texts {
@@ -47,9 +48,10 @@
             display: flex;
             gap: 20px;
             
-            img {
-                width: 20px;
-                height: 20px;
+            .options-icon {
+                color: var(--icons-color);
+                width: 24px;
+                height: 24px;
                 cursor: pointer;
             }
         }

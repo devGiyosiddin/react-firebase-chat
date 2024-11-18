@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import ChatBgImg from "../list/chatList/chatBgImg";
+// import ChatBgImg from "../list/chatList/chatBgImg";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
@@ -12,6 +12,8 @@ import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
+import { SlOptionsVertical } from "react-icons/sl";
+import ChatOptions from "./chatOptions/ChatOptions";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -30,6 +32,7 @@ const Chat = ({ onInfoClick }) => {
     const [showScrollDown, setShowScrollDown] = useState(false);
     const messagesRef = useRef(null);
     const [bgImgUrl, setBgImgUrl] = useState("");
+    const [showOptions, setShowOptions] = useState(false);
 
     const handleBgImgUpload = (url) => {
         setBgImgUrl(url);
@@ -212,17 +215,23 @@ const Chat = ({ onInfoClick }) => {
 
     return (
         <div className="chat">
-            <ChatBgImg onUploadComplete={handleBgImgUpload} />
+            {/* <ChatBgImg onUploadComplete={handleBgImgUpload} /> */}
             <div className="top">
                 <div className="user">
-                    <img src={user?.avatar || "./avatar.png"} alt="" />
+                    <img src={user?.avatar || "./avatar.png"} alt="" onClick={onInfoClick} />
                     <div className="texts">
                         <span>{user?.username}</span>
                         <p>Lorem ipsum dolor sit amet consectetur</p>
                     </div>
                 </div>
                 <div className="icons">
-                    <img src="./info.png" alt="" onClick={onInfoClick} />
+                    <SlOptionsVertical
+                        className="options-icon"
+                        onClick={() => setShowOptions(!showOptions)}
+                    />
+                    {showOptions && (
+                        <ChatOptions onUploadComplete={handleBgImgUpload} />
+                    )}
                 </div>
             </div>
             <div className="chat">

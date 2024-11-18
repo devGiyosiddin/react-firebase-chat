@@ -3,7 +3,7 @@ import { IoTrashOutline } from "react-icons/io5";
 import "./chatBgImg.css";
 import { toast } from "react-toastify";
 import { IoIosArrowBack } from "react-icons/io";
-import upload from "../../../lib/upload";
+import upload from "../../lib/upload";
 
 const ChatBgImg = ({ onUploadComplete }) => {
   const [file, setFile] = useState(null);
@@ -51,11 +51,11 @@ const ChatBgImg = ({ onUploadComplete }) => {
 
     try {
         // Загрузка изображения на Firebase
-      const uploadedImgUrl = await upload(file);
-      console.log("Uploaded image URL:", uploadedImgUrl);
-      setImgUrl(uploadedImgUrl);
+        const uploadedImgUrl = await upload(file);
+        console.log("Uploaded image URL:", uploadedImgUrl);
+        setIsFormVisible(false);
+        setImgUrl(uploadedImgUrl);
       toast.success("Image uploaded successfully!");
-      setIsFormVisible(false);
     } catch (error) {
         setError("Ошибка при загрузке файла: " + error);
     }
@@ -75,7 +75,7 @@ const ChatBgImg = ({ onUploadComplete }) => {
   return (
     <>
       <div onClick={() => setIsFormVisible(!isFormVisible)}>
-        {isFormVisible ? "Close Form" : "Set Background Image"}
+        {isFormVisible ? "Close Form" : "Background Image"}
       </div>
       {isFormVisible && (
         <div className="compact-form-container" onKeyDown={(e) => e.key === "Escape" && setIsFormVisible(false)}>

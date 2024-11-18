@@ -11,7 +11,6 @@ import { IoMdSearch } from "react-icons/io";
 import { CiCircleRemove } from "react-icons/ci";
 import MenuIcon from "../../icons/menuIcon";
 import { CgProfile } from "react-icons/cg";
-import { IoImagesOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 
 const ChatList = () => {
@@ -172,7 +171,7 @@ const ChatList = () => {
                             <CgProfile />
                         </li>
                         <li>
-                            <IoImagesOutline /></li>
+                            </li>
                         <li>
                             <span>Settings</span>
                             <MdOutlineSettings />
