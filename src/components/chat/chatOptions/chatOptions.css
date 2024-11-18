@@ -13,9 +13,18 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 4px 12px;
             font-size: 14px;
+            
+            .option-icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 20px;
+                color: var(--icons-color);
+            }            
+            .option-block-icon {
+                color: tomato;
+            }
 
             &:hover {
                 background-color: var(--secondary-textColor);
