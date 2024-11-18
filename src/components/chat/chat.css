@@ -106,6 +106,9 @@
                         p {
                             background-color: var(--purple);
                         }
+                        .time {
+                            align-self: flex-end;
+                        }
                     }
                 }
             

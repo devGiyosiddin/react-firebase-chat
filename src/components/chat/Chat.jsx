@@ -237,30 +237,37 @@ const Chat = ({ onInfoClick }) => {
                         backgroundRepeat: "no-repeat"
                     }}
                 >
-
-                <div className="messages" ref={messagesRef}>
-                    {chat?.messages?.map(message => (
-                        <div className={message.senderId === currentUser.id ? "message own" : "message"} key={message?.createdAt}>
-                            <div className="texts">
-                                {message.img && <img src={message.img} alt="" />}
-                                {message.audio && <audio controls src={message.audio}></audio>}
-                                {message.text &&<p>{message.text}</p>}
-                            </div>
+            <div className="messages" ref={messagesRef}>
+                {chat?.messages?.map((message) => (
+                    <div
+                        className={message.senderId === currentUser.id ? "message own" : "message"}
+                        key={message.createdAt?.seconds || Math.random()}
+                    >
+                        <div className="texts">
+                            {message.img && <img src={message.img} alt="" />}
+                            {message.audio && <audio controls src={message.audio}></audio>}
+                            {message.text && <p>{message.text}</p>}
+                            {message.createdAt && (
+                                <span className="time">
+                                    {new Date(message.createdAt.seconds * 1000).toLocaleTimeString("en-US", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}
+                                </span>
+                            )}
                         </div>
-                    ))}
-                    {img.url && <div className="message own">
+                    </div>
+                ))}
+                {img.url && (
+                    <div className="message own">
                         <div className="texts">
                             <img src={img.url} alt="" />
                         </div>
-                    </div>}
-                    <div ref={endRef}></div>
-                    {showScrollDown && (
-                        <button onClick={scrollToDown} id="scrollDownBtn">
-                            <FaArrowDown />
-                        </button>
-                    )}
+                    </div>
+                )}
+                <div ref={endRef}></div>
+            </div>
 
-                </div>
 
             <div className="send-wrapper">
                 <div className="input-inner">
