@@ -8,7 +8,8 @@ const ChatOptions = ({ onUploadComplete }) => {
     const [isVisible, setIsVisible] = useState(false);
     const optionsRef = useRef(null);
 
-    const toggleOptions = () => {
+    const toggleOptions = (e) => {
+        e.stopPropagation();
         setIsVisible((prev) => !prev);
     };
 
@@ -21,17 +22,23 @@ const ChatOptions = ({ onUploadComplete }) => {
     useEffect(() => {
         if (isVisible) {
             document.addEventListener("mousedown", handleOutsideClick);
+        } else {
+            document.removeEventListener("mousedown", handleOutsideClick);
         }
+
         return () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, [isVisible]);
 
     return (
-        <div className="chat-options-wrapper">
-            <SlOptionsVertical className="options-icon" onClick={toggleOptions} />
+        <div className="chat-options-wrapper" ref={optionsRef}>
+            <SlOptionsVertical
+                className="options-icon"
+                onClick={toggleOptions}
+            />
             {isVisible && (
-                <div className="chat-options" ref={optionsRef}>
+                <div className="chat-options">
                     <ChatBgImg onUploadComplete={onUploadComplete} />
                     <div className="option">Option 1</div>
                     <div className="option">Option 2</div>
