@@ -87,6 +87,7 @@
                 }
             }
             .message {
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 max-width: 400px;
@@ -137,6 +138,72 @@
                         font-size: 13px;
                     }
                 }
+            }
+
+            .actions {
+                display: flex;
+                gap: 5px;
+            }
+            
+            .actions button {
+                background: none;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            
+            .actions button:hover {
+                color: var(--purple);
+            }
+            
+            .edit-message {
+                position: fixed;
+                bottom: 80px;
+                display: flex;
+                gap: 5px;
+                align-items: center;
+            }
+            
+            .edit-message input {
+                flex: 1;
+                padding: 5px;
+                border: 1px solid var(--purple);
+                border-radius: 5px;
+                background-color: var(--bg-color);
+                color: #fff;
+            }
+            
+            .edit-message button {
+                background-color: var(--purple);
+                border: none;
+                padding: 5px 10px;
+                color: #fff;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+            
+            .edit-message button:hover {
+                background-color: var(--purple-2);
+            }
+            
+            .context-menu {
+                position: fixed;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                color: #fff;
+                border-radius: 5px;
+                padding: 10px;
+                background: var(--bg-color);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+            .context-menu button {
+                background: none;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                padding: 5px;
             }            
         }
         

@@ -14,7 +14,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { SlOptionsVertical } from "react-icons/sl";
 import ChatOptions from "./chatOptions/ChatOptions";
 
-const Chat = ({ onInfoClick }) => {
+const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
     const [openFileList, setOpenFileList] = useState(false);
@@ -32,6 +32,92 @@ const Chat = ({ onInfoClick }) => {
     const messagesRef = useRef(null);
     const [bgImgUrl, setBgImgUrl] = useState("");
     const [showOptions, setShowOptions] = useState(false);
+    const [editingMessage, setEditingMessage] = useState(null);
+    const [editingText, setEditingText] = useState("");
+    const [contextMenu, setContextMenu] = useState(null);
+
+    useEffect(() => {
+        if (editingMessage) {
+            setEditingText(editingMessage.text || "");
+        }
+    }, [editingMessage]);
+
+    const handleEditMessage = async (messageId, newText) => {
+        try {
+            const updatedMessages = chat.messages.map((message) =>
+                message.createdAt.seconds === messageId
+                    ? { ...message, text: newText }
+                    : message
+            );
+
+            await updateDoc(doc(db, "chats", chatId), {
+                messages: updatedMessages,
+                lastMessage: newText || chat.lastMessage,
+            });
+
+            setChat((prev) => ({ ...prev, messages: updatedMessages }));
+        } catch (err) {
+            console.error("Error editing message:", err);
+        }
+    };
+
+    const handleDeleteMessage = async (messageId) => {
+        try {
+            const updatedMessages = chat.messages.filter(
+                (message) => message.createdAt.seconds !== messageId
+            );
+
+            await updateDoc(doc(db, "chats", chatId), {
+                messages: updatedMessages,
+                lastMessage:
+                    updatedMessages.length > 0
+                        ? updatedMessages[updatedMessages.length - 1].text || "Медиа"
+                        : "",
+            });
+
+            setChat((prev) => ({ ...prev, messages: updatedMessages }));
+        } catch (err) {
+            console.error("Error deleting message:", err);
+        }
+    };
+
+    const handleContextMenu = (e, message) => {
+        e.preventDefault(); // Предотвращаем стандартное контекстное меню
+        
+        // Получаем размеры окна
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Получаем координаты клика
+        let x = e.clientX;
+        let y = e.clientY;
+        
+        // Создаем виртуальный элемент для расчета размеров меню
+        const menuWidth = 150; // Примерная ширина меню
+        const menuHeight = 80; // Примерная высота меню
+        
+        // Корректируем позицию, если меню выходит за пределы окна
+        if (x + menuWidth > windowWidth) {
+            x = windowWidth - menuWidth;
+        }
+        if (y + menuHeight > windowHeight) {
+            y = windowHeight - menuHeight;
+        }
+        
+        setContextMenu({ x, y, message });
+    };
+
+    const closeContextMenu = () => {
+        setContextMenu(null);
+    };
+
+    const saveEditedMessage = () => {
+        if (editingMessage && editingText.trim()) {
+            handleEditMessage(editingMessage.createdAt.seconds, editingText);
+            setEditingMessage(null);
+            setEditingText("");
+        }
+    };
 
     const handleBgImgUpload = (url) => {
         setBgImgUrl(url);
@@ -237,37 +323,71 @@ const Chat = ({ onInfoClick }) => {
                         backgroundRepeat: "no-repeat"
                     }}
                 >
-            <div className="messages" ref={messagesRef}>
-                {chat?.messages?.map((message) => (
-                    <div
-                        className={message.senderId === currentUser.id ? "message own" : "message"}
-                        key={message.createdAt?.seconds || Math.random()}
-                    >
-                        <div className="texts">
-                            {message.img && <img src={message.img} alt="" />}
-                            {message.audio && <audio controls src={message.audio}></audio>}
-                            {message.text && <p>{message.text}</p>}
-                            {message.createdAt && (
-                                <span className="time">
-                                    {new Date(message.createdAt.seconds * 1000).toLocaleTimeString("en-US", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })}
-                                </span>
-                            )}
+
+                <div className="messages" ref={messagesRef} onClick={closeContextMenu}>
+                    {chat?.messages?.map(message => (
+                        <div
+                            className={message.senderId === currentUser.id ? "message own" : "message"}
+                            key={message?.createdAt}
+                            onContextMenu={(e) => handleContextMenu(e, message)}
+                        >
+                            <div className="texts">
+                                {message.img && <img src={message.img} alt="" />}
+                                {message.audio && <audio controls src={message.audio}></audio>}
+                                {message.text &&<p>{message.text}</p>}
+                            </div>
                         </div>
-                    </div>
-                ))}
-                {img.url && (
-                    <div className="message own">
+                    ))}
+                    {contextMenu && (
+                <div
+                    className="context-menu"
+                    style={{ top: contextMenu.y, left: contextMenu.x }}
+                >
+                    <button
+                        onClick={() => {
+                            setEditingMessage(contextMenu.message);
+                            setContextMenu(null);
+                        }}
+                    >
+                        ✏️ Изменить
+                    </button>
+                    <button
+                        onClick={() => {
+                            handleDeleteMessage(contextMenu.message.createdAt.seconds);
+                            setContextMenu(null);
+                        }}
+                    >
+                        🗑️ Удалить
+                    </button>
+                </div>
+            )}
+
+            {editingMessage && (
+                <div className="edit-message">
+                    <input
+                        type="text"
+                        value={editingText}
+                        onChange={(e) => setEditingText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && saveEditedMessage()}
+                    />
+                    <button onClick={saveEditedMessage}>💾 Сохранить</button>
+                    <button onClick={() => setEditingMessage(null)}>❌ Отмена</button>
+                </div>
+            )}
+                    {img.url && <div className="message own">
                         <div className="texts">
                             <img src={img.url} alt="" />
                         </div>
-                    </div>
-                )}
-                <div ref={endRef}></div>
-            </div>
+                    </div>}
+                    <div ref={endRef}></div>
+                    {showScrollDown && (
+                        <button onClick={scrollToDown} id="scrollDownBtn">
+                            <FaArrowDown />
+                        </button>
+                    )}
+                    
 
+                </div>
 
             <div className="send-wrapper">
                 <div className="input-inner">
