@@ -19,7 +19,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [imgUrl, setImgUrl] = useState(null);
   const [currentFilter, setCurrentFilter] = useState(""); // Для хранения текущего фильтра
-  const [isFilterMenuVisible, setIsFilterMenuVisible] = useState(false); // Видимость меню фильтров
+  const [isFilterMenuVisible, setIsFilterMenuVisible] = useState(false);
 
   const progressBarRef = useRef(null);
   const filterMenuRef = useRef(null); // Ref для меню фильтров

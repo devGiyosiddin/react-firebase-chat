@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import "./chatList.css";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
-import { auth} from "../../lib/firebase";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { auth } from "../../lib/firebase";
+import { doc, getDoc, onSnapshot, updateDoc, getFirestore } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -29,11 +29,11 @@ const ChatList = () => {
     const { currentUser } = useUserStore();
     const { chatId, changeChat } = useChatStore();
     const inputRef = useRef(null);
-    const [ setBgImgUrl] = useState("");
+    const db = getFirestore();
 
     // Показать меню и задать позицию
     const handleContextMenu = (event) => {
-        event.preventDefault(); // Предотвращаем стандартное контекстное меню
+        event.preventDefault();
         setMenuPosition({ x: event.pageX, y: event.pageY });
         setIsContextMenuVisible(true);
     };
@@ -44,6 +44,7 @@ const ChatList = () => {
             setIsContextMenuVisible(false);
         }
     };
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -54,35 +55,55 @@ const ChatList = () => {
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
             const items = res.data().chats;
-
+    
+            // Получаем данные с полем `lastMessage` из коллекции `chats`
             const promises = items.map(async (item) => {
+                // Получаем пользователя
                 const userDocRef = doc(db, 'users', item.receiverId);
                 const userDocSnap = await getDoc(userDocRef);
-
                 const user = userDocSnap.data();
-
-                return { ...item, user, lastMessage: item.lastMessage };
+    
+                // Получаем данные чата
+                const chatDocRef = doc(db, 'chats', item.chatId);
+                const chatDocSnap = await getDoc(chatDocRef);
+                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
+    
+                // Теперь просто берем `lastMessage` из `item` (предполагая, что оно там уже есть)
+                const lastMessage = item.lastMessage || "nima gap";
+    
+                return {
+                    ...item,
+                    user,
+                    lastMessage,
+                };
             });
-
+    
             const chatData = await Promise.all(promises);
-
-            setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+    
+            setChats(
+                chatData.sort((a, b) => {
+                    const aTime = a.updatedAt?.seconds || 0;
+                    const bTime = b.updatedAt?.seconds || 0;
+                    return bTime - aTime;
+                })
+            );
         });
-
+    
         return () => {
             unSub();
         };
-    }, [currentUser.id]);
+    }, [currentUser.id]);    
 
     const toggleMenu = (e) => {
         e.stopPropagation();
-        setIsMenuOpen(prev => !prev);
+        setIsMenuOpen((prev) => !prev);
     };
+
     const handleClickOutside = (event) => {
         if (!menuToggleRef.current && menuRef.current && !menuRef.current.contains(event.target)) {
             setIsMenuOpen(false);
         }
-        menuToggleRef.current = false; // Сбрасываем флаг
+        menuToggleRef.current = false;
     };
 
     useEffect(() => {
@@ -95,19 +116,19 @@ const ChatList = () => {
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
 
-        const updatedChats = chats.map(item => {
+        const updatedChats = chats.map((item) => {
             if (item.chatId === chat.chatId) {
                 return { ...item, isSeen: true };
             }
             return item;
         });
 
-        const userChats = updatedChats.map(item => {
+        const userChats = updatedChats.map((item) => {
             const { user, ...rest } = item;
             return rest;
         });
 
-        const chatIndex = userChats.findIndex(item => item.chatId === chat.chatId);
+        const chatIndex = userChats.findIndex((item) => item.chatId === chat.chatId);
         userChats[chatIndex].isSeen = true;
 
         const userChatsRef = doc(db, 'userchats', currentUser.id);
@@ -116,8 +137,8 @@ const ChatList = () => {
             await updateDoc(userChatsRef, {
                 chats: userChats,
             });
-            setChats(updatedChats); 
-            changeChat(chat.chatId, chat.user); 
+            setChats(updatedChats);
+            changeChat(chat.chatId, chat.user);
         } catch (err) {
             console.log(err);
         }
@@ -126,8 +147,8 @@ const ChatList = () => {
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
 
-        const filteredChats = chats.filter(chat => chat.chatId !== chatId);
-        const updatedChats = filteredChats.map(item => {
+        const filteredChats = chats.filter((chat) => chat.chatId !== chatId);
+        const updatedChats = filteredChats.map((item) => {
             const { user, ...rest } = item;
             return rest;
         });
@@ -136,7 +157,7 @@ const ChatList = () => {
             await updateDoc(userChatsRef, {
                 chats: updatedChats,
             });
-            setChats(filteredChats); 
+            setChats(filteredChats);
         } catch (err) {
             console.log("Error while deleting chat: ", err);
         }
@@ -150,19 +171,19 @@ const ChatList = () => {
         inputRef.current.focus();
     };
 
-    const filteredChats = chats.filter(c =>
+    const filteredChats = chats.filter((c) =>
         c.user.username.toLowerCase().includes(input.toLowerCase())
     );
 
     return (
         <div className="chatList">
             <div className="search">
-                <MenuIcon 
-                    isOpen={isMenuOpen} 
+                <MenuIcon
+                    isOpen={isMenuOpen}
                     toggleMenu={(e) => {
                         menuToggleRef.current = true;
                         toggleMenu(e);
-                    }} 
+                    }}
                 />
                 {isMenuOpen && (
                     <ul className="dropdown-menu" ref={menuRef}>
@@ -170,21 +191,20 @@ const ChatList = () => {
                             <span>Profile</span>
                             <CgProfile />
                         </li>
-                        <li>
-                            </li>
+                        <li></li>
                         <li>
                             <span>Settings</span>
                             <MdOutlineSettings />
                         </li>
-                        <button className="logout" onClick={() => auth.signOut()}>Log out</button>
+                        <button className="logout" onClick={() => auth.signOut()}>
+                            Log out
+                        </button>
                     </ul>
                 )}
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
-                    <IoMdSearch
-                        onClick={handleIconClick}
-                        className="searchIcon" />
-                    <input 
-                        type="text" 
+                    <IoMdSearch onClick={handleIconClick} className="searchIcon" />
+                    <input
+                        type="text"
                         placeholder="Search"
                         value={input}
                         ref={inputRef}
@@ -192,12 +212,7 @@ const ChatList = () => {
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                     />
-                    {input && (
-                        <CiCircleRemove 
-                            className="clearIcon" 
-                            onClick={clearInput}
-                        />
-                    )}
+                    {input && <CiCircleRemove className="clearIcon" onClick={clearInput} />}
                 </div>
                 <img
                     src={addMode ? "./minus.png" : "./plus.png"}
@@ -205,23 +220,31 @@ const ChatList = () => {
                     className="add"
                     onClick={(e) => {
                         e.stopPropagation();
-                        setAddMode(prev => !prev)
+                        setAddMode((prev) => !prev);
                     }}
                 />
             </div>
             <div className="chats">
                 {filteredChats.map((chat, index) => (
-                    <div className="item"
-                        key={`${chat.chatId}-${index}`} 
+                    <div
+                        className="item"
+                        key={`${chat.chatId}-${index}`}
                         onClick={() => handleSelect(chat)}
                         style={{
-                            backgroundColor: chat.chatId === selectedChatId ? '#766ac8' : chat.isSeen ? 'transparent' : '#766ac8'
-                        }}                        
+                            backgroundColor:
+                                chat.chatId === selectedChatId
+                                    ? '#766ac8'
+                                    : chat.isSeen
+                                    ? 'transparent'
+                                    : '#766ac8',
+                        }}
                     >
-                        <img src={
-                            chat.user.blocked.includes(currentUser.id)
-                                ? "./avatar.png"
-                                : chat.user.avatar || "./avatar.png"}
+                        <img
+                            src={
+                                chat.user.blocked.includes(currentUser.id)
+                                    ? "./avatar.png"
+                                    : chat.user.avatar || "./avatar.png"
+                            }
                             alt=""
                         />
                         <div className="texts">
@@ -230,12 +253,17 @@ const ChatList = () => {
                                     ? "Blocked"
                                     : chat.user.username}
                             </span>
-                            {chat.lastMessage && <p>{chat.lastMessage}</p>}
+                            <span className="lastMessage">{chat.lastMessage || "No message"}</span>
                         </div>
-                        <button className="delete-btn" onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(chat.chatId);
-                        }}>{<FaRegTrashCan />}</button>
+                        <button
+                            className="delete-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(chat.chatId);
+                            }}
+                        >
+                            {<FaRegTrashCan />}
+                        </button>
                     </div>
                 ))}
             </div>
