@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IoTrashOutline, IoImagesOutline } from "react-icons/io5";
+import { GrPowerReset } from "react-icons/gr";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaPaintbrush } from "react-icons/fa6";
 import { toast } from "react-toastify";
@@ -173,12 +174,12 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
                   />
                   {isFilterMenuVisible && (
                     <div className="filter-menu" ref={filterMenuRef}>
-                      <button onClick={() => toggleFilter("blur(5px)")}>Размытие</button>
-                      <button onClick={() => toggleFilter("grayscale(100%)")}>Ч/Б</button>
-                      <button onClick={() => toggleFilter("sepia(100%)")}>Сепия</button>
-                      <button onClick={() => toggleFilter("contrast(200%)")}>Контраст</button>
-                      <button onClick={() => toggleFilter("brightness(150%)")}>Яркость</button>
-                      <button onClick={() => toggleFilter("")}>Сброс</button>
+                      <button title="blur" onClick={() => toggleFilter("blur(5px)")}>Размытие</button>
+                      <button title="Black & White" onClick={() => toggleFilter("grayscale(100%)")}>Ч/Б</button>
+                      <button title="cuttlefish" onClick={() => toggleFilter("sepia(100%)")}>Сепия</button>
+                      <button title="contrast" onClick={() => toggleFilter("contrast(200%)")}>Контраст</button>
+                      <button title="brightness" onClick={() => toggleFilter("brightness(150%)")}>Яркость</button>
+                      <button title="reset" onClick={() => toggleFilter("")}><GrPowerReset /></button>
                     </div>
                   )}
                 </div>
