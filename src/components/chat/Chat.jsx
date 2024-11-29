@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
@@ -11,10 +11,9 @@ import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
-import { SlOptionsVertical } from "react-icons/sl";
 import ChatOptions from "./chatOptions/ChatOptions";
 
-const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
+const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
     const [openFileList, setOpenFileList] = useState(false);
@@ -35,6 +34,8 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
     const [editingMessage, setEditingMessage] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [contextMenu, setContextMenu] = useState(null);
+    const [currentChatId, setCurrentChatId] = useState('1234');
+
 
     useEffect(() => {
         if (editingMessage) {
@@ -82,34 +83,34 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
     };
 
     const handleContextMenu = (e, message) => {
-        e.preventDefault(); // Предотвращаем стандартное контекстное меню
-        
-        // Получаем размеры окна
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        // Получаем координаты клика
-        let x = e.clientX;
-        let y = e.clientY;
-        
-        // Создаем виртуальный элемент для расчета размеров меню
-        const menuWidth = 150; // Примерная ширина меню
-        const menuHeight = 80; // Примерная высота меню
-        
-        // Корректируем позицию, если меню выходит за пределы окна
-        if (x + menuWidth > windowWidth) {
-            x = windowWidth - menuWidth;
-        }
-        if (y + menuHeight > windowHeight) {
-            y = windowHeight - menuHeight;
-        }
-        
-        setContextMenu({ x, y, message });
+    e.preventDefault(); // Предотвращаем стандартное контекстное меню
+    
+    // Получаем размеры окна
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // Получаем координаты клика
+    let x = e.clientX;
+    let y = e.clientY;
+    
+    // Создаем виртуальный элемент для расчета размеров меню
+    const menuWidth = 150; // Примерная ширина меню
+    const menuHeight = 80; // Примерная высота меню
+    
+    // Корректируем позицию, если меню выходит за пределы окна
+    if (x + menuWidth > windowWidth) {
+        x = windowWidth - menuWidth;
+    }
+    if (y + menuHeight > windowHeight) {
+        y = windowHeight - menuHeight;
+    }
+    
+    setContextMenu({ x, y, message });
     };
 
-    const closeContextMenu = () => {
+    const closeContextMenu = useCallback(() => {
         setContextMenu(null);
-    };
+    }, []);
 
     const saveEditedMessage = () => {
         if (editingMessage && editingText.trim()) {
@@ -119,8 +120,15 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
         }
     };
 
-    const handleBgImgUpload = (url) => {
-        setBgImgUrl(url);
+    const handleBgImgUpload = async (url) => {
+        try {
+            await updateDoc(doc(db, "chats", chatId), {
+                bgImgUrl: url,
+            });
+            setBgImgUrl(url); // Локальное обновление
+        } catch (err) {
+            console.error("Ошибка при загрузке фонового изображения:", err);
+        }
     };
 
     const scrollToDown = () => {
@@ -132,35 +140,38 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
     }, []);
 
     useEffect(() => {
-        const unSub = onSnapshot(
-            doc(db, 'chats', chatId),
-            (res) => {
-                setChat(res.data());
-                scrollToDown();
-            }
-        );
-
+        const unSub = onSnapshot(doc(db, 'chats', chatId), (res) => {
+            console.log('Chat data:', res.data());
+            setChat(res.data());
+            setBgImgUrl(res.data()?.bgImgUrl || ""); // Установка фонового изображения
+            scrollToDown();
+        });
+    
         return () => {
             unSub();
-        }
-    }, [chatId]);
-
+        };
+    }, [chatId]);    
+    
     const handleEmoji = (e) => {
-        setText(prev => prev + e.emoji);
+        if (e?.emoji) {
+            setText((prev) => prev + e.emoji);
+        }
     };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+            if (
+                emojiPickerRef.current &&
+                !emojiPickerRef.current.contains(event.target)
+            ) {
                 setOpen(false);
             }
         };
-    
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [emojiPickerRef]);
 
     const handleImg = e => {
         if (e.target.files[0]) {
@@ -309,7 +320,7 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser, currentChatId }) => {
                     </div>
                 </div>
                 <div className="icons">
-                    <ChatOptions onUploadComplete={handleBgImgUpload} />
+                    <ChatOptions currentChatId={currentChatId} onUploadComplete={handleBgImgUpload} />
                 </div>
             </div>
             <div className="chat">

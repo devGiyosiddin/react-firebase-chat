@@ -176,6 +176,7 @@ body {
 	background-color: #5a1996;
 }
 .uploaded-image-container {
+	position: relative;
 	text-align: center;
 }
 .uploaded-image-title {
@@ -189,4 +190,45 @@ body {
 	max-height: 200px;
 	border-radius: 10px;
 	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.changeImg {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 20px;
+	height: 20px;
+	color: var(--purple-2);
+	border-radius: 50%;
+	background-color: #87b6a7;
+	cursor: pointer;
+}
+
+.filter-menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 10;
+}
+
+.filter-menu button {
+  background-color: #7b2cbf;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filter-menu button:hover {
+  background-color: #5a1996;
 }

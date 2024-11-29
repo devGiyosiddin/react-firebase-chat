@@ -3,10 +3,16 @@ import { SlOptionsVertical } from "react-icons/sl";
 import BlockUser from "./blockUser";
 import ChatBgImg from "./chatBgImg/chatBgImg";
 import "./chatOptions.css";
+import { useChatStore } from "../../lib/chatStore";
 
-const ChatOptions = ({ onUploadComplete }) => {
+const ChatOptions = ({ onUploadComplete, currentChatId }) => {
     const [isVisible, setIsVisible] = useState(false);
     const optionsRef = useRef(null);
+    const { chatId } = useChatStore();
+
+    useEffect(() => {
+        console.log("Received chatId in ChatBgImg:", chatId);
+      }, [chatId]);
 
     const toggleOptions = (e) => {
         e.stopPropagation();
@@ -31,6 +37,11 @@ const ChatOptions = ({ onUploadComplete }) => {
         };
     }, [isVisible]);
 
+    // Проверка наличия currentChatId
+    if (!currentChatId) {
+        return <div>Error: chatId is missing.</div>;
+    }
+
     return (
         <div className="chat-options-wrapper" ref={optionsRef}>
             <SlOptionsVertical
@@ -39,7 +50,7 @@ const ChatOptions = ({ onUploadComplete }) => {
             />
             {isVisible && (
                 <div className="chat-options">
-                    <ChatBgImg onUploadComplete={onUploadComplete} />
+                    <ChatBgImg chatId={chatId} onUploadComplete={onUploadComplete} />
                     <div className="option">Option 1</div>
                     <div className="option">Option 2</div>
                     <div className="option">Option 3</div>
