@@ -69,7 +69,7 @@ const ChatList = () => {
                 const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
     
                 // Теперь просто берем `lastMessage` из `item` (предполагая, что оно там уже есть)
-                const lastMessage = item.lastMessage || "nima gap";
+                const lastMessage = item.lastMessage || "";
     
                 return {
                     ...item,
@@ -115,24 +115,33 @@ const ChatList = () => {
 
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
-
+    
         const updatedChats = chats.map((item) => {
             if (item.chatId === chat.chatId) {
                 return { ...item, isSeen: true };
             }
             return item;
         });
-
+    
         const userChats = updatedChats.map((item) => {
             const { user, ...rest } = item;
             return rest;
         });
-
+    
+        // Найти индекс выбранного чата
         const chatIndex = userChats.findIndex((item) => item.chatId === chat.chatId);
+    
+        // Проверить, существует ли элемент с таким chatId
+        if (chatIndex === -1) {
+            console.error(`Chat with ID ${chat.chatId} not found in userChats`);
+            return;
+        }
+    
+        // Обновить флаг isSeen для найденного чата
         userChats[chatIndex].isSeen = true;
-
+    
         const userChatsRef = doc(db, 'userchats', currentUser.id);
-
+    
         try {
             await updateDoc(userChatsRef, {
                 chats: userChats,
@@ -140,9 +149,9 @@ const ChatList = () => {
             setChats(updatedChats);
             changeChat(chat.chatId, chat.user);
         } catch (err) {
-            console.log(err);
+            console.error("Error updating user chats:", err);
         }
-    };
+    };    
 
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);

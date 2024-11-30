@@ -42,46 +42,54 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                 return;
             }
     
-            const chatRef = doc(db, 'chats', user.id);
+            const chatId = currentUser.id + "_" + user.id; // Уникальный ID для чата
+            const chatRef = doc(db, 'chats', chatId);
     
+            // Создаем документ чата с полем status
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
-                messages: []
+                messages: [],
+                status: 'unmute', // Добавляем статус в сам чат
             });
     
+            // Обновляем чаты текущего пользователя
             await updateDoc(userChatsRef, {
                 chats: arrayUnion({
-                    chatId: chatRef.id,
+                    chatId: chatId,
                     lastMessage: '',
                     receiverId: user.id,
                     updatedAt: Date.now(),
                     isSeen: false,
+                    status: 'unmute', // Добавляем статус в список чатов
                 })
             });
     
+            // Обновляем чаты добавленного пользователя
             await updateDoc(doc(db, 'userchats', user.id), {
                 chats: arrayUnion({
-                    chatId: chatRef.id,
+                    chatId: chatId,
                     lastMessage: '',
                     receiverId: currentUser.id,
                     updatedAt: Date.now(),
                     isSeen: false,
+                    status: 'unmute', // Добавляем статус для второго пользователя
                 })
             });
     
             setAddMode(false);
-            
+    
             handleSelect({
-                chatId: chatRef.id,
+                chatId: chatId,
                 user: user,
                 isSeen: false,
-                lastMessage: ''
+                lastMessage: '',
+                status: 'unmute', // Передаем статус в handleSelect
             });
     
         } catch (err) {
             console.log("Error on handleAdd:", err);
         }
-    };
+    };    
 
     useEffect(() => {
         const handleClickOutside = (event) => {

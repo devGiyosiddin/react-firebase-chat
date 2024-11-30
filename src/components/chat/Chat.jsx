@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
-import { arrayUnion, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { auth, db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
@@ -13,7 +13,7 @@ import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
 import ChatOptions from "./chatOptions/ChatOptions";
 
-const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
+const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
     const [openFileList, setOpenFileList] = useState(false);
@@ -35,7 +35,34 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
     const [editingText, setEditingText] = useState("");
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('1234');
-
+    const currentUserId = auth.currentUser.uid;
+    const [status, setStatus] = useState("");
+    const sendSound = "/src/components/notification/sounds/send.mp3",
+        getSound = "/src/components/notification/sounds/get.mp3",
+        deleteSound = "/src/components/notification/sounds/delete.mp3";
+    
+        useEffect(() => {
+            const getStatusFromFirebase = async () => {
+                const chatRef = doc(db, 'chats', chatId);
+                const chatDoc = await getDoc(chatRef);
+        
+                if (chatDoc.exists()) {
+                    const chatData = chatDoc.data();
+                    setStatus(chatData.status);
+                } else {
+                    console.log("Документ не найден");
+                }
+            };
+        
+            getStatusFromFirebase();
+        }, [chatId]);
+        
+        const playSound = (soundPath) => {
+            if (status !== 'mute') {
+                const audio = new Audio(soundPath);
+                audio.play().catch((err) => console.error("Error playing sound:", err));
+            }
+        };  
 
     useEffect(() => {
         if (editingMessage) {
@@ -77,6 +104,7 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
             });
 
             setChat((prev) => ({ ...prev, messages: updatedMessages }));
+            playSound(deleteSound);
         } catch (err) {
             console.error("Error deleting message:", err);
         }
@@ -141,16 +169,25 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'chats', chatId), (res) => {
-            console.log('Chat data:', res.data());
-            setChat(res.data());
-            setBgImgUrl(res.data()?.bgImgUrl || ""); // Установка фонового изображения
+            const chatData = res.data();
+            setChat(chatData);
+            setBgImgUrl(chatData?.bgImgUrl || "");
+    
+            const messages = chatData?.messages || [];
+            const lastMessage = messages[messages.length - 1]; // Последнее сообщение
+    
+            // Проверяем, от кого сообщение
+            if (lastMessage && lastMessage.senderId !== currentUserId) {
+                playSound(getSound); // Проигрываем звук только для сообщений от собеседника
+            }
+    
             scrollToDown();
         });
     
         return () => {
             unSub();
         };
-    }, [chatId]);    
+    }, [chatId, currentUserId]);    
     
     const handleEmoji = (e) => {
         if (e?.emoji) {
@@ -246,13 +283,8 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
         let audioUrl = null;
     
         try {
-            if (img.file) {
-                imgUrl = await upload(img.file);
-            }
-    
-            if (audioFile) {
-                audioUrl = await upload(audioFile);
-            }
+            if (img.file) imgUrl = await upload(img.file);
+            if (audioFile) audioUrl = await upload(audioFile);
     
             const newMessage = {
                 senderId: currentUser.id,
@@ -263,30 +295,27 @@ const Chat = ({ onInfoClick, currentChat, currentChatUser }) => {
             };
     
             await updateDoc(doc(db, 'chats', chatId), {
-                messages: arrayUnion({
-                    senderId: currentUser.id,
-                    text,
-                    createdAt: new Date(),
-                    ...(imgUrl && { img: imgUrl }),
-                    ...(audioUrl && { audio: audioUrl }),
-                }),
+                messages: arrayUnion(newMessage),
                 lastMessage: text || "Медиа",
-                updatedAt: new Date()
-            });            
+                updatedAt: new Date(),
+            });
+    
+            setChat((prev) => ({
+                ...prev,
+                messages: [...(prev?.messages || []), newMessage],
+            }));
     
             endRef.current?.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
     
-        setImg({
-            file: null,
-            url: ''
-        });
+        setImg({ file: null, url: '' });
         setAudioFile(null);
         setText('');
         setOpenFileList(false);
-    };    
+        playSound(sendSound);
+    };     
 
     const handleScroll = () => {
         const scrollTop = messagesRef.current.scrollTop;

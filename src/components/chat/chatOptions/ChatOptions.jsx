@@ -4,15 +4,21 @@ import BlockUser from "./blockUser";
 import ChatBgImg from "./chatBgImg/chatBgImg";
 import "./chatOptions.css";
 import { useChatStore } from "../../lib/chatStore";
+import ToggleMute from "../../notification/sounds/ToggleMute";
 
 const ChatOptions = ({ onUploadComplete, currentChatId }) => {
     const [isVisible, setIsVisible] = useState(false);
+    const [chatStatus, setChatStatus] = useState("unmute"); // Локальное состояние для статуса
     const optionsRef = useRef(null);
     const { chatId } = useChatStore();
 
     useEffect(() => {
-        console.log("Received chatId in ChatBgImg:", chatId);
-      }, [chatId]);
+        console.log("Получен chatId в ChatBgImg:", chatId);
+    }, [chatId]);
+
+    const handleStatusChange = (status) => {
+        setChatStatus(status); // Обновляем локальный статус при изменении в ToggleMute
+    };
 
     const toggleOptions = (e) => {
         e.stopPropagation();
@@ -39,7 +45,7 @@ const ChatOptions = ({ onUploadComplete, currentChatId }) => {
 
     // Проверка наличия currentChatId
     if (!currentChatId) {
-        return <div>Error: chatId is missing.</div>;
+        return <div>Ошибка: chatId отсутствует.</div>;
     }
 
     return (
@@ -51,7 +57,10 @@ const ChatOptions = ({ onUploadComplete, currentChatId }) => {
             {isVisible && (
                 <div className="chat-options">
                     <ChatBgImg chatId={chatId} onUploadComplete={onUploadComplete} />
-                    <div className="option">Option 1</div>
+                    <ToggleMute 
+                        chatId={chatId} 
+                        onStatusChange={handleStatusChange} // Передаем коллбек для обновления статуса
+                    />
                     <div className="option">Option 2</div>
                     <div className="option">Option 3</div>
                     <BlockUser />

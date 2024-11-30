@@ -105,6 +105,7 @@
             
                     .texts {
                         p {
+                            max-width: 100%;
                             background-color: var(--purple);
                         }
                         .time {
@@ -126,7 +127,7 @@
                     max-width: 100%;
             
                     p {
-                        max-width: 100%;
+                        max-width: max-content;
                         padding: 10px;
                         background-color: var(--container-color);
                         border-radius: 10px;
