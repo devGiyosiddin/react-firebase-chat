@@ -25,6 +25,7 @@ body {
   height: 100vh;
   color: #fff;
   overflow-x: hidden;
+  height: 100%;
 }
 
 #root {
