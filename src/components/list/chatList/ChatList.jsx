@@ -151,7 +151,7 @@ const ChatList = () => {
         } catch (err) {
             console.error("Error updating user chats:", err);
         }
-    };    
+    };
 
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
