@@ -313,8 +313,8 @@ const Chat = ({ onInfoClick }) => {
         setImg({ file: null, url: '' });
         setAudioFile(null);
         setText('');
-        setOpenFileList(false);
         playSound(sendSound);
+        setOpenFileList(false);
     };     
 
     const handleScroll = () => {
