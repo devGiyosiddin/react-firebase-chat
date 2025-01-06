@@ -103,8 +103,8 @@ const Chat = ({ onInfoClick }) => {
                         : "",
             });
 
-            setChat((prev) => ({ ...prev, messages: updatedMessages }));
             playSound(deleteSound);
+            setChat((prev) => ({ ...prev, messages: updatedMessages }));
         } catch (err) {
             console.error("Error deleting message:", err);
         }
