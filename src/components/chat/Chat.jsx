@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from "emoji-picker-react";
@@ -434,12 +434,14 @@ const Chat = ({ onInfoClick }) => {
                     <div className="emoji" ref={emojiPickerRef}>
                         <BsEmojiSmile className="emoji-icon"  onClick={() => setOpen(prev => !prev)} />
                         {open && (
-                            <div className="picker">
-                                <EmojiPicker
-                                    onEmojiClick={handleEmoji}
-                                    theme={Theme.DARK}
-                                />
-                            </div>
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <div className="picker">
+                                    <EmojiPicker
+                                        onEmojiClick={handleEmoji}
+                                        theme={Theme.DARK}
+                                    />
+                                </div>
+                            </Suspense>
                         )}
                     </div>
                     <input
