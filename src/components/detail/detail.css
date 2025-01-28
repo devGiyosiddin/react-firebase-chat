@@ -1,5 +1,22 @@
 .detail {
     flex: 1;
+    position: relative;
+
+    .close-icon {
+        position: absolute;
+        padding: 10px;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+        color: var(--icons-color);
+        border-radius: 50%;
+        transition: all 0.5s ease;
+
+        &:hover {
+            color: var(--purple-2);
+            background-color: var(--container-color);
+        }
+    }
 
     .user {
         padding: 30px 20px;

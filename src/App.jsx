@@ -29,6 +29,10 @@ const App = () => {
     return () => unSub();
   }, [fetchUserInfo]);
 
+  function handleChange(newState) {
+    setShowDetail(newState);
+  }
+
   if (isLoading) return <div className="loader"></div>;
 
   return (
@@ -37,7 +41,7 @@ const App = () => {
         <>
           <List />
           {chatId && <Chat onInfoClick={() => setShowDetail(prev => !prev)} />}
-          {chatId && showDetail && <Detail />}
+          {chatId && showDetail && <Detail onChangeState={handleChange} />}
         </>
       ) : (
         <Login />

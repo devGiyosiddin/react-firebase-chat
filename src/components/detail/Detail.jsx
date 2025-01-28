@@ -2,9 +2,10 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { useChatStore } from "../lib/chatStore";
 import { db } from "../lib/firebase";
 import { useUserStore } from "../lib/userStore";
+import { FaAngleLeft } from "react-icons/fa6";
 import "./detail.css";
 
-const Detail = () => {
+const Detail = ({onChangeState}) => {
 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock } = useChatStore();
     const { currentUser } = useUserStore();
@@ -30,6 +31,9 @@ const Detail = () => {
 
     return (
         <div className="detail">
+            <span className="close-icon" onClick={() => onChangeState(false)}>
+                <FaAngleLeft size={28}/>
+            </span>
             <div className="user">
                 <img src={user?.avatar || "./avatar.png"} alt="" />
                 <h2>{user?.username}</h2>
