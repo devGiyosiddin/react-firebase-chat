@@ -18,11 +18,15 @@ const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [usernameAvailable, setUsernameAvailable] = useState(true);
     const [checkingUsername, setCheckingUsername] = useState(false);
-    const [passwordRules, setPasswordRules] = useState({ length: false, uppercase: false, number: false });
+    const [passwordRules, setPasswordRules] = useState({
+        length: false,
+        uppercase: false,
+        number: false
+    });
+    const [showPassword, setShowPassword] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(true);
     const [emailInput, setEmailInput] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
     const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     const navigate = useNavigate();
@@ -68,12 +72,15 @@ const Login = () => {
 
     const handlePasswordChange = (e) => {
         const password = e.target.value;
-        setPasswordRules({
-            length: password.length >= 8,
-            uppercase: /[A-Z]/.test(password),
-            number: /\d/.test(password),
-        });
+
+            setPasswordRules({
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                number: /\d/.test(password),
+            });
     };
+    const isValid = passwordRules.length && passwordRules.uppercase && passwordRules.number;
+    const isInvalid = !isValid && passwordRules.length;
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -143,9 +150,9 @@ const Login = () => {
     const handleEmailChange = (e) => {
         const email = e.target.value.trim();
         setEmailInput(email);
-
+    
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        setIsEmailValid(emailRegex.test(email));
+        setIsEmailValid(email && emailRegex.test(email)); // Проверка только если email не пустой
     };
 
     return (
@@ -180,7 +187,7 @@ const Login = () => {
                     <h2>Create an Account</h2>
                     <form onSubmit={handleRegister}>
                         <label htmlFor="file">
-                            <img src={avatar.url || "./avatar.png"} alt="" />
+                            <img src={avatar.url || "../../../public/avatar.png"} alt="" />
                             <span>Upload an image</span>
                         </label>
                         <input required type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
@@ -204,14 +211,16 @@ const Login = () => {
                         </span>
                         
                         <div className="password">
-                            <input
-                                required
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Password"
-                                name="password"
-                                onChange={handlePasswordChange}
-                                className={`password-input ${passwordRules.length && passwordRules.uppercase && passwordRules.number ? 'valid' : 'invalid'}`}
-                            />
+                        <input
+                            required
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            name="password"
+                            onChange={handlePasswordChange}
+                            className={`password-input ${
+                                passwordRules.length > 0 ? (isValid ? "valid" : isInvalid ? "invalid" : "") : ""
+                            }`}
+                        />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword((prev) => !prev)}
@@ -233,7 +242,9 @@ const Login = () => {
                             placeholder="Email"
                             name="email"
                             onChange={handleEmailChange}
-                            className={`email-input ${isEmailValid ? 'valid' : 'invalid'}`}
+                            className={`email-input ${
+                                emailInput.length > 0 ? (isEmailValid ? "valid" : "invalid") : ""
+                            }`}
                         />
                         <button>{loading ? "Loading..." : "Sign Up"}</button>
                         <span className="or">or</span>

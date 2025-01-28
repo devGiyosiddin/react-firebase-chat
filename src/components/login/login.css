@@ -80,7 +80,7 @@
             
             /* Стили для username */
             .username-input {
-                border: 1px solid transparent;
+                border: 1px solid #ccc;
                 transition: border-color 0.3s ease;
             }
             
@@ -142,11 +142,11 @@
                 color: red;
             }
 
+            /* Стили для email */
             .email-input {
                 border: 1px solid #ccc;
                 transition: border-color 0.3s ease;
             }
-            /* Стили для email */
             .email-input.valid {
                 border-color: green;
             }
