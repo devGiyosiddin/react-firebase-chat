@@ -228,8 +228,8 @@ const ChatList = () => {
                     alt=""
                     className="add"
                     onClick={(e) => {
-                        e.stopPropagation();
                         setAddMode((prev) => !prev);
+                        e.stopPropagation();
                     }}
                 />
             </div>
