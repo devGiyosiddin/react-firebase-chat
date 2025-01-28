@@ -46,13 +46,6 @@ const ChatList = () => {
     };
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
             const items = res.data().chats;
     
