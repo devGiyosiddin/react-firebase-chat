@@ -87,24 +87,33 @@ const ChatList = () => {
         };
     }, [currentUser.id]);    
 
-    const toggleMenu = (e) => {
-        e.stopPropagation();
-        setIsMenuOpen((prev) => !prev);
-    };
-
+    useEffect(() => {
     const handleClickOutside = (event) => {
-        if (!menuToggleRef.current && menuRef.current && !menuRef.current.contains(event.target)) {
+            // Check if click is outside both menu and menu button
+            if (
+                menuRef.current && 
+                !menuRef.current.contains(event.target) &&
+                menuButtonRef.current && 
+                !menuButtonRef.current.contains(event.target)
+            ) {
             setIsMenuOpen(false);
         }
-        menuToggleRef.current = false;
     };
 
-    useEffect(() => {
+        // Add event listener
         document.addEventListener("mousedown", handleClickOutside);
+
+        // Cleanup
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    // Toggle menu function
+    const toggleMenu = (e) => {
+        e.stopPropagation();
+        setIsMenuOpen(prev => !prev);
+    };
 
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
