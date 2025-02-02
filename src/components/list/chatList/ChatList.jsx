@@ -189,13 +189,12 @@ const ChatList = () => {
     return (
         <div className="chatList">
             <div className="search">
+                <div ref={menuButtonRef}>
                 <MenuIcon
                     isOpen={isMenuOpen}
-                    toggleMenu={(e) => {
-                        menuToggleRef.current = true;
-                        toggleMenu(e);
-                    }}
+                        toggleMenu={toggleMenu}
                 />
+                </div>
                 {isMenuOpen && (
                     <ul className="dropdown-menu" ref={menuRef}>
                         <li>
@@ -229,10 +228,8 @@ const ChatList = () => {
                     src={addMode ? "./minus.png" : "./plus.png"}
                     alt=""
                     className="add"
-                    onClick={(e) => {
-                        setAddMode((prev) => !prev);
-                        handleClickOutside(e);
-                    }}
+                    ref={addRef}
+                    onClick={() => setAddMode(prev => !prev)}
                 />
             </div>
             <div className="chats">
