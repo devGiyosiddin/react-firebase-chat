@@ -70,3 +70,11 @@ body {
   75%  {background-size:25px 50% ,25px 50% ,25px 100%}
   100% {background-size:25px 50% ,25px 50% ,25px 50%}
 }
+
+.react-joyride__overlay {
+  z-index: 999;
+}
+
+.react-joyride__tooltip {
+  z-index: 1000;
+}

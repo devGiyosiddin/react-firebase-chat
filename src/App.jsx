@@ -13,15 +13,6 @@ const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   const { chatId } = useChatStore();
   const [showDetail, setShowDetail] = useState(false);
-  const [run, setRun] = useState(true);
-
-  // Steps for Joyride
-  const steps = [
-    {
-        target: ".menu-button",
-        content: "Это меню, здесь вы найдете основные функции.",
-    },
-];
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {

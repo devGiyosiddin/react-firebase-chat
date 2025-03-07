@@ -1,5 +1,6 @@
-import ChatList from "./chatList/ChatList";
 import "./list.css";
+import { useState } from "react";
+import ChatList from "./chatList/ChatList";
 // import UserInfo from "./userInfo/UserInfo";
 const List = () => {
     return (

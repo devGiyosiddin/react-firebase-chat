@@ -1,6 +1,5 @@
 import "./chatList.css";
 import { useEffect, useState, useRef } from "react";
-import "./chatList.css";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
 import { auth } from "../../lib/firebase";
@@ -13,6 +12,7 @@ import { CiCircleRemove } from "react-icons/ci";
 import MenuIcon from "../../icons/menuIcon";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineSettings } from "react-icons/md";
+import Joyride from "react-joyride";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -26,11 +26,93 @@ const ChatList = () => {
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
     const contextMenuRef = useRef(null);
-
     const { currentUser } = useUserStore();
+    const addRef = useRef(null);
+    const menuButtonRef = useRef(null);
     const { chatId, changeChat } = useChatStore();
     const inputRef = useRef(null);
+    const searchInputRef = useRef(null);
     const db = getFirestore();
+    
+    // Steps for Joyride
+    const [tourState, setTourState] = useState({
+        run: false,
+        steps: [
+            {
+                target: '.chatList',
+                content: 'Welcome to the chat!',
+                placement: 'center',
+                disableBeacon: true
+            },
+            {
+                target: '.menu-button',
+                content: 'This is the menu button',
+                placement: 'right',
+                disableBeacon: true
+            },
+            {
+                target: '.add',
+                content: 'Click here to add a new chat',
+                placement: 'left',
+                disableBeacon: true
+            },
+            {
+                target: '.searchBar',
+                content: 'Search for users here',
+                placement: 'bottom',
+                disableBeacon: true
+            }
+        ]
+    });
+
+    // Check if the tour has been completed previously
+    useEffect(() => {
+        const hasCompletedGuide = localStorage.getItem("guideCompleted");
+        if (!hasCompletedGuide) {
+            // Small delay to ensure components are mounted
+            const timer = setTimeout(() => {
+                setTourState(prev => ({
+                    ...prev,
+                    run: true
+                }));
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
+    const handleJoyrideCallback = (data) => {
+        const { action, index, status, type } = data;
+
+        // Handle tour completion
+        if (status === 'finished' || action === 'skip') {
+            setTourState(prev => ({
+                ...prev,
+                run: false
+            }));
+            localStorage.setItem("guideCompleted", "true");
+            // Clean up any open states
+            setIsMenuOpen(false);
+            setAddMode(false);
+            return;
+        }
+        
+        // Update UI based on the current step
+        if (type === 'step:before') {
+            // Reset states before showing new step
+            setIsMenuOpen(false);
+            setAddMode(false);
+            
+            // Set appropriate state for the upcoming step
+            if (index === 1) { // Menu button step
+                setIsMenuOpen(true);
+            } else if (index === 2) { // Add button step
+                setAddMode(false); // Keep closed initially to show the add button
+            } else if (index === 3 && addMode) { // Search step
+                // If we're on search step but add mode is open, close it
+                setAddMode(false);
+            }
+        }
+    };
 
     // Показать меню и задать позицию
     const handleContextMenu = (event) => {
@@ -87,9 +169,9 @@ const ChatList = () => {
             unSub();
         };
     }, [currentUser.id]);    
-
+    
     useEffect(() => {
-    const handleClickOutside = (event) => {
+        const handleClickOutside = (event) => {
             // Check if click is outside both menu and menu button
             if (
                 menuRef.current && 
@@ -97,9 +179,9 @@ const ChatList = () => {
                 menuButtonRef.current && 
                 !menuButtonRef.current.contains(event.target)
             ) {
-            setIsMenuOpen(false);
-        }
-    };
+                setIsMenuOpen(false);
+            }
+        };
 
         // Add event listener
         document.addEventListener("mousedown", handleClickOutside);
@@ -109,8 +191,7 @@ const ChatList = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-
-    // Toggle menu function
+    
     const toggleMenu = (e) => {
         e.stopPropagation();
         setIsMenuOpen(prev => !prev);
@@ -187,14 +268,53 @@ const ChatList = () => {
         c.user.username.toLowerCase().includes(input.toLowerCase())
     );
 
+    // Handle tour reset for testing purposes
+    const resetTour = () => {
+        localStorage.removeItem("guideCompleted");
+        setTourState(prev => ({
+            ...prev,
+            run: true
+        }));
+    };
+
     return (
         <div className="chatList">
+            <Joyride
+                callback={handleJoyrideCallback}
+                continuous={true}
+                run={tourState.run}
+                steps={tourState.steps}
+                scrollToFirstStep={true}
+                showProgress={true}
+                showSkipButton={true}
+                styles={{
+                    options: {
+                        zIndex: 1000,
+                        primaryColor: '#766ac8',
+                        backgroundColor: 'var(--container-color)',
+                        textColor: '#fff',
+                    },
+                    buttonNext: {
+                        backgroundColor: 'var(--purple)',
+                    },
+                    buttonBack: {
+                        color: 'var(--red-btn)',
+                    }
+                }}
+                locale={{
+                    last: "Finish",
+                    skip: "Skip tour"
+                }}
+                floaterProps={{
+                    disableAnimation: true
+                }}
+            />
             <div className="search">
-                <div ref={menuButtonRef}>
-                <MenuIcon
-                    isOpen={isMenuOpen}
+                <div ref={menuButtonRef} className="menu-button">
+                    <MenuIcon
+                        isOpen={isMenuOpen}
                         toggleMenu={toggleMenu}
-                />
+                    />
                 </div>
                 {isMenuOpen && (
                     <ul className="dropdown-menu" ref={menuRef}>
@@ -277,6 +397,19 @@ const ChatList = () => {
                 ))}
             </div>
             {addMode && <AddUser setAddMode={setAddMode} handleSelect={handleSelect} />}
+            
+            {/* Uncomment this button if you need to reset the tour for testing */}
+            {/* <button 
+                onClick={resetTour} 
+                style={{
+                    position: 'absolute', 
+                    bottom: '10px', 
+                    right: '10px', 
+                    zIndex: 1001
+                }}
+            >
+                Reset Tour
+            </button> */}
         </div>
     );
 };
