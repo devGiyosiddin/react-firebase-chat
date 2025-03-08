@@ -7,28 +7,57 @@ import { toast } from "react-toastify";
 
 const AddUser = ({ setAddMode, handleSelect }) => {
     const [user, setUser] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const { currentUser } = useUserStore();
     const addUserRef = useRef(null);
+    
+    // Рекомендуемый пользователь
+    const recommendedUser = {
+        id: "giyu_id",
+        username: "giyu",
+        avatar: "./avatar.png"
+    };
 
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const username = formData.get('username');
-
+    // Обрабатывает ввод в поле поиска
+    const handleInputChange = async (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        
+        if (value.length === 0) {
+            setSearchResults([recommendedUser]);
+            return;
+        }
+        
         try {
             const userRef = collection(db, 'users');
-            const q = query(userRef, where('username', "==", username));
+            const q = query(userRef, where('username', ">=", value), where('username', "<=", value + '\uf8ff'));
             const querySnapShot = await getDocs(q);
-
+            
             if (!querySnapShot.empty) {
-                setUser(querySnapShot.docs[0].data());
+                const results = querySnapShot.docs.map(doc => doc.data());
+                setSearchResults(results);
+            } else {
+                setSearchResults([]);
             }
         } catch (err) {
-            console.log("Error on handleSearch: ", err);
+            console.log("Error while searching: ", err);
+            setSearchResults([]);
         }
     };
 
+    // Устанавливаем рекомендуемого пользователя при загрузке
+    useEffect(() => {
+        setSearchResults([recommendedUser]);
+    }, []);
+
+    const handleSelectUser = (selectedUser) => {
+        setUser(selectedUser);
+    };
+
     const handleAdd = async () => {
+        if (!user) return;
+        
         const userChatsRef = doc(db, 'userchats', currentUser.id);
     
         try {
@@ -38,21 +67,19 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             const isAlreadyInChats = userChatsData.some(chat => chat.receiverId === user.id);
     
             if (isAlreadyInChats) {
-                toast.error("User is already in your chats.");
+                toast.error("Пользователь уже в вашем списке чатов.");
                 return;
             }
     
-            const chatId = currentUser.id + "_" + user.id; // Уникальный ID для чата
+            const chatId = currentUser.id + "_" + user.id;
             const chatRef = doc(db, 'chats', chatId);
     
-            // Создаем документ чата с полем status
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
                 messages: [],
-                status: 'unmute', // Добавляем статус в сам чат
+                status: 'unmute',
             });
     
-            // Обновляем чаты текущего пользователя
             await updateDoc(userChatsRef, {
                 chats: arrayUnion({
                     chatId: chatId,
@@ -60,11 +87,10 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                     receiverId: user.id,
                     updatedAt: Date.now(),
                     isSeen: false,
-                    status: 'unmute', // Добавляем статус в список чатов
+                    status: 'unmute',
                 })
             });
     
-            // Обновляем чаты добавленного пользователя
             await updateDoc(doc(db, 'userchats', user.id), {
                 chats: arrayUnion({
                     chatId: chatId,
@@ -72,7 +98,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                     receiverId: currentUser.id,
                     updatedAt: Date.now(),
                     isSeen: false,
-                    status: 'unmute', // Добавляем статус для второго пользователя
+                    status: 'unmute',
                 })
             });
     
@@ -83,8 +109,12 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                 user: user,
                 isSeen: false,
                 lastMessage: '',
-                status: 'unmute', // Передаем статус в handleSelect
+                status: 'unmute',
             });
+
+            
+    
+            toast.success("Пользователь добавлен в чат.");
     
         } catch (err) {
             console.log("Error on handleAdd:", err);
@@ -110,17 +140,45 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}
             ref={addUserRef}
         >
-            <form onSubmit={handleSearch}>
-                <input type="text" autoFocus placeholder="Username" name="username" />
-                <button>Search</button>
-            </form>
+            <div className="search-container">
+                <input 
+                    type="text" 
+                    autoFocus 
+                    placeholder="Введите имя пользователя" 
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                />
+            </div>
+            
+            <div className="search-results">
+                {searchResults.length > 0 ? (
+                    searchResults.map((result, index) => (
+                        <div 
+                            key={index} 
+                            className={`user-item ${user && user.id === result.id ? 'selected' : ''}`}
+                            onClick={() => handleSelectUser(result)}
+                        >
+                            <div className="detail">
+                                <img src={result.avatar || "./avatar.png"} alt="" />
+                                <span>{result.username}</span>
+                            </div>
+                            {user && user.id === result.id && (
+                                <div className="selected-indicator">✓</div>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-results">No result</div>
+                )}
+            </div>
+            
             {user && (
-                <div className="user">
-                    <div className="detail">
+                <div className="selected-user">
+                    <div className="user-detail">
                         <img src={user.avatar || "./avatar.png"} alt="" />
                         <span>{user.username}</span>
                     </div>
-                    <button onClick={handleAdd}>Add User</button>
+                    <button onClick={handleAdd} className="add-button">Add user</button>
                 </div>
             )}
         </div>
