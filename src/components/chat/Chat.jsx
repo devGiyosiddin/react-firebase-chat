@@ -300,11 +300,6 @@ const Chat = ({ onInfoClick }) => {
                 updatedAt: new Date(),
             });
     
-            setChat((prev) => ({
-                ...prev,
-                messages: [...(prev?.messages || []), newMessage],
-            }));
-    
             endRef.current?.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             console.log("Error on handleSend:", err);
@@ -315,7 +310,7 @@ const Chat = ({ onInfoClick }) => {
         setText('');
         playSound(sendSound);
         setOpenFileList(false);
-    };     
+    };
 
     const handleScroll = () => {
         const scrollTop = messagesRef.current.scrollTop;
