@@ -12,14 +12,14 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     const { currentUser } = useUserStore();
     const addUserRef = useRef(null);
     
-    // Рекомендуемый пользователь
+    // Recommended user
     const recommendedUser = {
         id: "giyu_id",
         username: "giyu",
         avatar: "./avatar.png"
     };
 
-    // Обрабатывает ввод в поле поиска
+    // Search on change
     const handleInputChange = async (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -46,7 +46,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
         }
     };
 
-    // Устанавливаем рекомендуемого пользователя при загрузке
+    // Set recommended user
     useEffect(() => {
         setSearchResults([recommendedUser]);
     }, []);
