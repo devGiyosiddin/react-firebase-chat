@@ -4,7 +4,7 @@ import { useUserStore } from "../../../components/lib/userStore";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { MdOutlineEdit } from "react-icons/md";
 
-const UserInfo = ({ toggleProfile }) => { // ✅ Исправил передачу пропсов
+const UserInfo = ({ toggleProfile }) => {
     const { currentUser } = useUserStore();
     return (
         <div className="userInfo">
