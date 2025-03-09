@@ -10,9 +10,9 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 import { CiCircleRemove } from "react-icons/ci";
 import MenuIcon from "../../icons/menuIcon";
-import { CgProfile } from "react-icons/cg";
 import { MdOutlineSettings } from "react-icons/md";
 import Joyride from "react-joyride";
+import UserInfo from '../userInfo/UserInfo'
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -33,6 +33,11 @@ const ChatList = () => {
     const inputRef = useRef(null);
     const searchInputRef = useRef(null);
     const db = getFirestore();
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const toggleProfile = () => {
+        setIsProfileOpen((prev) => !prev);
+    };
+
     
     // Steps for Joyride
     const [tourState, setTourState] = useState({
@@ -279,6 +284,7 @@ const ChatList = () => {
 
     return (
         <div className="chatList">
+            {isProfileOpen && <UserInfo toggleProfile={toggleProfile} />}
             <Joyride
                 callback={handleJoyrideCallback}
                 continuous={true}
@@ -318,14 +324,14 @@ const ChatList = () => {
                 </div>
                 {isMenuOpen && (
                     <ul className="dropdown-menu" ref={menuRef}>
-                        <li>
-                            <span>Profile</span>
-                            <CgProfile />
+                        <li className="user"
+                            onClick={toggleProfile}>
+                            <img className="avatar" src={currentUser.avatar || '../../../../public/avatar.png'} alt="" />
+                            <span>{currentUser.username}</span>
                         </li>
-                        <li></li>
                         <li>
-                            <span>Settings</span>
                             <MdOutlineSettings />
+                            <span>Settings</span>
                         </li>
                         <button className="logout" onClick={() => auth.signOut()}>
                             Log out
