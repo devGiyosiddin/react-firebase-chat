@@ -1,5 +1,5 @@
 import "./addUser.css";
-import { collection, where, query, getDoc, getDocs, setDoc, serverTimestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, where, query, getDocs, setDoc, serverTimestamp, doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { useState, useEffect, useRef } from "react";
 import { useUserStore } from "../../../lib/userStore";
@@ -12,20 +12,32 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     const { currentUser } = useUserStore();
     const addUserRef = useRef(null);
     
-    // Recommended user
-    const recommendedUser = {
-        id: "giyu_id",
-        username: "giyu",
-        avatar: "./avatar.png"
+    // Get random recommended user
+    const getRandomRecUser = async () => {
+        try {
+            const userRef = collection(db, "users");
+            const querySnapshot = await getDocs(userRef);
+            const users = querySnapshot.docs.map(doc => doc.data());
+            
+            if (users.length === 0) return null;
+
+            // Select a random user from the list
+            const randomUser = users[Math.floor(Math.random() * users.length)];
+            return randomUser;
+        } catch (err) {
+            console.log("Error while getting recommended user: ", err);
+            return null;
+        }
     };
 
-    // Search on change
+    // Search on input change
     const handleInputChange = async (e) => {
         const value = e.target.value;
         setSearchTerm(value);
         
         if (value.length === 0) {
-            setSearchResults([recommendedUser]);
+            const recUser = await getRandomRecUser(); // Get a random recommended user when input is cleared
+            setSearchResults(recUser ? [recUser] : []);
             return;
         }
         
@@ -44,11 +56,23 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             console.log("Error while searching: ", err);
             setSearchResults([]);
         }
+
+        // Fetch a random recommended user after each search
+        const randomRecUser = await getRandomRecUser();
+        if (randomRecUser) {
+            setSearchResults((prevResults) => [...prevResults, randomRecUser]);
+        }
     };
 
-    // Set recommended user
+    // Set recommended user when the component mounts
     useEffect(() => {
-        setSearchResults([recommendedUser]);
+        const fetchRecUser = async () => {
+            const randomRecUser = await getRandomRecUser();
+            if (randomRecUser) {
+                setSearchResults([randomRecUser]);
+            }
+        };
+        fetchRecUser();
     }, []);
 
     const handleSelectUser = (selectedUser) => {
@@ -112,14 +136,12 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                 status: 'unmute',
             });
 
-            
-    
             toast.success("Пользователь добавлен в чат.");
     
         } catch (err) {
             console.log("Error on handleAdd:", err);
         }
-    };    
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
