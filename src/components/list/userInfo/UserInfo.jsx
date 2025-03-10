@@ -10,7 +10,7 @@ const UserInfo = ({ toggleProfile }) => {
         <div className="userInfo">
             <div className="header">
                 <FaArrowLeftLong onClick={toggleProfile} className="close" size={32} />
-                <h3 className="title">Settings</h3>
+                <h3 className="title">Profile</h3>
                 <MdOutlineEdit className="edit-profile" size={32} color="var(--btn-blue)" />
             </div>
             <div className="user">
