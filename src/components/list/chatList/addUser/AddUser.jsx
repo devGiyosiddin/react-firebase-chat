@@ -127,7 +127,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             });
     
             setAddMode(false);
-    
+            
             handleSelect({
                 chatId: chatId,
                 user: user,
