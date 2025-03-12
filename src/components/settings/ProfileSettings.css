@@ -1,7 +1,3 @@
-.profile-settings {
-    /* Container styles */
-}
-
 .profile-settings__heading {
     font-size: 1.5rem;
     font-weight: 600;
@@ -57,10 +53,6 @@
     @media (min-width: 768px) {
         grid-template-columns: 1fr 1fr;
     }
-}
-
-.profile-settings__form-field {
-    /* Form field container */
 }
 
 .profile-settings__form-field--full {

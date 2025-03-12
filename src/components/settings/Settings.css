@@ -138,11 +138,6 @@
     flex-direction: column;
     gap: 0.25rem;
 }
-
-.settings__nav-item {
-    /* Nav item container */
-}
-
 .settings__nav-item--separated {
     padding-top: 1rem;
     margin-top: 1rem;
