@@ -147,11 +147,9 @@ const ChatList = () => {
                 // Получаем данные чата
                 const chatDocRef = doc(db, 'chats', item.chatId);
                 const chatDocSnap = await getDoc(chatDocRef);
-                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
-    
-                // Теперь просто берем `lastMessage` из `item` (предполагая, что оно там уже есть)
-                const lastMessage = item.lastMessage || "";
-    
+                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};              console.log('chatdata:', chatData);
+                const lastMessage = chatData.lastMessage;
+                console.log(lastMessage)
                 return {
                     ...item,
                     user,
@@ -388,7 +386,7 @@ const ChatList = () => {
                                     ? "Blocked"
                                     : chat.user.username}
                             </span>
-                            <span className="lastMessage">{chat.lastMessage || "No message"}</span>
+                            <span className="lastMessage">{chat.lastMessage || 'No message'}</span>
                         </div>
                         <button
                             className="delete-btn"
