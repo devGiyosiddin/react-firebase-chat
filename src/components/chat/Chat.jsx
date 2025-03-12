@@ -12,6 +12,7 @@ import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
 import ChatOptions from "./chatOptions/ChatOptions";
+import { saveBackgroundImageUrl  } from "../lib/firebase";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -149,14 +150,12 @@ const Chat = ({ onInfoClick }) => {
     };
 
     const handleBgImgUpload = async (url) => {
-        try {
-            await updateDoc(doc(db, "chats", chatId), {
-                bgImgUrl: url,
-            });
-            setBgImgUrl(url); // Локальное обновление
-        } catch (err) {
-            console.error("Ошибка при загрузке фонового изображения:", err);
-        }
+    try {
+        await saveBackgroundImageUrl (chatId, url);
+        setBgImgUrl(url);
+    } catch (err) {
+        console.error("Ошибка при загрузке фонового изображения:", err);
+    }
     };
 
     const scrollToDown = () => {

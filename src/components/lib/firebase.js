@@ -26,7 +26,7 @@ export const uploadImage = async (file, path) => {
     const imageRef = ref(storage, path);
     const snapshot = await uploadBytes(imageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
-    return downloadURL; // Возвращаем URL загруженного изображения
+    return downloadURL;
   } catch (error) {
     console.error("Error uploading image: ", error);
     throw new Error('Error uploading image');
@@ -37,13 +37,15 @@ export const saveBackgroundImageUrl = async (chatId, imageUrl) => {
   if (!chatId || !imageUrl) {
     throw new Error("Не передан chatId или imageUrl");
   }
-  const chatRef = doc(db, "chats", chatId);
-  await updateDoc(chatRef, { bgImage: imageUrl });
+  try {
+    const chatRef = doc(db, "chats", chatId);
+    await updateDoc(chatRef, { bgImage: imageUrl }); // Единое название ключа
+  } catch (error) {
+    console.error("Ошибка при установке фонового изображения:", error);
+    throw new Error("Ошибка обновления фона чата");
+  }
 };
 
-
-
-// Функция получения URL изображения из Firestore
 export const getBackgroundImageUrl = async (chatId) => {
   try {
     const chatRef = doc(db, "chats", chatId);
