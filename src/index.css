@@ -53,6 +53,14 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.125);
 }
 
+.loader-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .loader {
   width: 85px;
   height: 50px;
