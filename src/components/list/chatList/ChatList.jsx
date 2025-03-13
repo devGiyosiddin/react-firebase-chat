@@ -203,6 +203,15 @@ const ChatList = () => {
     const handleSelect = async (chat) => {
         setSelectedChatId(chat.chatId);
     
+        // If this is a new chat being added from AddUser component
+        if (!chats.some(c => c.chatId === chat.chatId)) {
+            // Just update the UI and chat store without modifying Firestore
+            // The data was already added to Firestore in the AddUser component
+            changeChat(chat.chatId, chat.user);
+            return;
+        }
+    
+        // For existing chats, continue with the update process
         const updatedChats = chats.map((item) => {
             if (item.chatId === chat.chatId) {
                 return { ...item, isSeen: true };
@@ -211,21 +220,16 @@ const ChatList = () => {
         });
     
         const userChats = updatedChats.map((item) => {
-            const { user, ...rest } = item;
-            return rest;
+            // Keep only the necessary properties for Firestore
+            return {
+                chatId: item.chatId,
+                lastMessage: item.lastMessage || '',
+                receiverId: item.receiverId || item.user?.id,
+                updatedAt: item.updatedAt || Date.now(),
+                isSeen: item.chatId === chat.chatId ? true : item.isSeen,
+                status: item.status || 'unmute',
+            };
         });
-    
-        // Найти индекс выбранного чата
-        const chatIndex = userChats.findIndex((item) => item.chatId === chat.chatId);
-    
-        // Проверить, существует ли элемент с таким chatId
-        if (chatIndex === -1) {
-            console.error(`Chat with ID ${chat.chatId} not found in userChats`);
-            return;
-        }
-    
-        // Обновить флаг isSeen для найденного чата
-        userChats[chatIndex].isSeen = true;
     
         const userChatsRef = doc(db, 'userchats', currentUser.id);
     
