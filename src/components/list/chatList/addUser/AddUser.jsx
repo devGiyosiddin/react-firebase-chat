@@ -83,6 +83,7 @@ const AddUser = ({ setAddMode, handleSelect }) => {
         if (!user) return;
         
         const userChatsRef = doc(db, 'userchats', currentUser.id);
+        const receiverChatsRef = doc(db, 'userchats', user.id);
     
         try {
             const userChatsSnap = await getDoc(userChatsRef);
@@ -98,33 +99,75 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             const chatId = currentUser.id + "_" + user.id;
             const chatRef = doc(db, 'chats', chatId);
     
+            // Create chat document with status for both users
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
                 messages: [],
-                status: 'unmute',
+                status: {
+                    [currentUser.id]: 'online',  // Current user status
+                    [user.id]: 'offline'         // Receiver's default status
+                },
+                lastSeen: {
+                    [currentUser.id]: Date.now(), // Current user last seen
+                    [user.id]: null               // Receiver hasn't seen chat yet
+                }
             });
     
-            await updateDoc(userChatsRef, {
-                chats: arrayUnion({
-                    chatId: chatId,
-                    lastMessage: '',
-                    receiverId: user.id,
-                    updatedAt: Date.now(),
-                    isSeen: false,
-                    status: 'unmute',
-                })
-            });
+            // Update current user's chats
+            if (userChatsSnap.exists()) {
+                await updateDoc(userChatsRef, {
+                    chats: arrayUnion({
+                        chatId: chatId,
+                        lastMessage: '',
+                        receiverId: user.id,
+                        updatedAt: Date.now(),
+                        isSeen: false,
+                        status: 'online',         // Current user's status
+                        receiverStatus: 'offline' // Assume receiver is offline initially
+                    })
+                });
+            } else {
+                await setDoc(userChatsRef, {
+                    chats: [{
+                        chatId: chatId,
+                        lastMessage: '',
+                        receiverId: user.id,
+                        updatedAt: Date.now(),
+                        isSeen: false,
+                        status: 'online',
+                        receiverStatus: 'offline'
+                    }]
+                });
+            }
     
-            await updateDoc(doc(db, 'userchats', user.id), {
-                chats: arrayUnion({
-                    chatId: chatId,
-                    lastMessage: '',
-                    receiverId: currentUser.id,
-                    updatedAt: Date.now(),
-                    isSeen: false,
-                    status: 'unmute',
-                })
-            });
+            // Check if receiver's chats document exists
+            const receiverChatsSnap = await getDoc(receiverChatsRef);
+            
+            if (receiverChatsSnap.exists()) {
+                await updateDoc(receiverChatsRef, {
+                    chats: arrayUnion({
+                        chatId: chatId,
+                        lastMessage: '',
+                        receiverId: currentUser.id,
+                        updatedAt: Date.now(),
+                        isSeen: false,
+                        status: 'offline',         // Receiver's status
+                        receiverStatus: 'online'   // Current user status from receiver's perspective
+                    })
+                });
+            } else {
+                await setDoc(receiverChatsRef, {
+                    chats: [{
+                        chatId: chatId,
+                        lastMessage: '',
+                        receiverId: currentUser.id,
+                        updatedAt: Date.now(),
+                        isSeen: false,
+                        status: 'offline',
+                        receiverStatus: 'online'
+                    }]
+                });
+            }
     
             setAddMode(false);
             
@@ -133,13 +176,15 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                 user: user,
                 isSeen: false,
                 lastMessage: '',
-                status: 'unmute',
+                status: 'online',
+                receiverStatus: 'offline'
             });
-
+    
             toast.success("Пользователь добавлен в чат.");
     
         } catch (err) {
             console.log("Error on handleAdd:", err);
+            toast.error("Ошибка при добавлении пользователя.");
         }
     };
 

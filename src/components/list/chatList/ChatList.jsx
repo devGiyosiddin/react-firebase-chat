@@ -206,12 +206,10 @@ const ChatList = () => {
         // If this is a new chat being added from AddUser component
         if (!chats.some(c => c.chatId === chat.chatId)) {
             // Just update the UI and chat store without modifying Firestore
-            // The data was already added to Firestore in the AddUser component
             changeChat(chat.chatId, chat.user);
             return;
         }
     
-        // For existing chats, continue with the update process
         const updatedChats = chats.map((item) => {
             if (item.chatId === chat.chatId) {
                 return { ...item, isSeen: true };
@@ -219,30 +217,107 @@ const ChatList = () => {
             return item;
         });
     
+        // Keep track of statuses when mapping to Firestore format
         const userChats = updatedChats.map((item) => {
-            // Keep only the necessary properties for Firestore
             return {
                 chatId: item.chatId,
                 lastMessage: item.lastMessage || '',
                 receiverId: item.receiverId || item.user?.id,
                 updatedAt: item.updatedAt || Date.now(),
                 isSeen: item.chatId === chat.chatId ? true : item.isSeen,
-                status: item.status || 'unmute',
+                status: item.status || 'online',
+                receiverStatus: item.receiverStatus || 'offline'
             };
         });
     
         const userChatsRef = doc(db, 'userchats', currentUser.id);
+        const chatRef = doc(db, 'chats', chat.chatId);
     
         try {
+            // Update user chats document
             await updateDoc(userChatsRef, {
                 chats: userChats,
             });
+    
+            // Update the chat document to record last seen time
+            await updateDoc(chatRef, {
+                [`lastSeen.${currentUser.id}`]: Date.now()
+            });
+    
             setChats(updatedChats);
             changeChat(chat.chatId, chat.user);
         } catch (err) {
             console.error("Error updating user chats:", err);
         }
     };
+    
+    // Add a function to update user status (call this on app load/unload)
+    const updateUserStatus = async (status) => {
+        if (!currentUser?.id) return;
+        
+        try {
+            // Get all chats for the current user
+            const userChatsRef = doc(db, 'userchats', currentUser.id);
+            const userChatsSnap = await getDoc(userChatsRef);
+            
+            if (!userChatsSnap.exists()) return;
+            
+            const userChats = userChatsSnap.data().chats;
+            
+            // Update status in each chat document
+            for (const chat of userChats) {
+                // Update the chat document status
+                await updateDoc(doc(db, 'chats', chat.chatId), {
+                    [`status.${currentUser.id}`]: status
+                });
+                
+                // Update receiver's reference to this user's status
+                const receiverChatsRef = doc(db, 'userchats', chat.receiverId);
+                const receiverChatsSnap = await getDoc(receiverChatsRef);
+                
+                if (receiverChatsSnap.exists()) {
+                    const receiverChats = receiverChatsSnap.data().chats;
+                    const chatIndex = receiverChats.findIndex(rc => rc.chatId === chat.chatId);
+                    
+                    if (chatIndex !== -1) {
+                        receiverChats[chatIndex].receiverStatus = status;
+                        
+                        await updateDoc(receiverChatsRef, {
+                            chats: receiverChats
+                        });
+                    }
+                }
+            }
+            
+            // Update status in user's own chats record
+            await updateDoc(userChatsRef, {
+                chats: userChats.map(chat => ({
+                    ...chat,
+                    status: status
+                }))
+            });
+        } catch (err) {
+            console.error("Error updating user status:", err);
+        }
+    };
+    
+    // Add event listeners for online/offline status in the ChatList component
+    useEffect(() => {
+        // Set user as online when component mounts
+        updateUserStatus('online');
+        
+        // Set user as offline when component unmounts or window closes
+        const handleBeforeUnload = () => {
+            updateUserStatus('offline');
+        };
+        
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            updateUserStatus('offline');
+        };
+    }, [currentUser?.id]);
 
     const handleDelete = async (chatId) => {
         const userChatsRef = doc(db, 'userchats', currentUser.id);
@@ -376,6 +451,7 @@ const ChatList = () => {
                                     : '#766ac8',
                         }}
                     >
+                    <div className="user-avatar">
                         <img
                             src={
                                 chat.user.blocked.includes(currentUser.id)
@@ -384,6 +460,11 @@ const ChatList = () => {
                             }
                             alt=""
                         />
+                        <div 
+                            className={`status-indicator ${chat.receiverStatus || 'offline'}`}
+                            title={chat.receiverStatus || 'offline'}
+                        ></div>  
+                    </div>
                         <div className="texts">
                             <span>
                                 {chat.user.blocked.includes(currentUser.id)
