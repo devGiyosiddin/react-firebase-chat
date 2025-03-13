@@ -38,32 +38,34 @@ const Chat = ({ onInfoClick }) => {
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
     const [status, setStatus] = useState("");
+    const [lastMessageId, setLastMessageId] = useState(null);
+    
     const sendSound = "/src/components/notification/sounds/send.mp3",
         getSound = "/src/components/notification/sounds/get.mp3",
         deleteSound = "/src/components/notification/sounds/delete.mp3";
     
-        useEffect(() => {
-            const getStatusFromFirebase = async () => {
-                const chatRef = doc(db, 'chats', chatId);
-                const chatDoc = await getDoc(chatRef);
-        
-                if (chatDoc.exists()) {
-                    const chatData = chatDoc.data();
-                    setStatus(chatData.status);
-                } else {
-                    console.log("Документ не найден");
-                }
-            };
-        
-            getStatusFromFirebase();
-        }, [chatId]);
-        
-        const playSound = (soundPath) => {
-            if (status !== 'mute') {
-                const audio = new Audio(soundPath);
-                audio.play().catch((err) => console.error("Error playing sound:", err));
+    useEffect(() => {
+        const getStatusFromFirebase = async () => {
+            const chatRef = doc(db, 'chats', chatId);
+            const chatDoc = await getDoc(chatRef);
+    
+            if (chatDoc.exists()) {
+                const chatData = chatDoc.data();
+                setStatus(chatData.status);
+            } else {
+                console.log("Документ не найден");
             }
-        };  
+        };
+    
+        getStatusFromFirebase();
+    }, [chatId]);
+    
+    const playSound = (soundPath) => {
+        if (status !== 'mute') {
+            const audio = new Audio(soundPath);
+            audio.play().catch((err) => console.error("Error playing sound:", err));
+        }
+    };  
 
     useEffect(() => {
         if (editingMessage) {
@@ -78,12 +80,10 @@ const Chat = ({ onInfoClick }) => {
                     ? { ...message, text: newText }
                     : message
             );
-
             await updateDoc(doc(db, "chats", chatId), {
                 messages: updatedMessages,
                 lastMessage: newText || chat.lastMessage,
             });
-
             setChat((prev) => ({ ...prev, messages: updatedMessages }));
         } catch (err) {
             console.error("Error editing message:", err);
@@ -96,6 +96,7 @@ const Chat = ({ onInfoClick }) => {
                 (message) => message.createdAt.seconds !== messageId
             );
 
+
             await updateDoc(doc(db, "chats", chatId), {
                 messages: updatedMessages,
                 lastMessage:
@@ -103,7 +104,6 @@ const Chat = ({ onInfoClick }) => {
                         ? updatedMessages[updatedMessages.length - 1].text || "Медиа"
                         : "",
             });
-
             playSound(deleteSound);
             setChat((prev) => ({ ...prev, messages: updatedMessages }));
         } catch (err) {
@@ -112,29 +112,29 @@ const Chat = ({ onInfoClick }) => {
     };
 
     const handleContextMenu = (e, message) => {
-    e.preventDefault(); // Предотвращаем стандартное контекстное меню
-    
-    // Получаем размеры окна
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    
-    // Получаем координаты клика
-    let x = e.clientX;
-    let y = e.clientY;
-    
-    // Создаем виртуальный элемент для расчета размеров меню
-    const menuWidth = 150; // Примерная ширина меню
-    const menuHeight = 80; // Примерная высота меню
-    
-    // Корректируем позицию, если меню выходит за пределы окна
-    if (x + menuWidth > windowWidth) {
-        x = windowWidth - menuWidth;
-    }
-    if (y + menuHeight > windowHeight) {
-        y = windowHeight - menuHeight;
-    }
-    
-    setContextMenu({ x, y, message });
+        e.preventDefault(); // Предотвращаем стандартное контекстное меню
+        
+        // Получаем размеры окна
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Получаем координаты клика
+        let x = e.clientX;
+        let y = e.clientY;
+        
+        // Создаем виртуальный элемент для расчета размеров меню
+        const menuWidth = 150; // Примерная ширина меню
+        const menuHeight = 80; // Примерная высота меню
+        
+        // Корректируем позицию, если меню выходит за пределы окна
+        if (x + menuWidth > windowWidth) {
+            x = windowWidth - menuWidth;
+        }
+        if (y + menuHeight > windowHeight) {
+            y = windowHeight - menuHeight;
+        }
+        
+        setContextMenu({ x, y, message });
     };
 
     const closeContextMenu = useCallback(() => {
@@ -150,12 +150,12 @@ const Chat = ({ onInfoClick }) => {
     };
 
     const handleBgImgUpload = async (url) => {
-    try {
-        await saveBackgroundImageUrl (chatId, url);
-        setBgImgUrl(url);
-    } catch (err) {
-        console.error("Ошибка при загрузке фонового изображения:", err);
-    }
+        try {
+            await saveBackgroundImageUrl(chatId, url);
+            setBgImgUrl(url);
+        } catch (err) {
+            console.error("Ошибка при загрузке фонового изображения:", err);
+        }
     };
 
     const scrollToDown = () => {
@@ -167,17 +167,35 @@ const Chat = ({ onInfoClick }) => {
     }, []);
 
     useEffect(() => {
-        const unSub = onSnapshot(doc(db, 'chats', chatId), (res) => {
+        const chatRef = doc(db, 'chats', chatId);
+    
+        const unSub = onSnapshot(chatRef, async (res) => {
+            if (!res.exists()) return;
+    
             const chatData = res.data();
             setChat(chatData);
             setBgImgUrl(chatData?.bgImgUrl || "");
     
-            const messages = chatData?.messages || [];
-            const lastMessage = messages[messages.length - 1]; // Последнее сообщение
+            // 🔥 Ensure we get the latest status from Firestore
+            const chatStatus = chatData?.status || "unmute";
+            setStatus(chatStatus);
     
-            // Проверяем, от кого сообщение
-            if (lastMessage && lastMessage.senderId !== currentUserId) {
-                playSound(getSound); // Проигрываем звук только для сообщений от собеседника
+            const messages = chatData?.messages || [];
+            const lastMessage = messages[messages.length - 1]; // Get the last message
+    
+            // 🔥 Play sound only if:
+            // - A new message exists
+            // - It was sent by someone else
+            // - It's not the same as the last message (prevents duplicate sounds)
+            // - The chat is NOT muted
+            if (
+                lastMessage && 
+                lastMessage.senderId !== currentUserId && 
+                lastMessageId !== lastMessage.createdAt?.seconds &&
+                chatStatus !== 'mute' // 🔥 Check if the chat is unmuted
+            ) {
+                playSound(getSound);
+                setLastMessageId(lastMessage.createdAt?.seconds); // Update lastMessageId to prevent duplicate sounds
             }
     
             scrollToDown();
@@ -186,8 +204,8 @@ const Chat = ({ onInfoClick }) => {
         return () => {
             unSub();
         };
-    }, [chatId, currentUserId]);    
-    
+    }, [chatId, currentUserId, lastMessageId]);    
+
     const handleEmoji = (e) => {
         if (e?.emoji) {
             setText((prev) => prev + e.emoji);
@@ -218,6 +236,7 @@ const Chat = ({ onInfoClick }) => {
         }
     };
 
+
     const handleCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -230,10 +249,8 @@ const Chat = ({ onInfoClick }) => {
             canvas.height = video.videoHeight;
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
             video.pause();
             stream.getTracks().forEach(track => track.stop());
-
             const imgDataUrl = canvas.toDataURL('image/jpeg');
             const response = await fetch(imgDataUrl);
             const blob = await response.blob();
@@ -251,18 +268,14 @@ const Chat = ({ onInfoClick }) => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const mediaRecorder = new MediaRecorder(stream);
             let audioChunks = [];
-
             mediaRecorder.ondataavailable = (event) => {
                 audioChunks.push(event.data);
             };
-
             mediaRecorder.onstop = async () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 setAudioFile(audioBlob);
             };
-
             mediaRecorder.start();
-
             setTimeout(() => {
                 mediaRecorder.stop();
             }, 5000);
