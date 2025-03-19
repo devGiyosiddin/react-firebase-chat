@@ -11,8 +11,9 @@ import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
+import { IoVolumeMuteOutline, IoVolumeHighOutline } from "react-icons/io5"; // Иконки для звука
 import ChatOptions from "./chatOptions/ChatOptions";
-import { saveBackgroundImageUrl  } from "../lib/firebase";
+import { saveBackgroundImageUrl } from "../lib/firebase";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -37,35 +38,86 @@ const Chat = ({ onInfoClick }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
-    const [status, setStatus] = useState("");
+    
+    // Персональные настройки звука
+    const [userSoundSetting, setUserSoundSetting] = useState("unmute"); // Настройка текущего пользователя
     const [lastMessageId, setLastMessageId] = useState(null);
     
-    const sendSound = "/src/components/notification/sounds/send.mp3",
-        getSound = "/src/components/notification/sounds/get.mp3",
-        deleteSound = "/src/components/notification/sounds/delete.mp3";
+    const sendSound = "/src/components/notification/sounds/send.mp3";
+    const getSound = "/src/components/notification/sounds/get.mp3";
+    const deleteSound = "/src/components/notification/sounds/delete.mp3";
     
+    // Получение персональных настроек звука при инициализации
     useEffect(() => {
-        const getStatusFromFirebase = async () => {
-            const chatRef = doc(db, 'chats', chatId);
-            const chatDoc = await getDoc(chatRef);
-    
-            if (chatDoc.exists()) {
-                const chatData = chatDoc.data();
-                setStatus(chatData.status);
-            } else {
-                console.log("Документ не найден");
+        const getUserSoundSettings = async () => {
+            try {
+                // Получаем настройки из коллекции пользователей
+                const userDoc = await getDoc(doc(db, 'users', currentUserId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.soundSettings && userData.soundSettings[chatId]) {
+                        setUserSoundSetting(userData.soundSettings[chatId]);
+                    } else {
+                        // Если настроек для этого чата нет, устанавливаем по умолчанию
+                        const initialSetting = "unmute";
+                        await updateUserSoundSetting(initialSetting);
+                        setUserSoundSetting(initialSetting);
+                    }
+                }
+            } catch (err) {
+                console.error("Ошибка при получении настроек звука пользователя:", err);
             }
         };
-    
-        getStatusFromFirebase();
-    }, [chatId]);
-    
+        
+        if (chatId && currentUserId) {
+            getUserSoundSettings();
+        }
+    }, [chatId, currentUserId]);
+
+    // Обновление настроек звука пользователя
+    const updateUserSoundSetting = async (newSetting) => {
+        try {
+            const userRef = doc(db, 'users', currentUserId);
+            const userDoc = await getDoc(userRef);
+            
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const currentSettings = userData.soundSettings || {};
+                
+                // Обновляем настройки для конкретного чата
+                await updateDoc(userRef, {
+                    soundSettings: {
+                        ...currentSettings,
+                        [chatId]: newSetting
+                    }
+                });
+            } else {
+                // Если документ пользователя не существует, создаем его
+                await updateDoc(userRef, {
+                    soundSettings: {
+                        [chatId]: newSetting
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Ошибка при обновлении настроек звука:", err);
+        }
+    };
+
+    // Воспроизведение звука с учетом персональных настроек
     const playSound = (soundPath) => {
-        if (status !== 'mute') {
+        if (userSoundSetting !== 'mute') {
             const audio = new Audio(soundPath);
             audio.play().catch((err) => console.error("Error playing sound:", err));
         }
-    };  
+    };
+    
+    // Переключение режима звука
+    const toggleSoundMode = async () => {
+        const newMode = userSoundSetting === 'mute' ? 'unmute' : 'mute';
+        await updateUserSoundSetting(newMode);
+        setUserSoundSetting(newMode);
+    };
 
     useEffect(() => {
         if (editingMessage) {
@@ -95,7 +147,6 @@ const Chat = ({ onInfoClick }) => {
             const updatedMessages = chat.messages.filter(
                 (message) => message.createdAt.seconds !== messageId
             );
-
 
             await updateDoc(doc(db, "chats", chatId), {
                 messages: updatedMessages,
@@ -176,23 +227,15 @@ const Chat = ({ onInfoClick }) => {
             setChat(chatData);
             setBgImgUrl(chatData?.bgImgUrl || "");
     
-            // 🔥 Ensure we get the latest status from Firestore
-            const chatStatus = chatData?.status || "unmute";
-            setStatus(chatStatus);
-    
             const messages = chatData?.messages || [];
             const lastMessage = messages[messages.length - 1]; // Get the last message
-    
-            // 🔥 Play sound only if:
-            // - A new message exists
-            // - It was sent by someone else
-            // - It's not the same as the last message (prevents duplicate sounds)
-            // - The chat is NOT muted
+
+            // Проверяем необходимость воспроизведения звука для входящего сообщения
             if (
                 lastMessage && 
                 lastMessage.senderId !== currentUserId && 
                 lastMessageId !== lastMessage.createdAt?.seconds &&
-                chatStatus !== 'mute' // 🔥 Check if the chat is unmuted
+                userSoundSetting !== 'mute' // Используем локальную настройку пользователя
             ) {
                 playSound(getSound);
                 setLastMessageId(lastMessage.createdAt?.seconds); // Update lastMessageId to prevent duplicate sounds
@@ -204,7 +247,7 @@ const Chat = ({ onInfoClick }) => {
         return () => {
             unSub();
         };
-    }, [chatId, currentUserId, lastMessageId]);    
+    }, [chatId, currentUserId, lastMessageId, userSoundSetting]);    
 
     const handleEmoji = (e) => {
         if (e?.emoji) {
@@ -235,7 +278,6 @@ const Chat = ({ onInfoClick }) => {
             });
         }
     };
-
 
     const handleCamera = async () => {
         try {
@@ -313,6 +355,11 @@ const Chat = ({ onInfoClick }) => {
             });
     
             endRef.current?.scrollIntoView({ behavior: 'smooth' });
+            
+            // Воспроизводим звук отправки с учетом настроек текущего пользователя
+            if (userSoundSetting !== 'mute') {
+                playSound(sendSound);
+            }
         } catch (err) {
             console.log("Error on handleSend:", err);
         }
@@ -320,7 +367,6 @@ const Chat = ({ onInfoClick }) => {
         setImg({ file: null, url: '' });
         setAudioFile(null);
         setText('');
-        playSound(sendSound);
         setOpenFileList(false);
     };
 
@@ -352,10 +398,29 @@ const Chat = ({ onInfoClick }) => {
                     <img src={user?.avatar || "./avatar.png"} alt="" onClick={onInfoClick} />
                     <div className="texts">
                         <span>{user?.username}</span>
-                        <p>Lorem ipsum dolor sit amet consectetur</p>
+                        <p className="user-bio">
+                            {user?.bio || ""}
+                        </p>
                     </div>
+                            {userSoundSetting === 'mute' && <span
+                                className="mute-indicator">
+                                    <IoVolumeMuteOutline className="sound-icon-small muted" />
+                                </span>
+                            }
                 </div>
                 <div className="icons">
+                    <div 
+                        className="sound-control" 
+                        title={userSoundSetting === 'mute' ? 'Включить уведомления' : 'Отключить уведомления'}
+                        onClick={toggleSoundMode}
+                    >
+                        {userSoundSetting === 'mute' ? (
+                            <IoVolumeMuteOutline size={24} className="sound-icon muted" />
+                        
+                        ) : (
+                            <IoVolumeHighOutline size={24} className="sound-icon" />
+                        )}
+                    </div>
                     <ChatOptions currentChatId={currentChatId} onUploadComplete={handleBgImgUpload} />
                 </div>
             </div>
@@ -381,7 +446,7 @@ const Chat = ({ onInfoClick }) => {
                             <div className="texts">
                                 {message.img && <img src={message.img} alt="" />}
                                 {message.audio && <audio controls src={message.audio}></audio>}
-                                {message.text &&<p>{message.text}</p>}
+                                {message.text && <p>{message.text}</p>}
                             </div>
                         </div>
                     ))}

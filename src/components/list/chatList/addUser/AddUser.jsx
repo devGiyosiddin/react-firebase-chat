@@ -99,17 +99,21 @@ const AddUser = ({ setAddMode, handleSelect }) => {
             const chatId = currentUser.id + "_" + user.id;
             const chatRef = doc(db, 'chats', chatId);
     
-            // Create chat document with status for both users
+            // Create chat document with notification settings for both users
             await setDoc(chatRef, {
                 createdAt: serverTimestamp(),
                 messages: [],
                 status: {
-                    [currentUser.id]: 'online',  // Current user status
-                    [user.id]: 'offline'         // Receiver's default status
+                    [currentUser.id]: 'online',
+                    [user.id]: 'offline'
+                },
+                notificationSettings: {
+                    [currentUser.id]: 'unmute',  // Current user's notification preference
+                    [user.id]: 'unmute'          // Receiver's notification preference (default unmute)
                 },
                 lastSeen: {
-                    [currentUser.id]: Date.now(), // Current user last seen
-                    [user.id]: null               // Receiver hasn't seen chat yet
+                    [currentUser.id]: Date.now(),
+                    [user.id]: null
                 }
             });
     
@@ -122,8 +126,9 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                         receiverId: user.id,
                         updatedAt: Date.now(),
                         isSeen: false,
-                        status: 'online',         // Current user's status
-                        receiverStatus: 'offline' // Assume receiver is offline initially
+                        status: 'online',
+                        receiverStatus: 'offline',
+                        notificationStatus: 'unmute'  // Current user's notification preference
                     })
                 });
             } else {
@@ -135,7 +140,8 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                         updatedAt: Date.now(),
                         isSeen: false,
                         status: 'online',
-                        receiverStatus: 'offline'
+                        receiverStatus: 'offline',
+                        notificationStatus: 'unmute'
                     }]
                 });
             }
@@ -151,8 +157,9 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                         receiverId: currentUser.id,
                         updatedAt: Date.now(),
                         isSeen: false,
-                        status: 'offline',         // Receiver's status
-                        receiverStatus: 'online'   // Current user status from receiver's perspective
+                        status: 'offline',
+                        receiverStatus: 'online',
+                        notificationStatus: 'unmute'  // Receiver's notification preference (default unmute)
                     })
                 });
             } else {
@@ -164,7 +171,8 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                         updatedAt: Date.now(),
                         isSeen: false,
                         status: 'offline',
-                        receiverStatus: 'online'
+                        receiverStatus: 'online',
+                        notificationStatus: 'unmute'
                     }]
                 });
             }
@@ -177,7 +185,8 @@ const AddUser = ({ setAddMode, handleSelect }) => {
                 isSeen: false,
                 lastMessage: '',
                 status: 'online',
-                receiverStatus: 'offline'
+                receiverStatus: 'offline',
+                notificationStatus: 'unmute'
             });
     
             toast.success("Пользователь добавлен в чат.");
