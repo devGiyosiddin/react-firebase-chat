@@ -11,9 +11,13 @@ import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
 import { MdAttachFile } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
+import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { IoVolumeMuteOutline, IoVolumeHighOutline } from "react-icons/io5"; // Иконки для звука
 import ChatOptions from "./chatOptions/ChatOptions";
 import { saveBackgroundImageUrl } from "../lib/firebase";
+import { PiMicrophone, PiMicrophoneFill } from "react-icons/pi";
+import { MdOutlineStop } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -25,6 +29,13 @@ const Chat = ({ onInfoClick }) => {
         url: '',
     });
     const [audioFile, setAudioFile] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingTime, setRecordingTime] = useState(0);
+    const [audioRecorder, setAudioRecorder] = useState(null);
+    const [audioChunks, setAudioChunks] = useState([]);
+    const [audioStream, setAudioStream] = useState(null);
+    const [isAudioInputActive, setIsAudioInputActive] = useState(false);
+    
     const endRef = useRef(null);
     const emojiPickerRef = useRef(null); 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
@@ -38,6 +49,7 @@ const Chat = ({ onInfoClick }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
+    const recordingTimerRef = useRef(null);
     
     // Персональные настройки звука
     const [userSoundSetting, setUserSoundSetting] = useState("unmute"); // Настройка текущего пользователя
@@ -124,6 +136,88 @@ const Chat = ({ onInfoClick }) => {
             setEditingText(editingMessage.text || "");
         }
     }, [editingMessage]);
+
+    // Функции для записи голоса
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            setAudioStream(stream);
+            const mediaRecorder = new MediaRecorder(stream);
+            setAudioRecorder(mediaRecorder);
+            
+            const chunks = [];
+            setAudioChunks(chunks);
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                    setAudioChunks([...chunks]);
+                }
+            };
+            
+            setIsRecording(true);
+            setRecordingTime(0);
+            
+            // Запускаем таймер для обновления времени записи
+            recordingTimerRef.current = setInterval(() => {
+                setRecordingTime(prev => prev + 1);
+            }, 1000);
+            
+            mediaRecorder.start(300); // Собираем данные каждые 300ms
+            setIsAudioInputActive(true);
+            
+        } catch (err) {
+            console.error("Ошибка при запуске записи:", err);
+            setIsRecording(false);
+        }
+    };
+    
+    const stopRecording = () => {
+        if (audioRecorder && isRecording) {
+            audioRecorder.stop();
+            clearInterval(recordingTimerRef.current);
+            
+            audioRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                setAudioFile(audioBlob);
+                
+                // Останавливаем все треки в потоке
+                if (audioStream) {
+                    audioStream.getTracks().forEach(track => track.stop());
+                }
+                
+                setIsRecording(false);
+                setAudioStream(null);
+                
+                // Можно автоматически отправить сообщение при завершении записи
+                // handleSend();
+            };
+        }
+    };
+    
+    const cancelRecording = () => {
+        if (audioRecorder && isRecording) {
+            audioRecorder.stop();
+            clearInterval(recordingTimerRef.current);
+            
+            // Останавливаем все треки в потоке
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+            }
+            
+            setIsRecording(false);
+            setAudioStream(null);
+            setAudioFile(null);
+            setAudioChunks([]);
+        }
+    };
+    
+    // Форматирование времени записи
+    const formatRecordingTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
 
     const handleEditMessage = async (messageId, newText) => {
         try {
@@ -305,27 +399,6 @@ const Chat = ({ onInfoClick }) => {
         }
     };
 
-    const handleVoice = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
-            let audioChunks = [];
-            mediaRecorder.ondataavailable = (event) => {
-                audioChunks.push(event.data);
-            };
-            mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                setAudioFile(audioBlob);
-            };
-            mediaRecorder.start();
-            setTimeout(() => {
-                mediaRecorder.stop();
-            }, 5000);
-        } catch (err) {
-            console.log("Voice error:", err);
-        }
-    };
-
     const removeText = () => {
         setText(prev => prev.slice(0, -1));
     };
@@ -368,6 +441,7 @@ const Chat = ({ onInfoClick }) => {
         setAudioFile(null);
         setText('');
         setOpenFileList(false);
+        setIsAudioInputActive(false);
     };
 
     const handleScroll = () => {
@@ -390,6 +464,18 @@ const Chat = ({ onInfoClick }) => {
             messagesElement?.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    // Проверяем, должна ли кнопка отправки показывать микрофон
+    const shouldShowMicButton = !text && !img.file && !audioFile && !isRecording;
+
+    // Обработчик нажатия кнопки отправки/записи
+    const handleSendButtonClick = () => {
+        if (shouldShowMicButton) {
+            startRecording();
+        } else {
+            handleSend();
+        }
+    };
 
     return (
         <div className="chat">
@@ -451,41 +537,41 @@ const Chat = ({ onInfoClick }) => {
                         </div>
                     ))}
                     {contextMenu && (
-                <div
-                    className="context-menu"
-                    style={{ top: contextMenu.y, left: contextMenu.x }}
-                >
-                    <button
-                        onClick={() => {
-                            setEditingMessage(contextMenu.message);
-                            setContextMenu(null);
-                        }}
-                    >
-                        ✏️ Изменить
-                    </button>
-                    <button
-                        onClick={() => {
-                            handleDeleteMessage(contextMenu.message.createdAt.seconds);
-                            setContextMenu(null);
-                        }}
-                    >
-                        🗑️ Удалить
-                    </button>
-                </div>
-            )}
+                        <div
+                            className="context-menu"
+                            style={{ top: contextMenu.y, left: contextMenu.x }}
+                        >
+                            <button
+                                onClick={() => {
+                                    setEditingMessage(contextMenu.message);
+                                    setContextMenu(null);
+                                }}
+                            >
+                                ✏️ Изменить
+                            </button>
+                            <button
+                                onClick={() => {
+                                    handleDeleteMessage(contextMenu.message.createdAt.seconds);
+                                    setContextMenu(null);
+                                }}
+                            >
+                                🗑️ Удалить
+                            </button>
+                        </div>
+                    )}
 
-            {editingMessage && (
-                <div className="edit-message">
-                    <input
-                        type="text"
-                        value={editingText}
-                        onChange={(e) => setEditingText(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && saveEditedMessage()}
-                    />
-                    <button onClick={saveEditedMessage}>💾 Сохранить</button>
-                    <button onClick={() => setEditingMessage(null)}>❌ Отмена</button>
-                </div>
-            )}
+                    {editingMessage && (
+                        <div className="edit-message">
+                            <input
+                                type="text"
+                                value={editingText}
+                                onChange={(e) => setEditingText(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && saveEditedMessage()}
+                            />
+                            <button onClick={saveEditedMessage}>💾 Сохранить</button>
+                            <button onClick={() => setEditingMessage(null)}>❌ Отмена</button>
+                        </div>
+                    )}
                     {img.url && <div className="message own">
                         <div className="texts">
                             <img src={img.url} alt="" />
@@ -497,53 +583,83 @@ const Chat = ({ onInfoClick }) => {
                             <FaArrowDown />
                         </button>
                     )}
-                    
-
                 </div>
 
             <div className="send-wrapper">
-                <div className="input-inner">
-                    <div className="emoji" ref={emojiPickerRef}>
-                        <BsEmojiSmile className="emoji-icon"  onClick={() => setOpen(prev => !prev)} />
-                        {open && (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <div className="picker">
-                                    <EmojiPicker
-                                        onEmojiClick={handleEmoji}
-                                        theme={Theme.DARK}
-                                    />
-                                </div>
-                            </Suspense>
-                        )}
-                    </div>
-                    <input
-                        type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
-                        value={text}
-                        onKeyDown={(e) => e.key  === 'Enter' && handleSend()}
-                        onChange={(e) => setText(e.target.value)}
-                        disabled={isCurrentUserBlocked || isReceiverBlocked}
-                        />
-                    <MdAttachFile 
-                        onClick={() => setOpenFileList(!openFileList)}
-                        className="file" 
-                    />
-                    {openFileList && (
-                        <div className="icons">
-                            <label htmlFor="file">
-                                <img src="./img.png" alt="" />
-                            </label>
-                            <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                            <img src="./camera.png" alt="" onClick={handleCamera} />
-                            <img src="./mic.png" alt="" onClick={handleVoice} />
+                {isRecording && (
+                    <div className="recording-indicator">
+                        <div className="recording-wave">
+                            <span className="wave-bar"></span>
+                            <span className="wave-bar"></span>
+                            <span className="wave-bar"></span>
+                            <span className="wave-bar"></span>
+                            <span className="wave-bar"></span>
                         </div>
+                        <span className="recording-time">{formatRecordingTime(recordingTime)}</span>
+                        <div className="recording-actions">
+                            <button onClick={cancelRecording} className="cancel-recording">
+                                <RiDeleteBin6Line size={20} />
+                            </button>
+                            <button onClick={stopRecording} className="stop-recording">
+                                <MdOutlineStop size={20} />
+                            </button>
+                        </div>
+                    </div>
+                )}
+                
+                {!isRecording && (
+                    <div className="input-inner">
+                        <div className="emoji" ref={emojiPickerRef}>
+                            <BsEmojiSmile className="emoji-icon" onClick={() => setOpen(prev => !prev)} />
+                            {open && (
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <div className="picker">
+                                        <EmojiPicker
+                                            onEmojiClick={handleEmoji}
+                                            theme={Theme.DARK}
+                                        />
+                                    </div>
+                                </Suspense>
+                            )}
+                        </div>
+                        <input
+                            type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
+                            value={text}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                            onChange={(e) => setText(e.target.value)}
+                            disabled={isCurrentUserBlocked || isReceiverBlocked}
+                        />
+                        <MdAttachFile 
+                            onClick={() => setOpenFileList(!openFileList)}
+                            className="file" 
+                        />
+                        {openFileList && (
+                            <div className="icons">
+                                <label htmlFor="file">
+                                    <img src="./img.png" alt="" />
+                                </label>
+                                <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
+                                <img src="./camera.png" alt="" onClick={handleCamera} />
+                            </div>
+                        )}
+                        <FiDelete onClick={removeText} className="removeText" />
+                    </div>
+                )}
+                
+                <button
+                    className={`sendButton ${shouldShowMicButton ? 'mic-button' : ''} ${isRecording ? 'recording' : ''}`}
+                    onClick={handleSendButtonClick}
+                    disabled={isCurrentUserBlocked || isReceiverBlocked}
+                >
+                    {shouldShowMicButton ? (
+                        <PiMicrophone size={24} />
+                    ) : (
+                        <MdOutlineKeyboardDoubleArrowRight size={28} />
                     )}
-                    <FiDelete onClick={removeText} className="removeText" />
-                    
-                </div>
-                    <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
-                </div>
+                </button>
             </div>
-            </div>
+        </div>
+        </div>
         </div>
     );
 }
