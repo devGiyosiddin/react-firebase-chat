@@ -57,10 +57,10 @@ const ChatOptions = ({ onUploadComplete, currentChatId }) => {
             {isVisible && (
                 <div className="chat-options">
                     <ChatBgImg chatId={chatId} onUploadComplete={onUploadComplete} />
-                    <ToggleMute 
+                    {/* <ToggleMute 
                         chatId={chatId} 
-                        onStatusChange={handleStatusChange} // Передаем коллбек для обновления статуса
-                    />
+                        onStatusChange={handleStatusChange} 
+                    /> */}
                     <div className="option">Option 2</div>
                     <div className="option">Option 3</div>
                     <BlockUser />
