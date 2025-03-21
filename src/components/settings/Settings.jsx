@@ -23,7 +23,7 @@ const Settings = () => {
   };
   
   return (
-    <div className="settings">
+    <div className="settings-wrapper">
       {/* Sidebar Navigation */}
       <div className="settings__sidebar">
         <div className="settings__sidebar-header">
