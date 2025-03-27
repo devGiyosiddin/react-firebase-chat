@@ -195,7 +195,7 @@
                 position: absolute;
                 right: 5%;
                 float: right;
-                color: tomato;
+                color: var(--orange);
                 cursor: pointer;
                 border: none;
                 border-radius: 5px;

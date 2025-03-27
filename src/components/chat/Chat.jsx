@@ -18,6 +18,8 @@ import { saveBackgroundImageUrl } from "../lib/firebase";
 import { PiMicrophone, PiMicrophoneFill } from "react-icons/pi";
 import { MdOutlineStop } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaCamera, FaStop } from "react-icons/fa";
+import CameraCapture from "./capturePhoto/webcam";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -50,6 +52,9 @@ const Chat = ({ onInfoClick }) => {
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
     const recordingTimerRef = useRef(null);
+    const [cameraStream, setCameraStream] = useState(null);
+    const [isCameraActive, setIsCameraActive] = useState(false);
+    const videoRef = useRef(null);
     
     // Персональные настройки звука
     const [userSoundSetting, setUserSoundSetting] = useState("unmute"); // Настройка текущего пользователя
@@ -189,8 +194,6 @@ const Chat = ({ onInfoClick }) => {
                 setIsRecording(false);
                 setAudioStream(null);
                 
-                // Можно автоматически отправить сообщение при завершении записи
-                // handleSend();
             };
         }
     };
@@ -365,6 +368,7 @@ const Chat = ({ onInfoClick }) => {
     }, [emojiPickerRef]);
 
     const handleImg = e => {
+        setOpenFileList(false);
         if (e.target.files[0]) {
             setImg({
                 file: e.target.files[0],
@@ -372,32 +376,55 @@ const Chat = ({ onInfoClick }) => {
             });
         }
     };
+    
+    const handleCameraOpen = () => {
+        setOpenFileList(false);
+        setIsCameraActive(true);
+    };
 
-    const handleCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
-
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            video.pause();
-            stream.getTracks().forEach(track => track.stop());
-            const imgDataUrl = canvas.toDataURL('image/jpeg');
-            const response = await fetch(imgDataUrl);
-            const blob = await response.blob();
+    const handlePhotoCaptured = (imageDataUrl) => {
+        // Convert dataURL to Blob
+        const dataURLtoBlob = (dataURL) => {
+            // Split the dataURL to get the base64 data
+            const byteString = atob(dataURL.split(',')[1]);
+            
+            // Extract the MIME type
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            
+            // Create an ArrayBuffer and Uint8Array
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+    
+            // Create and return a Blob
+            return new Blob([ab], {type: mimeString});
+        };
+    
+        const blob = dataURLtoBlob(imageDataUrl);
+        
+        if (blob) {
             setImg({
                 file: blob,
-                url: imgDataUrl,
+                url: URL.createObjectURL(blob)
             });
-        } catch (err) {
-            console.log("Camera error:", err);
+            setIsCameraActive(false);
         }
     };
+
+    const closeCameraCapture = () => {
+        setIsCameraActive(false);
+    };
+    
+    
+    const removeImg = () => {
+        setImg({
+            file: null,
+            url: null,
+        });
+    }
 
     const removeText = () => {
         setText(prev => prev.slice(0, -1));
@@ -574,7 +601,7 @@ const Chat = ({ onInfoClick }) => {
                     )}
                     {img.url && <div className="message own">
                         <div className="texts">
-                            <img src={img.url} alt="" />
+                            {/* <img src={img.url} alt="" /> */}
                         </div>
                     </div>}
                     <div ref={endRef}></div>
@@ -633,13 +660,23 @@ const Chat = ({ onInfoClick }) => {
                             onClick={() => setOpenFileList(!openFileList)}
                             className="file" 
                         />
+                                
                         {openFileList && (
                             <div className="icons">
                                 <label htmlFor="file">
-                                    <img src="./img.png" alt="" />
+                                    <img src="./img.png" alt="Upload" />
                                 </label>
-                                <input type="file" id='file' style={{ display: 'none' }} onChange={handleImg} />
-                                <img src="./camera.png" alt="" onClick={handleCamera} />
+                                <input 
+                                    type="file" 
+                                    id='file' 
+                                    style={{ display: 'none' }} 
+                                    onChange={handleImg} 
+                                />
+                                <img 
+                                    src="./camera.png" 
+                                    alt="Open Camera" 
+                                    onClick={handleCameraOpen} 
+                                />
                             </div>
                         )}
                         <FiDelete onClick={removeText} className="removeText" />
@@ -650,7 +687,7 @@ const Chat = ({ onInfoClick }) => {
                     className={`sendButton ${shouldShowMicButton ? 'mic-button' : ''} ${isRecording ? 'recording' : ''}`}
                     onClick={handleSendButtonClick}
                     disabled={isCurrentUserBlocked || isReceiverBlocked}
-                >
+                    >
                     {shouldShowMicButton ? (
                         <PiMicrophone size={24} />
                     ) : (
@@ -658,6 +695,41 @@ const Chat = ({ onInfoClick }) => {
                     )}
                 </button>
             </div>
+
+            {/* Camera Capture Modal */}
+            {isCameraActive && (
+                <CameraCapture 
+                onCapture={handlePhotoCaptured}
+                    onClose={closeCameraCapture}
+                />
+            )}
+
+            {/* Audio preview */}
+            {audioFile && (
+                <div className="audioPreview">
+                    <audio controls src={audioFile} />
+                    <button 
+                        title="Remove the audio" 
+                        className="removeAudioBtn" 
+                        onClick={cancelRecording}
+                    >
+                        <RiDeleteBin6Line size={20} />
+                    </button>
+                </div>
+            )}        
+
+            {img.file && (
+                <div className="imgPreview">
+                    <img className="img" src={img.url} alt="Preview" />
+                    <button 
+                        title="Remove the image" 
+                        className="removeImgBtn" 
+                        onClick={removeImg}
+                    >
+                        <RiDeleteBin6Line size={20} />
+                    </button>
+                </div>
+            )}
         </div>
         </div>
         </div>
