@@ -12,7 +12,8 @@ import { CiCircleRemove } from "react-icons/ci";
 import MenuIcon from "../../icons/menuIcon";
 import { MdOutlineSettings } from "react-icons/md";
 import Joyride from "react-joyride";
-import UserInfo from '../userInfo/UserInfo'
+import UserInfo from '../userInfo/UserInfo';
+import Settings from "../../settings/Settings";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -34,6 +35,7 @@ const ChatList = () => {
     const searchInputRef = useRef(null);
     const db = getFirestore();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const toggleProfile = () => {
         setIsProfileOpen((prev) => !prev);
     };
@@ -350,6 +352,16 @@ const ChatList = () => {
         c.user.username.toLowerCase().includes(input.toLowerCase())
     );
 
+    // Open settings modal
+    const openSettings = () => {
+        setIsSettingsOpen(true);
+    };
+
+    // Close settings modal
+    const closeSettings = () => {
+        setIsSettingsOpen(false);
+    };
+
     // Handle tour reset for testing purposes
     const resetTour = () => {
         localStorage.removeItem("guideCompleted");
@@ -406,7 +418,8 @@ const ChatList = () => {
                             <img className="avatar" src={currentUser.avatar || '../../../../public/avatar.png'} alt="" />
                             <span>{currentUser.username}</span>
                         </li>
-                        <li>
+                        <li className="settings"
+                            onClick={openSettings}>
                             <MdOutlineSettings />
                             <span>Settings</span>
                         </li>
@@ -499,6 +512,8 @@ const ChatList = () => {
             >
                 Reset Tour
             </button> */}
+
+            { isSettingsOpen && <Settings onClose={closeSettings} />}
         </div>
     );
 };

@@ -1,8 +1,8 @@
 import './Settings.css';
 import React, { useState } from 'react';
-import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut } from 'lucide-react';
+import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut, X } from 'lucide-react';  
 
-const Settings = () => {
+const Settings = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('profile');
   
   const renderContent = () => {
@@ -24,6 +24,9 @@ const Settings = () => {
   
   return (
     <div className="settings-wrapper">
+          <button className="settings-close" onClick={onClose}>
+              <X size={24} />
+          </button>
       {/* Sidebar Navigation */}
       <div className="settings__sidebar">
         <div className="settings__sidebar-header">
