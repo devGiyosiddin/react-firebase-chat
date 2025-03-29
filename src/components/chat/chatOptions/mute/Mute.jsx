@@ -1,12 +1,14 @@
+import './mute.css';
+
 import { IoVolumeMediumOutline, IoVolumeMuteOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../../../lib/firebase";
 
 const ToggleMute = ({ chatId, onStatusChange }) => {
-    const [status, setStatus] = useState("unmute"); // Default to unmute
+    const [status, setStatus] = useState("unmute");
+    const [userSoundSetting, setUserSoundSetting] = useState("unmute");
 
-    // Reading chat status from Firebase
     useEffect(() => {
         if (!chatId) {
             console.error("chatId is undefined or null");
@@ -66,12 +68,12 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
         <div className="option" onClick={handleToggle}>
             {status === "mute" ? (
                 <>
-                    <IoVolumeMuteOutline className="option-icon" />
+                    <IoVolumeMuteOutline size="24" className="option-icon" />
                     Unmute
                 </>
             ) : (
                 <>
-                    <IoVolumeMediumOutline className="option-icon" />
+                    <IoVolumeMediumOutline size="24" className="option-icon" />
                     Mute
                 </>
             )}
