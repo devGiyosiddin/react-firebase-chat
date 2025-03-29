@@ -1,0 +1,16 @@
+.emoji {
+    position: relative;
+    
+    .emoji-icon {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    
+    .picker {
+        position: absolute;
+        bottom: 50px;
+        border-radius: 10px;
+        background-color: grey;
+    }
+}

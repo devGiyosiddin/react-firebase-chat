@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense, memo } from "react";
 import "./chat.css";
-import EmojiPicker from "emoji-picker-react";
-import { Theme } from "emoji-picker-react";
+import EmojiPickerComponent from "./emoji/EmojiPickerComponent";
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
@@ -287,11 +286,11 @@ const Chat = ({ onInfoClick }) => {
         };
     }, [chatId, currentUserId, lastMessageId, userSoundSetting]);    
 
-    const handleEmoji = (e) => {
+    const handleEmoji = useCallback((e) => {
         if (e?.emoji) {
             setText((prev) => prev + e.emoji);
         }
-    };
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -573,19 +572,17 @@ const Chat = ({ onInfoClick }) => {
                 
                 {!isRecording && (
                     <div className="input-inner">
-                        <div className="emoji" ref={emojiPickerRef}>
-                            <BsEmojiSmile className="emoji-icon" onClick={() => setOpen(prev => !prev)} />
+                            <EmojiPickerComponent onEmojiSelect={handleEmoji} />
+                        {/* <div className="emoji" ref={emojiPickerRef}>
+                            <BsEmojiSmile className="emoji-icon"
+                                onClick={() => setOpen(prev => !prev)} />
                             {open && (
                                 <Suspense fallback={<div>Loading...</div>}>
                                     <div className="picker">
-                                        <EmojiPicker
-                                            onEmojiClick={handleEmoji}
-                                            theme={Theme.DARK}
-                                        />
                                     </div>
                                 </Suspense>
                             )}
-                        </div>
+                        </div> */}
                         <input
                             type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
                             value={text}
