@@ -1,4 +1,5 @@
 import './Settings.css';
+import './media.css';
 import React, { useState } from 'react';
 import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut, X } from 'lucide-react';  
 
