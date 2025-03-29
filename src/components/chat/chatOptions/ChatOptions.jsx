@@ -4,7 +4,7 @@ import BlockUser from "./blockUser";
 import ChatBgImg from "./chatBgImg/chatBgImg";
 import "./chatOptions.css";
 import { useChatStore } from "../../lib/chatStore";
-import ToggleMute from "./mute/Mute"; // Update path if needed
+import ToggleMute from "./mute/Mute";
 
 const ChatOptions = ({ onUploadComplete, currentChatId, onSoundSettingChange }) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -12,9 +12,12 @@ const ChatOptions = ({ onUploadComplete, currentChatId, onSoundSettingChange }) 
     const optionsRef = useRef(null);
     const { chatId } = useChatStore();
     
+    // Use currentChatId from props or chatId from store
+    const activeChatId = currentChatId || chatId;
+    
     useEffect(() => {
-        console.log("Получен chatId в ChatOptions:", chatId);
-    }, [chatId]);
+        console.log("ChatOptions using chatId:", activeChatId);
+    }, [activeChatId]);
     
     const handleSoundSettingChange = (setting) => {
         setChatSoundSetting(setting);
@@ -46,8 +49,8 @@ const ChatOptions = ({ onUploadComplete, currentChatId, onSoundSettingChange }) 
         };
     }, [isVisible]);
     
-    // Check if currentChatId exists
-    if (!currentChatId) {
+    // Check if activeChatId exists
+    if (!activeChatId) {
         return <div>Ошибка: chatId отсутствует.</div>;
     }
     
@@ -59,9 +62,9 @@ const ChatOptions = ({ onUploadComplete, currentChatId, onSoundSettingChange }) 
             />
             {isVisible && (
                 <div className="chat-options">
-                    <ChatBgImg chatId={chatId} onUploadComplete={onUploadComplete} />
+                    <ChatBgImg chatId={activeChatId} onUploadComplete={onUploadComplete} />
                     <ToggleMute
-                        chatId={chatId}
+                        chatId={activeChatId}
                         onStatusChange={handleSoundSettingChange}
                     />
                     <div className="option">Option 2</div>

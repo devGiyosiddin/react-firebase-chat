@@ -1,26 +1,34 @@
 import './mute.css';
 import { IoVolumeMediumOutline, IoVolumeMuteOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
-import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "../../../lib/firebase";
 
 const ToggleMute = ({ chatId, onStatusChange }) => {
-    const [userSoundSetting, setUserSoundSetting] = useState("mute");
+    const [userSoundSetting, setUserSoundSetting] = useState(null); // Start with null to indicate loading
+    const [isLoading, setIsLoading] = useState(true);
     const currentUserId = auth.currentUser.uid;
 
     useEffect(() => {
+        let isMounted = true;
+        
         if (!chatId || !currentUserId) {
             console.error("chatId or userId is undefined or null");
             return;
         }
-   
+    
         // Get user-specific sound settings from Firebase
         const getUserSoundSettings = async () => {
             try {
+                setIsLoading(true);
+                
+                if (!isMounted) return;
+                
                 const userDoc = await getDoc(doc(db, 'users', currentUserId));
-                if (userDoc.exists()) {
+                if (userDoc.exists() && isMounted) {
                     const userData = userDoc.data();
-                    console.log(userData.soundSettings);
+                    console.log("Retrieved sound settings:", userData.soundSettings);
+                    
                     if (userData.soundSettings && userData.soundSettings[chatId]) {
                         setUserSoundSetting(userData.soundSettings[chatId]);
                         if (onStatusChange) {
@@ -30,6 +38,18 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
                         // If settings for this chat don't exist, set default
                         const initialSetting = "mute";
                         await updateUserSoundSetting(initialSetting);
+                        if (isMounted) {
+                            setUserSoundSetting(initialSetting);
+                            if (onStatusChange) {
+                                onStatusChange(initialSetting);
+                            }
+                        }
+                    }
+                } else {
+                    // No user document exists yet
+                    const initialSetting = "mute";
+                    await updateUserSoundSetting(initialSetting);
+                    if (isMounted) {
                         setUserSoundSetting(initialSetting);
                         if (onStatusChange) {
                             onStatusChange(initialSetting);
@@ -38,14 +58,20 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
                 }
             } catch (err) {
                 console.error("Error getting user sound settings:", err);
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         };
-
+    
         getUserSoundSettings();
         
-        return () => {};
-    }, [chatId, currentUserId, onStatusChange]);    
-
+        return () => {
+            isMounted = false;
+        };
+    }, [chatId, currentUserId]); // Remove onStatusChange from dependencies
+  
     // Update user sound settings in Firebase
     const updateUserSoundSetting = async (newSetting) => {
         try {
@@ -71,14 +97,15 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
                     }
                 });
             }
-            console.log(`Chat ${chatId} sound setting updated to: ${newSetting}`);
         } catch (err) {
             console.error("Error updating sound settings:", err);
         }
     };
 
+
     // Handler for toggling status
-    const handleToggle = async () => {
+    const handleToggle = async (e) => {
+        e.stopPropagation(); // Stop event propagation
         try {
             if (!chatId) {
                 console.error("Cannot update: chatId is undefined");
@@ -87,25 +114,26 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
             
             const newSetting = userSoundSetting === "mute" ? "unmute" : "mute";
             
+            // Update local state immediately to prevent flickering
+            setUserSoundSetting(newSetting);
+            
             // Update user settings in Firebase
             await updateUserSoundSetting(newSetting);
-            
-            // Update local state
-            setUserSoundSetting(newSetting);
             
             if (onStatusChange) {
                 onStatusChange(newSetting);
             }
-            
-            console.log("Before toggle:", userSoundSetting);
-            console.log("After toggle:", newSetting);
         } catch (error) {
             console.error("Error updating sound settings:", error);
-            console.log("Current chatId:", chatId);
-            console.log("Current setting:", userSoundSetting);
+            // Revert local state if Firebase update fails
+            setUserSoundSetting(prevSetting => prevSetting === "mute" ? "unmute" : "mute");
         }
-
     };
+
+    // Show loading indicator or empty div while fetching settings
+    if (isLoading || userSoundSetting === null) {
+        return <div className="option">...</div>;
+    }
 
     return (
         <div className="option" onClick={handleToggle}>
