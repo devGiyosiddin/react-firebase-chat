@@ -1,7 +1,8 @@
 import './Settings.css';
 import './media.css';
 import React, { useState } from 'react';
-import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut, X } from 'lucide-react';  
+import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut, X } from 'lucide-react';
+import ProfileSettings from './profileSettings/ProfileSettings';
 
 const Settings = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -105,77 +106,6 @@ const Settings = ({ onClose }) => {
     </div>
   );
 };
-
-// Individual settings sections
-import './ProfileSettings.css';
-const ProfileSettings = () => (
-  <div className="profile-settings">
-    <h2 className="profile-settings__heading">Profile Settings</h2>
-    
-    <div className="profile-settings__section">
-      <div className="profile-settings__photo-area">
-        <img src="/api/placeholder/80/80" alt="Profile" className="profile-settings__photo" />
-        <div>
-          <button className="profile-settings__photo-button">
-            Change Photo
-          </button>
-          <p className="profile-settings__photo-info">JPG, GIF or PNG. Max size 5MB</p>
-        </div>
-      </div>
-      
-      <div className="profile-settings__form">
-        <div className="profile-settings__form-field">
-          <label className="profile-settings__label">First Name</label>
-          <input 
-            type="text" 
-            className="profile-settings__input"
-            defaultValue="Alex"
-          />
-        </div>
-        <div className="profile-settings__form-field">
-          <label className="profile-settings__label">Last Name</label>
-          <input 
-            type="text" 
-            className="profile-settings__input"
-            defaultValue="Morgan"
-          />
-        </div>
-        <div className="profile-settings__form-field">
-          <label className="profile-settings__label">Email</label>
-          <input 
-            type="email" 
-            className="profile-settings__input"
-            defaultValue="alex.morgan@example.com"
-          />
-        </div>
-        <div className="profile-settings__form-field">
-          <label className="profile-settings__label">Phone Number</label>
-          <input 
-            type="tel" 
-            className="profile-settings__input"
-            defaultValue="+1 (555) 123-4567"
-          />
-        </div>
-        <div className="profile-settings__form-field profile-settings__form-field--full">
-          <label className="profile-settings__label">Bio</label>
-          <textarea 
-            className="profile-settings__textarea"
-            defaultValue="Product designer based in New York. I enjoy creating user-centric, delightful, and human experiences."
-          ></textarea>
-        </div>
-      </div>
-    </div>
-    
-    <div className="profile-settings__actions">
-      <button className="profile-settings__button profile-settings__button--cancel">
-        Cancel
-      </button>
-      <button className="profile-settings__button profile-settings__button--save">
-        Save Changes
-      </button>
-    </div>
-  </div>
-);
 
 import './NotificationSettings.css';
 const NotificationSettings = () => (
@@ -315,78 +245,126 @@ const PrivacySettings = () => (
   </div>
 );
 
-import styles from "./AppearanceSettings.module.css";
+// AppearanceSettings.jsx
+import styles from './AppearanceSettings.module.css';
 
-const AppearanceSettings = () => (
-  <div className={"appearance-settings"}>
-    <h2>Appearance</h2>
+const AppearanceSettings = () => {
+  const [selectedTheme, setSelectedTheme] = useState('light');
+  const [selectedBackground, setSelectedBackground] = useState(0);
+  const [fontSize, setFontSize] = useState(16);
 
-    <div className={"settings-container"}>
-      <h3>Theme</h3>
+  const handleThemeChange = (theme) => {
+    setSelectedTheme(theme);
+  };
 
-      <div className={"theme-options"}>
-        <div className={`${"theme-card"} ${"selected"}`}>
-          <div className={"indicator"}></div>
-          <div className={`${"preview"} ${"light"}`}></div>
-          <p>Light</p>
-        </div>
+  const handleBackgroundChange = (index) => {
+    setSelectedBackground(index);
+  };
 
-        <div className={"theme-card"}>
-          <div className={`${"preview"} ${"dark"}`}></div>
-          <p>Dark</p>
-        </div>
+  const handleFontSizeChange = (e) => {
+    setFontSize(e.target.value);
+  };
 
-        <div className={"theme-card"}>
-          <div className={`${"preview"} ${"system"}`}></div>
-          <p>System</p>
+  const handleReset = () => {
+    setSelectedTheme('light');
+    setSelectedBackground(0);
+    setFontSize(16);
+  };
+
+  const handleSave = () => {
+    // Save settings logic here
+    console.log('Settings saved:', { selectedTheme, selectedBackground, fontSize });
+  };
+
+  // Background preview colors
+  const backgrounds = [
+    '#ffffff', 
+    '#f7fafc', 
+    '#edf2f7', 
+    '#e2e8f0'
+  ];
+
+  return (
+    <div className={styles.appearanceSettings}>
+      <h2>Appearance</h2>
+      
+      <div className={styles.settingsContainer}>
+        <h3>Theme</h3>
+        <div className={styles.themeOptions}>
+          <div 
+            className={`${styles.themeCard} ${selectedTheme === 'light' ? styles.selected : ''}`}
+            onClick={() => handleThemeChange('light')}
+          >
+            <div className={`${styles.preview} ${styles.light}`}></div>
+            {selectedTheme === 'light' && <div className={styles.indicator}></div>}
+            <div>Light</div>
+          </div>
+
+          <div 
+            className={`${styles.themeCard} ${selectedTheme === 'dark' ? styles.selected : ''}`}
+            onClick={() => handleThemeChange('dark')}
+          >
+            <div className={`${styles.preview} ${styles.dark}`}></div>
+            {selectedTheme === 'dark' && <div className={styles.indicator}></div>}
+            <div>Dark</div>
+          </div>
+
+          <div 
+            className={`${styles.themeCard} ${selectedTheme === 'system' ? styles.selected : ''}`}
+            onClick={() => handleThemeChange('system')}
+          >
+            <div className={`${styles.preview} ${styles.system}`}></div>
+            {selectedTheme === 'system' && <div className={styles.indicator}></div>}
+            <div>System</div>
+          </div>
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className={styles.settingsContainer}>
         <h3>Chat Background</h3>
-
-        <div className={"background-options"}>
-          <div className={`${"bg-option"} ${"selected"}`}>
-            <div className={"preview"} style={{ background: "#fff" }}></div>
-          </div>
-
-          <div className={"bg-option"}>
-            <div className={"preview"} style={{ background: "#f3f4f6" }}></div>
-          </div>
-
-          <div className={"bg-option"}>
-            <div className={"preview"} style={{ background: "#eff6ff" }}></div>
-          </div>
-
-          <div className={"bg-option"}>
-            <div className={"preview"} style={{ background: "linear-gradient(to right, #eff6ff, #ede9fe)" }}></div>
-          </div>
+        <div className={styles.backgroundOptions}>
+          {backgrounds.map((bg, index) => (
+            <div 
+              key={index}
+              className={`${styles.bgOption} ${selectedBackground === index ? styles.selected : ''}`}
+              onClick={() => handleBackgroundChange(index)}
+            >
+              <div 
+                className={styles.preview} 
+                style={{ background: bg }}
+              ></div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className={styles.settingsContainer}>
         <h3>Font Size</h3>
-
-        <div className={"font-size-slider"}>
-          <span style={{ fontSize: "0.875rem" }}>A</span>
-          <input
-            type="range"
-            min="1"
-            max="5"
-            defaultValue="3"
-            className={"slider"}
+        <div className={styles.fontSizeSlider}>
+          <span className={styles.smallA}>A</span>
+          <input 
+            type="range" 
+            min="12" 
+            max="24" 
+            value={fontSize}
+            onChange={handleFontSizeChange}
+            className={styles.slider}
           />
-          <span style={{ fontSize: "1.25rem" }}>A</span>
+          <span className={styles.largeA}>A</span>
         </div>
       </div>
-    </div>
 
-    <div className={"actions"}>
-      <button className={"reset-btn"}>Reset to Defaults</button>
-      <button className={"save-btn"}>Save Changes</button>
+      <div className={styles.actions}>
+        <button className={styles.resetBtn} onClick={handleReset}>
+          Reset to Defaults
+        </button>
+        <button className={styles.saveBtn} onClick={handleSave}>
+          Save Changes
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 import "./LanguageSettings.module.css";
 
