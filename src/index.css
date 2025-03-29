@@ -1,4 +1,7 @@
 :root {
+  --text-color: #fff;
+  --text-color-dark: #000;
+  --text-info: #6b7280;
   --bg-color: #181818;
   --container-color: #212121;
   --icons-color: #aaa;
@@ -7,9 +10,12 @@
   --purple-3: #7261e1;
   --btn-blue: #1a73e8;
   --red-btn: #dc143ccb;
+  --red-btn-2: #dc143c88;
   --secondary-textColor: rgba(170, 170, 170, 0.08);
   --icon-green: #9EDF9C;
   --orange: #f79f79;
+  --orange-2: #f79f7988;
+  --card-bg: #2f3132;
 }
 
 * {
@@ -45,7 +51,7 @@ body {
   display: flex;
   width: 100%;
   max-width: 1680px;
-  min-height: 100%;
+  min-height: 100%; 
   background: var(--container-color);
   margin: 0 auto;
   border-radius: 12px;
