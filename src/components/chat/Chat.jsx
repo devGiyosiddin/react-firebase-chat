@@ -51,89 +51,30 @@ const Chat = ({ onInfoClick }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
+    const [lastMessageId, setLastMessageId] = useState(null);
     const recordingTimerRef = useRef(null);
     const [cameraStream, setCameraStream] = useState(null);
     const [isCameraActive, setIsCameraActive] = useState(false);
     const videoRef = useRef(null);
-    
-    // Персональные настройки звука
     const [userSoundSetting, setUserSoundSetting] = useState("unmute"); // Настройка текущего пользователя
-    const [lastMessageId, setLastMessageId] = useState(null);
-    
     const sendSound = "/src/components/notification/sounds/send.mp3";
     const getSound = "/src/components/notification/sounds/get.mp3";
     const deleteSound = "/src/components/notification/sounds/delete.mp3";
-    
-    // Получение персональных настроек звука при инициализации
-    useEffect(() => {
-        const getUserSoundSettings = async () => {
-            try {
-                // Получаем настройки из коллекции пользователей
-                const userDoc = await getDoc(doc(db, 'users', currentUserId));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.soundSettings && userData.soundSettings[chatId]) {
-                        setUserSoundSetting(userData.soundSettings[chatId]);
-                    } else {
-                        // Если настроек для этого чата нет, устанавливаем по умолчанию
-                        const initialSetting = "unmute";
-                        await updateUserSoundSetting(initialSetting);
-                        setUserSoundSetting(initialSetting);
-                    }
-                }
-            } catch (err) {
-                console.error("Ошибка при получении настроек звука пользователя:", err);
-            }
-        };
-        
-        if (chatId && currentUserId) {
-            getUserSoundSettings();
-        }
-    }, [chatId, currentUserId]);
 
-    // Обновление настроек звука пользователя
-    const updateUserSoundSetting = async (newSetting) => {
-        try {
-            const userRef = doc(db, 'users', currentUserId);
-            const userDoc = await getDoc(userRef);
-            
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                const currentSettings = userData.soundSettings || {};
-                
-                // Обновляем настройки для конкретного чата
-                await updateDoc(userRef, {
-                    soundSettings: {
-                        ...currentSettings,
-                        [chatId]: newSetting
-                    }
-                });
-            } else {
-                // Если документ пользователя не существует, создаем его
-                await updateDoc(userRef, {
-                    soundSettings: {
-                        [chatId]: newSetting
-                    }
-                });
-            }
-        } catch (err) {
-            console.error("Ошибка при обновлении настроек звука:", err);
-        }
+    const handleSoundSettingChange = (setting) => {
+        console.log("Sound setting changed to:", setting);
+        setUserSoundSetting(setting);
     };
 
-    // Воспроизведение звука с учетом персональных настроек
+    // The playSound function can stay the same
     const playSound = (soundPath) => {
+        console.log("Attempting to play sound, current setting:", userSoundSetting);
         if (userSoundSetting !== 'mute') {
             const audio = new Audio(soundPath);
             audio.play().catch((err) => console.error("Error playing sound:", err));
+        } else {
+            console.log("Sound is muted, not playing.");
         }
-    };
-    
-    // Переключение режима звука
-    const toggleSoundMode = async () => {
-        const newMode = userSoundSetting === 'mute' ? 'unmute' : 'mute';
-        await updateUserSoundSetting(newMode);
-        setUserSoundSetting(newMode);
     };
 
     useEffect(() => {
@@ -504,6 +445,10 @@ const Chat = ({ onInfoClick }) => {
         }
     };
 
+    useEffect(() => {
+        console.log("Sound setting changed in Chat component:", userSoundSetting);
+    }, [userSoundSetting]);
+
     return (
         <div className="chat">
             <div className="top">
@@ -515,26 +460,18 @@ const Chat = ({ onInfoClick }) => {
                             {user?.bio || ""}
                         </p>
                     </div>
-                            {userSoundSetting === 'mute' && <span
-                                className="mute-indicator">
-                                    <IoVolumeMuteOutline className="sound-icon-small muted" />
-                                </span>
-                            }
+                    {userSoundSetting === 'mute' && <span
+                        className="mute-indicator">
+                            <IoVolumeMuteOutline className="sound-icon-small muted" />
+                        </span>
+                    }
                 </div>
                 <div className="icons">
-                    <div 
-                        className="sound-control" 
-                        title={userSoundSetting === 'mute' ? 'Включить уведомления' : 'Отключить уведомления'}
-                        onClick={toggleSoundMode}
-                    >
-                        {userSoundSetting === 'mute' ? (
-                            <IoVolumeMuteOutline size={24} className="sound-icon muted" />
-                        
-                        ) : (
-                            <IoVolumeHighOutline size={24} className="sound-icon" />
-                        )}
-                    </div>
-                    <ChatOptions currentChatId={currentChatId} onUploadComplete={handleBgImgUpload} />
+                <ChatOptions 
+                    currentChatId={currentChatId}
+                    onUploadComplete={handleBgImgUpload} 
+                    onSoundSettingChange={handleSoundSettingChange} 
+                />
                 </div>
             </div>
             <div className="chat">

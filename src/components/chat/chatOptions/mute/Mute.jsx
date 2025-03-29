@@ -1,39 +1,81 @@
 import './mute.css';
-
 import { IoVolumeMediumOutline, IoVolumeMuteOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { db, auth } from "../../../lib/firebase";
 
 const ToggleMute = ({ chatId, onStatusChange }) => {
-    const [status, setStatus] = useState("unmute");
-    const [userSoundSetting, setUserSoundSetting] = useState("unmute");
+    const [userSoundSetting, setUserSoundSetting] = useState("mute");
+    const currentUserId = auth.currentUser.uid;
 
     useEffect(() => {
-        if (!chatId) {
-            console.error("chatId is undefined or null");
+        if (!chatId || !currentUserId) {
+            console.error("chatId or userId is undefined or null");
             return;
         }
    
-        const chatRef = doc(db, "chats", chatId);
-        const unsubscribe = onSnapshot(chatRef, (docSnapshot) => {
-            if (docSnapshot.exists()) {
-                const chatStatus = docSnapshot.data().status || "unmute";
-                setStatus(chatStatus);
-                if (onStatusChange) {
-                    onStatusChange(chatStatus);
+        // Get user-specific sound settings from Firebase
+        const getUserSoundSettings = async () => {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUserId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    console.log(userData.soundSettings);
+                    if (userData.soundSettings && userData.soundSettings[chatId]) {
+                        setUserSoundSetting(userData.soundSettings[chatId]);
+                        if (onStatusChange) {
+                            onStatusChange(userData.soundSettings[chatId]);
+                        }
+                    } else {
+                        // If settings for this chat don't exist, set default
+                        const initialSetting = "mute";
+                        await updateUserSoundSetting(initialSetting);
+                        setUserSoundSetting(initialSetting);
+                        if (onStatusChange) {
+                            onStatusChange(initialSetting);
+                        }
+                    }
                 }
-            } else {
-                console.error(`No document exists for chat ID: ${chatId}`);
-                // Optionally create the document if it doesn't exist
-                // updateDoc(chatRef, { status: "unmute" });
+            } catch (err) {
+                console.error("Error getting user sound settings:", err);
             }
-        }, (error) => {
-            console.error("Error fetching chat document:", error);
-        });
-   
-        return () => unsubscribe();
-    }, [chatId, onStatusChange]);    
+        };
+
+        getUserSoundSettings();
+        
+        return () => {};
+    }, [chatId, currentUserId, onStatusChange]);    
+
+    // Update user sound settings in Firebase
+    const updateUserSoundSetting = async (newSetting) => {
+        try {
+            const userRef = doc(db, 'users', currentUserId);
+            const userDoc = await getDoc(userRef);
+            
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const currentSettings = userData.soundSettings || {};
+                
+                // Update settings for specific chat
+                await updateDoc(userRef, {
+                    soundSettings: {
+                        ...currentSettings,
+                        [chatId]: newSetting
+                    }
+                });
+            } else {
+                // Use setDoc instead of updateDoc for new documents
+                await setDoc(userRef, {
+                    soundSettings: {
+                        [chatId]: newSetting
+                    }
+                });
+            }
+            console.log(`Chat ${chatId} sound setting updated to: ${newSetting}`);
+        } catch (err) {
+            console.error("Error updating sound settings:", err);
+        }
+    };
 
     // Handler for toggling status
     const handleToggle = async () => {
@@ -42,31 +84,32 @@ const ToggleMute = ({ chatId, onStatusChange }) => {
                 console.error("Cannot update: chatId is undefined");
                 return;
             }
-
-            const chatRef = doc(db, "chats", chatId);
-            const newStatus = status === "mute" ? "unmute" : "mute";
             
-            await updateDoc(chatRef, {
-                status: newStatus,
-            });
-
-            setStatus(newStatus);
+            const newSetting = userSoundSetting === "mute" ? "unmute" : "mute";
+            
+            // Update user settings in Firebase
+            await updateUserSoundSetting(newSetting);
+            
+            // Update local state
+            setUserSoundSetting(newSetting);
+            
             if (onStatusChange) {
-                onStatusChange(newStatus);
+                onStatusChange(newSetting);
             }
-            console.log(`Chat ${chatId} status updated to: ${newStatus}`);
-        } catch (error) {
-            console.error("Error updating chat status:", error);
             
-            // Additional debugging
+            console.log("Before toggle:", userSoundSetting);
+            console.log("After toggle:", newSetting);
+        } catch (error) {
+            console.error("Error updating sound settings:", error);
             console.log("Current chatId:", chatId);
-            console.log("Current status:", status);
+            console.log("Current setting:", userSoundSetting);
         }
+
     };
 
     return (
         <div className="option" onClick={handleToggle}>
-            {status === "mute" ? (
+            {userSoundSetting === "mute" ? (
                 <>
                     <IoVolumeMuteOutline size="24" className="option-icon" />
                     Unmute
