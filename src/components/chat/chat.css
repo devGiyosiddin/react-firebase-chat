@@ -216,6 +216,7 @@
             .highlighted-message {
                 transition: background-color 0.3s ease;
                 background-color: var(--orange-2);
+                box-shadow: 0 0 8px rgba(255, 204, 0, 0.5) !important;
             }
             
             .own.current-search-result {
