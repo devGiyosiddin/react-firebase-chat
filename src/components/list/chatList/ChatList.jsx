@@ -14,6 +14,7 @@ import { MdOutlineSettings } from "react-icons/md";
 import Joyride from "react-joyride";
 import UserInfo from '../userInfo/UserInfo';
 import Settings from "../../settings/Settings";
+import UniversalSearch from './universalSearch/UniversalSearch';
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -151,7 +152,8 @@ const ChatList = () => {
                 // Получаем данные чата
                 const chatDocRef = doc(db, 'chats', item.chatId);
                 const chatDocSnap = await getDoc(chatDocRef);
-                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};              console.log('chatdata:', chatData);
+                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
+                console.log('chatdata:', chatData);
                 const lastMessage = chatData.lastMessage;
                 console.log(lastMessage)
                 return {
@@ -252,7 +254,7 @@ const ChatList = () => {
             changeChat(chat.chatId, chat.user);
 
             // Scroll to down the chat
-            
+
         } catch (err) {
             console.error("Error updating user chats:", err);
         }
@@ -433,6 +435,13 @@ const ChatList = () => {
                         </button>
                     </ul>
                 )}
+                <UniversalSearch
+                    inputRef={searchInputRef}
+                    setInput={setInput}
+                    input={input}
+                    handleSelect={handleSelect}
+                    filteredChats={filteredChats}
+                />
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
                     <IoMdSearch onClick={handleIconClick} className="searchIcon" />
                     <input

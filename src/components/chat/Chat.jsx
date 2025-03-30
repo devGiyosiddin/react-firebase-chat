@@ -22,7 +22,7 @@ import CameraCapture from "./capturePhoto/webcam";
 import { toast } from "react-toastify";
 import ChatSearch from './chatSearch/ChatSearch';
 import { SearchIcon } from 'lucide-react';
-import UniversalSearch from '../list/chatList/addUser/universalSearch/UniversalSearch';
+import UniversalSearch from '../list/chatList/universalSearch/UniversalSearch';
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
