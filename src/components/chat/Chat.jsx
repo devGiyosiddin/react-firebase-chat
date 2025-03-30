@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, Suspense, memo, useLayoutEffect } from "react";
 import "./chat.css";
 import EmojiPickerComponent from "./emoji/EmojiPickerComponent";
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc, addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
@@ -22,6 +22,7 @@ import CameraCapture from "./capturePhoto/webcam";
 import { toast } from "react-toastify";
 import ChatSearch from './chatSearch/ChatSearch';
 import { SearchIcon } from 'lucide-react';
+import UniversalSearch from '../list/chatList/addUser/universalSearch/UniversalSearch';
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -60,7 +61,6 @@ const Chat = ({ onInfoClick }) => {
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [searchActive, setSearchActive] = useState(false);
     const [currentSearchIndex, setCurrentSearchIndex] = useState(-1);
-    const [cameraStream, setCameraStream] = useState(null);
     const [isCameraActive, setIsCameraActive] = useState(false);
     const videoRef = useRef(null);
     const [userSoundSetting, setUserSoundSetting] = useState("unmute");
@@ -237,6 +237,45 @@ const Chat = ({ onInfoClick }) => {
         setContextMenu(null);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (contextMenu && !e.target.closest('.context-menu')) {
+                closeContextMenu();
+            }
+        };
+
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && contextMenu) {
+                closeContextMenu();
+            }
+        };
+
+        const handleScroll = (e) => {
+            if (contextMenu) {
+                e.preventDefault();
+                return false;
+            }
+        };
+
+        if (contextMenu) {
+            document.body.style.overflow = 'hidden';
+            document.querySelector('.messages').style.overflow = 'hidden';
+            document.addEventListener('click', handleClickOutside);
+            document.addEventListener('keydown', handleEscape);
+            document.addEventListener('scroll', handleScroll, { passive: false });
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+            if (document.querySelector('.messages')) {
+                document.querySelector('.messages').style.overflow = '';
+            }
+            document.removeEventListener('click', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+            document.removeEventListener('scroll', handleScroll);
+        };
+    }, [contextMenu, closeContextMenu]);
+
     const saveEditedMessage = () => {
         if (editingMessage && editingText.trim()) {
             handleEditMessage(editingMessage.createdAt.seconds, editingText);
@@ -284,6 +323,10 @@ const Chat = ({ onInfoClick }) => {
             messagesElement?.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    const toggleChatSearch = () => {
+        setOpenSearch((prev) => !prev);
+    };
 
     const handleSearch = (query) => {
         if (!query.trim()) {
@@ -507,6 +550,38 @@ const Chat = ({ onInfoClick }) => {
         console.log("Sound setting changed in Chat component:", userSoundSetting);
     }, [userSoundSetting]);
 
+    const handleAddToFavorites = async (message) => {
+        try {
+            await addDoc(collection(db, 'favorites'), {
+                userId: currentUser.id,
+                message,
+                savedAt: new Date(),
+                chatId,
+                originalMessageId: message.createdAt.seconds
+            });
+            toast.success('Message saved to favorites');
+        } catch (error) {
+            console.error('Error saving to favorites:', error);
+            toast.error('Failed to save message');
+        }
+    };
+
+    const handleAddReaction = async (message) => {
+        try {
+            await addDoc(collection(db, 'reactions'), {
+                userId: currentUser.id,
+                message,
+                createdAt: new Date(),
+                chatId,
+                originalMessageId: message.createdAt.seconds
+            });
+            toast.success('Reaction added');
+        } catch (error) {
+            console.error('Error adding reaction:', error);
+            toast.error('Failed to add reaction');
+        }
+    }
+
     return (
         <div className="chat">
             <div className="top">
@@ -526,10 +601,8 @@ const Chat = ({ onInfoClick }) => {
                 </div>
                 <div className="icons">
                     <SearchIcon size={22}
-                        onClick={() => setOpenSearch(true)}
+                        onClick={() => setOpenSearch(!openSearch)}
                         className="chatSearch-icon" />
-                    
-
 
                     <ChatOptions
                         currentChatId={currentChatId}
@@ -551,7 +624,7 @@ const Chat = ({ onInfoClick }) => {
                 >
                 
                 {/* Search messages */}
-                <ChatSearch onSearch={handleSearch} />
+                { openSearch &&  <ChatSearch onSearch={handleSearch} /> }    
                 {searchActive && filteredMessages.length > 0 && (
                     <div className="search-navigation">
                         <span>{currentSearchIndex + 1} / {filteredMessages.length}</span>
@@ -589,7 +662,7 @@ const Chat = ({ onInfoClick }) => {
                                     setContextMenu(null);
                                 }}
                             >
-                                ✏️ Изменить
+                                <span>✏️</span> Edit
                             </button>
                             <button
                                 onClick={() => {
@@ -597,8 +670,26 @@ const Chat = ({ onInfoClick }) => {
                                     setContextMenu(null);
                                 }}
                             >
-                                🗑️ Удалить
+                                <span>🗑️</span> Delete
                             </button>
+                            <button
+                                onClick={() => {
+                                    handleAddToFavorites(contextMenu.message);
+                                    setContextMenu(null);
+                                }}
+                            >
+                                <span>⭐</span> Save
+                            </button>
+                            <div className="reaction-picker">
+                                {['❤️', '👍', '😂', '😮', '😢', '😡'].map(emoji => (
+                                    <button
+                                        key={emoji}
+                                        onClick={() => handleAddReaction(contextMenu.message, emoji)}
+                                    >
+                                        {emoji}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
 

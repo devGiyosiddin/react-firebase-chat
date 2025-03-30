@@ -210,6 +210,26 @@
                         font-size: 13px;
                     }
                 }
+
+                .reactions {
+                    display: flex;
+                    gap: 4px;
+                    margin-top: 4px;
+                    
+                    .reaction {
+                        display: flex;
+                        align-items: center;
+                        gap: 2px;
+                        padding: 2px 4px;
+                        border-radius: 12px;
+                        background: var(--container-color);
+                        font-size: 12px;
+                        
+                        .count {
+                            color: var(--icons-color);
+                        }
+                    }
+                }
             }
 
             /* Search message */
@@ -294,14 +314,52 @@
                 padding: 10px;
                 background: var(--bg-color);
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                
+                .reaction-picker {
+                    position: absolute;
+                    top: 105%;
+                    display: flex;
+                    gap: 4px;
+                    padding: 8px;
+                    border-radius: 10px;
+                    background-color: var(--container-color);
+                    border-top: 1px solid var(--container-color);
+                    
+                    button {
+                        padding: 4px;
+                        border: none;
+                        background: none;
+                        cursor: pointer;
+                        border-radius: 4px;
+                        transition: transform 0.2s;
+                        
+                        &:hover {
+                            transform: scale(1.2);
+                            background: var(--purple-hover);
+                        }
+
+                        
+                    }
+                }
             }
             .context-menu button {
-                background: none;
-                border: none;
+                display: flex;
+                width: 100%;
                 color: #fff;
                 cursor: pointer;
+                border: none;
+                border-radius: 5px;
+                background: none;
                 padding: 5px;
-            }            
+                
+                &:hover {
+                    background: var(--purple-hover);
+                }
+
+                span {
+                    margin-right: 5px;
+                }
+            }
         }
         
     }
