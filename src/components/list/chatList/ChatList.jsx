@@ -36,9 +36,6 @@ const ChatList = () => {
     const db = getFirestore();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const toggleProfile = () => {
-        setIsProfileOpen((prev) => !prev);
-    };
 
     
     // Steps for Joyride
@@ -120,6 +117,11 @@ const ChatList = () => {
             }
         }
     };
+    
+    // Toggle profile modal
+    const toggleProfile = () => {
+        setIsProfileOpen((prev) => !prev);
+    };
 
     // Показать меню и задать позицию
     const handleContextMenu = (event) => {
@@ -127,7 +129,7 @@ const ChatList = () => {
         setMenuPosition({ x: event.pageX, y: event.pageY });
         setIsContextMenuVisible(true);
     };
-
+    
     // Скрыть меню при клике вне его
     const handleClickOutsideMenu = (event) => {
         if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
@@ -248,6 +250,9 @@ const ChatList = () => {
     
             setChats(updatedChats);
             changeChat(chat.chatId, chat.user);
+
+            // Scroll to down the chat
+            
         } catch (err) {
             console.error("Error updating user chats:", err);
         }
