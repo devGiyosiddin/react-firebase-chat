@@ -20,10 +20,13 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaCamera, FaStop } from "react-icons/fa";
 import CameraCapture from "./capturePhoto/webcam";
 import { toast } from "react-toastify";
+import ChatSearch from './chatSearch/ChatSearch';
+import { SearchIcon } from 'lucide-react';
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
     const [open, setOpen] = useState(false);
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const [openFileList, setOpenFileList] = useState(false);
     const [text, setText] = useState("");
     const [img, setImg] = useState({
@@ -37,7 +40,7 @@ const Chat = ({ onInfoClick }) => {
     const [audioChunks, setAudioChunks] = useState([]);
     const [audioStream, setAudioStream] = useState(null);
     const [isAudioInputActive, setIsAudioInputActive] = useState(false);
-    
+    const [messages, setMessages] = useState([]);
     const endRef = useRef(null);
     const emojiPickerRef = useRef(null); 
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
@@ -51,12 +54,16 @@ const Chat = ({ onInfoClick }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('1234');
     const currentUserId = auth.currentUser.uid;
+    const [ openSearch, setOpenSearch] = useState(false);
     const [lastMessageId, setLastMessageId] = useState(null);
     const recordingTimerRef = useRef(null);
+    const [filteredMessages, setFilteredMessages] = useState([]);
+    const [searchActive, setSearchActive] = useState(false);
+    const [currentSearchIndex, setCurrentSearchIndex] = useState(-1);
     const [cameraStream, setCameraStream] = useState(null);
     const [isCameraActive, setIsCameraActive] = useState(false);
     const videoRef = useRef(null);
-    const [userSoundSetting, setUserSoundSetting] = useState("unmute"); // Настройка текущего пользователя
+    const [userSoundSetting, setUserSoundSetting] = useState("unmute");
     const sendSound = "/src/components/notification/sounds/send.mp3";
     const getSound = "/src/components/notification/sounds/get.mp3";
     const deleteSound = "/src/components/notification/sounds/delete.mp3";
@@ -278,39 +285,86 @@ const Chat = ({ onInfoClick }) => {
         };
     }, []);
 
-    useEffect(() => {
+    const handleSearch = (query) => {
+        if (!query.trim()) {
+          setFilteredMessages([]);
+          setSearchActive(false);
+          setCurrentSearchIndex(-1);
+          return;
+        }
+        
+        const query_lower = query.toLowerCase();
+        
+        // Фильтруем сообщения, которые содержат поисковый запрос
+        const filtered = chat.messages.filter(message => 
+          message.text?.toLowerCase().includes(query_lower)
+        );
+        
+        setFilteredMessages(filtered);
+        setSearchActive(true);
+        setCurrentSearchIndex(filtered.length > 0 ? 0 : -1);
+        
+        // Если есть результаты, прокрутите к первому найденному сообщению
+        if (filtered.length > 0) {
+          setTimeout(() => scrollToMessage(filtered[0].id), 100);
+        }
+      };
+      
+      // Функция для прокрутки к конкретному сообщению
+      const scrollToMessage = (messageId) => {
+        const messageElement = document.getElementById(`message-${messageId}`);
+        if (messageElement) {
+          messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          messageElement.classList.add('highlighted-message');
+          
+          // Удаляем подсветку через некоторое время
+          setTimeout(() => {
+            messageElement.classList.remove('highlighted-message');
+          }, 2000);
+        }
+      };
+      
+      // Функция для переключения между результатами поиска
+      const navigateSearchResults = (direction) => {
+        if (!filteredMessages.length) return;
+        
+        let newIndex = currentSearchIndex;
+        
+        if (direction === 'next') {
+          newIndex = (currentSearchIndex + 1) % filteredMessages.length;
+        } else {
+          newIndex = (currentSearchIndex - 1 + filteredMessages.length) % filteredMessages.length;
+        }
+        
+        setCurrentSearchIndex(newIndex);
+        // Change this line to use createdAt.seconds instead of id
+        scrollToMessage(filteredMessages[newIndex].createdAt.seconds);
+      };
+      
+      useEffect(() => {
         const chatRef = doc(db, 'chats', chatId);
-       
+        
         const unSub = onSnapshot(chatRef, async (res) => {
-            if (!res.exists()) return;
-       
-            const chatData = res.data();
-            setChat(chatData);
-            setBgImgUrl(chatData?.bgImgUrl || "");
-       
-            const messages = chatData?.messages || [];
-            const lastMessage = messages[messages.length - 1];
-            
-            if (
-                lastMessage &&
-                lastMessage.senderId !== currentUserId &&
-                lastMessageId !== lastMessage.createdAt?.seconds &&
-                userSoundSetting !== 'mute'
-            ) {
-                playSound(getSound);
-                setLastMessageId(lastMessage.createdAt?.seconds);
-            }
-       
-            // Time for the chat messages load fully & scroll to the bottom
-            setTimeout(() => {
-                scrollToDown();
-            }, 100);
+          if (!res.exists()) return;
+          
+          const chatData = res.data();
+          setChat(chatData);
+          
+          const messagesData = chatData?.messages || [];
+          setMessages(messagesData);
+          
+          // Сбрасываем поиск при смене чата
+          setFilteredMessages([]);
+          setSearchActive(false);
+          
+          // Скролл вниз только если не в режиме поиска
+          if (!searchActive) {
+            setTimeout(() => scrollToDown(), 100);
+          }
         });
-       
-        return () => {
-            unSub();
-        };
-    }, [chatId, currentUserId, lastMessageId, userSoundSetting]);
+        
+        return () => unSub();
+      }, [chatId]);
 
     const handleEmoji = useCallback((e) => {
         if (e?.emoji) {
@@ -324,7 +378,7 @@ const Chat = ({ onInfoClick }) => {
                 emojiPickerRef.current &&
                 !emojiPickerRef.current.contains(event.target)
             ) {
-                setOpen(false);
+                setEmojiPickerOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -471,11 +525,17 @@ const Chat = ({ onInfoClick }) => {
                     }
                 </div>
                 <div className="icons">
-                <ChatOptions 
-                    currentChatId={currentChatId}
-                    onUploadComplete={handleBgImgUpload} 
-                    onSoundSettingChange={handleSoundSettingChange} 
-                />
+                    <SearchIcon size={22}
+                        onClick={() => setOpenSearch(true)}
+                        className="chatSearch-icon" />
+                    
+
+
+                    <ChatOptions
+                        currentChatId={currentChatId}
+                        onUploadComplete={handleBgImgUpload} 
+                        onSoundSettingChange={handleSoundSettingChange} 
+                    />
                 </div>
             </div>
             <div className="chat">
@@ -489,12 +549,26 @@ const Chat = ({ onInfoClick }) => {
                         backgroundRepeat: "no-repeat"
                     }}
                 >
+                
+                {/* Search messages */}
+                <ChatSearch onSearch={handleSearch} />
+                {searchActive && filteredMessages.length > 0 && (
+                    <div className="search-navigation">
+                        <span>{currentSearchIndex + 1} / {filteredMessages.length}</span>
+                        <button onClick={() => navigateSearchResults('prev')}>▲</button>
+                        <button onClick={() => navigateSearchResults('next')}>▼</button>
+                    </div>
+                )}
 
                 <div className="messages" ref={messagesRef} onClick={closeContextMenu}>
-                    {chat?.messages?.map(message => (
+                    {chat?.messages?.map(message => {
+                        const isHightlighted = searchActive && filteredMessages.some(m => m.createdAt.seconds === message.createdAt.seconds);
+
+                    return (
                         <div
-                            className={message.senderId === currentUser.id ? "message own" : "message"}
+                            className={message.senderId === currentUser.id ? "message own" + (isHightlighted ? ' current-search-result' : '') : "message" + (isHightlighted ? ' current-search-result' : '')}
                             key={message?.createdAt}
+                            id={`message-${message.createdAt.seconds}`}
                             onContextMenu={(e) => handleContextMenu(e, message)}
                         >
                             <div className="texts">
@@ -503,7 +577,7 @@ const Chat = ({ onInfoClick }) => {
                                 {message.text && <p>{message.text}</p>}
                             </div>
                         </div>
-                    ))}
+                    )})}
                     {contextMenu && (
                         <div
                             className="context-menu"
@@ -577,17 +651,12 @@ const Chat = ({ onInfoClick }) => {
                 
                 {!isRecording && (
                     <div className="input-inner">
-                            <EmojiPickerComponent onEmojiSelect={handleEmoji} />
-                        {/* <div className="emoji" ref={emojiPickerRef}>
-                            <BsEmojiSmile className="emoji-icon"
-                                onClick={() => setOpen(prev => !prev)} />
-                            {open && (
-                                <Suspense fallback={<div>Loading...</div>}>
-                                    <div className="picker">
-                                    </div>
-                                </Suspense>
-                            )}
-                        </div> */}
+                        <EmojiPickerComponent 
+                            ref={emojiPickerRef}
+                            onEmojiSelect={handleEmoji}
+                            isOpen={emojiPickerOpen} 
+                            setIsOpen={setEmojiPickerOpen}
+                        />
                         <input
                             type="text" placeholder={isCurrentUserBlocked || isReceiverBlocked ? "You are blocked" : "Type a message..."}
                             value={text}
