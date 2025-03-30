@@ -384,10 +384,17 @@
             max-width: 700px;
             padding: 5px 10px;
             
-            .file {
+            .file, .camera {
+                color: var(--icons-color);
                 width: 24px;
                 height: 24px;
                 cursor: pointer;
+                transition: all 0.4s ease;
+
+                &:hover {
+                    transform: scale(1.2);
+                    color: var(--purple);
+                }
             }
             .icons {
                 position: absolute;

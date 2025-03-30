@@ -8,8 +8,7 @@ import { useUserStore } from "../lib/userStore";
 import upload from "../lib/upload";
 import { FiDelete } from "react-icons/fi";
 import { FaArrowDown } from "react-icons/fa";
-import { MdAttachFile } from "react-icons/md";
-import { BsEmojiSmile } from "react-icons/bs";
+import { MdAttachFile, MdOutlineInsertDriveFile } from "react-icons/md";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { IoVolumeMuteOutline, IoVolumeHighOutline } from "react-icons/io5"; // Иконки для звука
 import ChatOptions from "./chatOptions/ChatOptions";
@@ -763,7 +762,7 @@ const Chat = ({ onInfoClick }) => {
                         {openFileList && (
                             <div className="icons">
                                 <label htmlFor="file">
-                                    <img src="./img.png" alt="Upload" />
+                                    <MdOutlineInsertDriveFile className="file" size={20} />
                                 </label>
                                 <input 
                                     type="file" 
@@ -771,10 +770,10 @@ const Chat = ({ onInfoClick }) => {
                                     style={{ display: 'none' }} 
                                     onChange={handleImg} 
                                 />
-                                <img 
-                                    src="./camera.png" 
-                                    alt="Open Camera" 
-                                    onClick={handleCameraOpen} 
+                                <FaCamera
+                                    className="camera"
+                                    size={20} 
+                                    onClick={handleCameraOpen}
                                 />
                             </div>
                         )}
