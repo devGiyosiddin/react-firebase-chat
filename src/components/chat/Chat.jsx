@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, Suspense, memo } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense, memo, useLayoutEffect } from "react";
 import "./chat.css";
 import EmojiPickerComponent from "./emoji/EmojiPickerComponent";
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
@@ -19,6 +19,7 @@ import { MdOutlineStop } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaCamera, FaStop } from "react-icons/fa";
 import CameraCapture from "./capturePhoto/webcam";
+import { toast } from "react-toastify";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -250,41 +251,66 @@ const Chat = ({ onInfoClick }) => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
 
+    useLayoutEffect(() => {
+        if (chat?.messages?.length > 0) {
+            scrollToDown();
+        }
+    }, [chat?.messages]);
+
+    const handleScroll = () => {
+        const scrollTop = messagesRef.current.scrollTop;
+        const scrollHeight = messagesRef.current.scrollHeight;
+        const clientHeight = messagesRef.current.clientHeight;
+    
+        if (scrollTop + clientHeight < scrollHeight - 100) {
+            setShowScrollDown(true);
+        } else {
+            setShowScrollDown(false);
+        }
+    };
+
     useEffect(() => {
-        scrollToDown();
+        const messagesElement = messagesRef.current;
+        messagesElement?.addEventListener("scroll", handleScroll);
+    
+        return () => {
+            messagesElement?.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     useEffect(() => {
         const chatRef = doc(db, 'chats', chatId);
-    
+       
         const unSub = onSnapshot(chatRef, async (res) => {
             if (!res.exists()) return;
-    
+       
             const chatData = res.data();
             setChat(chatData);
             setBgImgUrl(chatData?.bgImgUrl || "");
-    
+       
             const messages = chatData?.messages || [];
-            const lastMessage = messages[messages.length - 1]; // Get the last message
-
-            // Проверяем необходимость воспроизведения звука для входящего сообщения
+            const lastMessage = messages[messages.length - 1];
+            
             if (
-                lastMessage && 
-                lastMessage.senderId !== currentUserId && 
+                lastMessage &&
+                lastMessage.senderId !== currentUserId &&
                 lastMessageId !== lastMessage.createdAt?.seconds &&
-                userSoundSetting !== 'mute' // Используем локальную настройку пользователя
+                userSoundSetting !== 'mute'
             ) {
                 playSound(getSound);
-                setLastMessageId(lastMessage.createdAt?.seconds); // Update lastMessageId to prevent duplicate sounds
+                setLastMessageId(lastMessage.createdAt?.seconds);
             }
-    
-            scrollToDown();
+       
+            // Time for the chat messages load fully & scroll to the bottom
+            setTimeout(() => {
+                scrollToDown();
+            }, 100);
         });
-    
+       
         return () => {
             unSub();
         };
-    }, [chatId, currentUserId, lastMessageId, userSoundSetting]);    
+    }, [chatId, currentUserId, lastMessageId, userSoundSetting]);
 
     const handleEmoji = useCallback((e) => {
         if (e?.emoji) {
@@ -410,27 +436,6 @@ const Chat = ({ onInfoClick }) => {
         setOpenFileList(false);
         setIsAudioInputActive(false);
     };
-
-    const handleScroll = () => {
-        const scrollTop = messagesRef.current.scrollTop;
-        const scrollHeight = messagesRef.current.scrollHeight;
-        const clientHeight = messagesRef.current.clientHeight;
-    
-        if (scrollTop + clientHeight < scrollHeight - 100) {
-            setShowScrollDown(true);
-        } else {
-            setShowScrollDown(false);
-        }
-    };
-
-    useEffect(() => {
-        const messagesElement = messagesRef.current;
-        messagesElement?.addEventListener("scroll", handleScroll);
-    
-        return () => {
-            messagesElement?.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
 
     // Проверяем, должна ли кнопка отправки показывать микрофон
     const shouldShowMicButton = !text && !img.file && !audioFile && !isRecording;
