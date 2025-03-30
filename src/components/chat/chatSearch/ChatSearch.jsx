@@ -11,7 +11,7 @@ function ChatSearch({ onSearch }) {
   };
 
   return (
-    <div className="search-container">
+    <div className="chat-search-container">
       <input
         type="text"
         placeholder="Search messages..."
