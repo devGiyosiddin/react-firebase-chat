@@ -233,26 +233,33 @@ const Chat = ({ onInfoClick }) => {
     };
 
     const handleContextMenu = (e, message) => {
-        e.preventDefault(); // Предотвращаем стандартное контекстное меню
+        e.preventDefault();
         
-        // Получаем размеры окна
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        const messagesContainer = messagesRef.current;
+        const containerRect = messagesContainer.getBoundingClientRect();
         
-        // Получаем координаты клика
+        // Calculate available space
+        const menuWidth = 150;
+        const menuHeight = 200; // Include reaction picker height
+        
+        // Get click coordinates relative to viewport
         let x = e.clientX;
         let y = e.clientY;
         
-        // Создаем виртуальный элемент для расчета размеров меню
-        const menuWidth = 150; // Примерная ширина меню
-        const menuHeight = 80; // Примерная высота меню
-        
-        // Корректируем позицию, если меню выходит за пределы окна
-        if (x + menuWidth > windowWidth) {
-            x = windowWidth - menuWidth;
+        // Adjust horizontal position
+        if (x + menuWidth > containerRect.right) {
+            x = containerRect.right - menuWidth - 10;
         }
-        if (y + menuHeight > windowHeight) {
-            y = windowHeight - menuHeight;
+        if (x < containerRect.left) {
+            x = containerRect.left + 10;
+        }
+        
+        // Adjust vertical position
+        if (y + menuHeight > containerRect.bottom) {
+            y = y - menuHeight;
+        }
+        if (y < containerRect.top) {
+            y = containerRect.top + 10;
         }
         
         setContextMenu({ x, y, message });
@@ -275,29 +282,14 @@ const Chat = ({ onInfoClick }) => {
             }
         };
 
-        const handleScroll = (e) => {
-            if (contextMenu) {
-                e.preventDefault();
-                return false;
-            }
-        };
-
         if (contextMenu) {
-            document.body.style.overflow = 'hidden';
-            document.querySelector('.messages').style.overflow = 'hidden';
             document.addEventListener('click', handleClickOutside);
             document.addEventListener('keydown', handleEscape);
-            document.addEventListener('scroll', handleScroll, { passive: false });
         }
 
         return () => {
-            document.body.style.overflow = '';
-            if (document.querySelector('.messages')) {
-                document.querySelector('.messages').style.overflow = '';
-            }
             document.removeEventListener('click', handleClickOutside);
             document.removeEventListener('keydown', handleEscape);
-            document.removeEventListener('scroll', handleScroll);
         };
     }, [contextMenu, closeContextMenu]);
 
@@ -594,7 +586,6 @@ const Chat = ({ onInfoClick }) => {
 
     const handleAddReaction = async (message, emoji) => {
         try {
-            // Update the message with the new reaction
             const updatedMessages = chat.messages.map(msg => {
                 if (msg.createdAt.seconds === message.createdAt.seconds) {
                     return {
@@ -608,7 +599,6 @@ const Chat = ({ onInfoClick }) => {
                 return msg;
             });
 
-            // Update the chat document with the new messages array
             await updateDoc(doc(db, 'chats', chatId), {
                 messages: updatedMessages
             });
@@ -683,11 +673,9 @@ const Chat = ({ onInfoClick }) => {
                             id={`message-${message.createdAt.seconds}`}
                             onContextMenu={(e) => handleContextMenu(e, message)}
                         >
-                            <div className="texts">
                                 {message.img && <img src={message.img} alt="" />}
                                 {message.audio && <audio controls src={message.audio}></audio>}
                                 {message.text && <p>{message.text}</p>}
-                            </div>
                             <div className="actions">
                             {message.reactions && (
                                 <div className="reactions">
