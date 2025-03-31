@@ -687,10 +687,8 @@ const Chat = ({ onInfoClick }) => {
                                 {message.img && <img src={message.img} alt="" />}
                                 {message.audio && <audio controls src={message.audio}></audio>}
                                 {message.text && <p>{message.text}</p>}
-                                <span className="message-time">
-                                    {format(message.createdAt.toDate(), 'HH:mm')}
-                                </span>
                             </div>
+                            <div className="actions">
                             {message.reactions && (
                                 <div className="reactions">
                                     {Object.entries(message.reactions).map(([userId, emoji]) => (
@@ -698,9 +696,13 @@ const Chat = ({ onInfoClick }) => {
                                     ))}
                                 </div>
                             )}
+                                <span className="message-time">
+                                    {format(message.createdAt.toDate(), 'HH:mm')}
+                                </span>
                             {favoriteMessages.has(message.createdAt.seconds) && (
                                 <span className="favorite-icon">⭐</span>
                             )}
+                            </div>
                         </div>
                     )})}
                     {contextMenu && (
