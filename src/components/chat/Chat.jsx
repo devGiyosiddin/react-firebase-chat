@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, Suspense, memo, useLayoutEffect } from "react";
 import "./chat.css";
 import EmojiPickerComponent from "./emoji/EmojiPickerComponent";
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc, addDoc, collection } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc, addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
@@ -67,6 +67,7 @@ const Chat = ({ onInfoClick }) => {
     const sendSound = "/src/components/notification/sounds/send.mp3";
     const getSound = "/src/components/notification/sounds/get.mp3";
     const deleteSound = "/src/components/notification/sounds/delete.mp3";
+    const [favoriteMessages, setFavoriteMessages] = useState(new Set());
 
     const handleSoundSettingChange = (setting) => {
         console.log("Sound setting changed to:", setting);
@@ -89,6 +90,30 @@ const Chat = ({ onInfoClick }) => {
             setEditingText(editingMessage.text || "");
         }
     }, [editingMessage]);
+
+    useEffect(() => {
+        const loadFavorites = async () => {
+            try {
+                const favoritesSnapshot = await getDocs(query(
+                    collection(db, 'favorites'),
+                    where('userId', '==', currentUser.id),
+                    where('chatId', '==', chatId)
+                ));
+                
+                const favoriteIds = new Set();
+                favoritesSnapshot.forEach(doc => {
+                    favoriteIds.add(doc.data().originalMessageId);
+                });
+                setFavoriteMessages(favoriteIds);
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+            }
+        };
+
+        if (chatId && currentUser?.id) {
+            loadFavorites();
+        }
+    }, [chatId, currentUser?.id]);
 
     // Функции для записи голоса
     const startRecording = async () => {
@@ -559,6 +584,7 @@ const Chat = ({ onInfoClick }) => {
                 chatId,
                 originalMessageId: message.createdAt.seconds
             });
+            setFavoriteMessages(prev => new Set(prev).add(message.createdAt.seconds));
             toast.success('Message saved to favorites');
         } catch (error) {
             console.error('Error saving to favorites:', error);
@@ -672,7 +698,7 @@ const Chat = ({ onInfoClick }) => {
                                     ))}
                                 </div>
                             )}
-                            {message.isFavorite && (
+                            {favoriteMessages.has(message.createdAt.seconds) && (
                                 <span className="favorite-icon">⭐</span>
                             )}
                         </div>
