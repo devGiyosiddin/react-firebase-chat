@@ -137,9 +137,25 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
     };
   }, []);
 
-  if (KeyboardEvent.key === "Escape") {
-    setIsFormVisible(false);
-  }
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        if (isFilterMenuVisible) {
+          setIsFilterMenuVisible(false);
+        } else if (isFormVisible) {
+          setIsFormVisible(false);
+        }
+      }
+    };
+  
+    // Регистрируем обработчик на уровне документа
+    document.addEventListener('keydown', handleEscKey);
+    
+    // Удаляем обработчик при размонтировании компонента
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isFormVisible, isFilterMenuVisible]);
 
   return (
     <>
@@ -148,7 +164,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
         {isFormVisible ? "Закрыть форму" : "Изображение фона"}
       </div>
       {isFormVisible && (
-        <div className="compact-form-container" onKeyDown={(e) => e.key === "Escape" && setIsFormVisible(false)}>
+        <div className="compact-form-container">
           <div className="compact-upload-files-container">
             <IoIosArrowBack title="Назад" className="cancel-icon" onClick={() => setIsFormVisible(false)} />
             <div
