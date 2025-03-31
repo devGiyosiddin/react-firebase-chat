@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import ChatSearch from './chatSearch/ChatSearch';
 import { SearchIcon } from 'lucide-react';
 import UniversalSearch from '../list/chatList/universalSearch/UniversalSearch';
+import { format } from "date-fns";
 
 const Chat = ({ onInfoClick }) => {
     const [chat, setChat] = useState("");
@@ -565,21 +566,34 @@ const Chat = ({ onInfoClick }) => {
         }
     };
 
-    const handleAddReaction = async (message) => {
+    const handleAddReaction = async (message, emoji) => {
         try {
-            await addDoc(collection(db, 'reactions'), {
-                userId: currentUser.id,
-                message,
-                createdAt: new Date(),
-                chatId,
-                originalMessageId: message.createdAt.seconds
+            // Update the message with the new reaction
+            const updatedMessages = chat.messages.map(msg => {
+                if (msg.createdAt.seconds === message.createdAt.seconds) {
+                    return {
+                        ...msg,
+                        reactions: {
+                            ...msg.reactions,
+                            [currentUser.id]: emoji
+                        }
+                    };
+                }
+                return msg;
             });
+
+            // Update the chat document with the new messages array
+            await updateDoc(doc(db, 'chats', chatId), {
+                messages: updatedMessages
+            });
+
+            setContextMenu(null);
             toast.success('Reaction added');
         } catch (error) {
             console.error('Error adding reaction:', error);
             toast.error('Failed to add reaction');
         }
-    }
+    };
 
     return (
         <div className="chat">
@@ -647,7 +661,20 @@ const Chat = ({ onInfoClick }) => {
                                 {message.img && <img src={message.img} alt="" />}
                                 {message.audio && <audio controls src={message.audio}></audio>}
                                 {message.text && <p>{message.text}</p>}
+                                <span className="message-time">
+                                    {format(message.createdAt.toDate(), 'HH:mm')}
+                                </span>
                             </div>
+                            {message.reactions && (
+                                <div className="reactions">
+                                    {Object.entries(message.reactions).map(([userId, emoji]) => (
+                                        <span key={userId} className="reaction">{emoji}</span>
+                                    ))}
+                                </div>
+                            )}
+                            {message.isFavorite && (
+                                <span className="favorite-icon">⭐</span>
+                            )}
                         </div>
                     )})}
                     {contextMenu && (
@@ -704,8 +731,8 @@ const Chat = ({ onInfoClick }) => {
                                 onChange={(e) => setEditingText(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && saveEditedMessage()}
                             />
-                            <button onClick={saveEditedMessage}>💾 Сохранить</button>
-                            <button onClick={() => setEditingMessage(null)}>❌ Отмена</button>
+                            <button onClick={saveEditedMessage}>💾 Save</button>
+                            <button onClick={() => setEditingMessage(null)}>❌ Cancel</button>
                         </div>
                     )}
                     {img.url && <div className="message own">
@@ -833,9 +860,9 @@ const Chat = ({ onInfoClick }) => {
                 </div>
             )}
         </div>
-        </div>
-        </div>
-    );
-}
+    </div>
+</div>
+);
+};
 
 export default Chat;
