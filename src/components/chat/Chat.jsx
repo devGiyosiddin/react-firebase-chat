@@ -656,6 +656,7 @@ const Chat = ({ onInfoClick }) => {
                             style={{ top: contextMenu.y, left: contextMenu.x }}
                         >
                             <button
+                                className="option"
                                 onClick={() => {
                                     setEditingMessage(contextMenu.message);
                                     setContextMenu(null);
@@ -664,6 +665,7 @@ const Chat = ({ onInfoClick }) => {
                                 <span>✏️</span> Edit
                             </button>
                             <button
+                                className="option"
                                 onClick={() => {
                                     handleDeleteMessage(contextMenu.message.createdAt.seconds);
                                     setContextMenu(null);
@@ -672,6 +674,7 @@ const Chat = ({ onInfoClick }) => {
                                 <span>🗑️</span> Delete
                             </button>
                             <button
+                                className="option"
                                 onClick={() => {
                                     handleAddToFavorites(contextMenu.message);
                                     setContextMenu(null);
@@ -682,6 +685,7 @@ const Chat = ({ onInfoClick }) => {
                             <div className="reaction-picker">
                                 {['❤️', '👍', '😂', '😮', '😢', '😡'].map(emoji => (
                                     <button
+                                        className="emoji-button"
                                         key={emoji}
                                         onClick={() => handleAddReaction(contextMenu.message, emoji)}
                                     >
