@@ -435,13 +435,14 @@ const ChatList = () => {
                         </button>
                     </ul>
                 )}
-                <UniversalSearch
+                {/* TODO: Implement universal search */}
+                {/* <UniversalSearch
                     inputRef={searchInputRef}
                     setInput={setInput}
                     input={input}
                     handleSelect={handleSelect}
                     filteredChats={filteredChats}
-                />
+                /> */}
                 <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
                     <IoMdSearch onClick={handleIconClick} className="searchIcon" />
                     <input
