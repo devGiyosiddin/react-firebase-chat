@@ -137,6 +137,10 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
     };
   }, []);
 
+  if (KeyboardEvent.key === "Escape") {
+    setIsFormVisible(false);
+  }
+
   return (
     <>
       <div className="option" onClick={() => setIsFormVisible(!isFormVisible)}>
@@ -160,7 +164,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
             >
               {imgUrl && (
                 <div className="uploaded-image-container">
-                  <h4 className="uploaded-image-title">Загруженное изображение:</h4>
+                  <h4 className="uploaded-image-title">Uploaded Image:</h4>
                   <img
                     src={imgUrl}
                     alt="Uploaded Preview"
@@ -174,11 +178,11 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
                   />
                   {isFilterMenuVisible && (
                     <div className="filter-menu" ref={filterMenuRef}>
-                      <button title="blur" onClick={() => toggleFilter("blur(5px)")}>Размытие</button>
-                      <button title="Black & White" onClick={() => toggleFilter("grayscale(100%)")}>Ч/Б</button>
-                      <button title="cuttlefish" onClick={() => toggleFilter("sepia(100%)")}>Сепия</button>
-                      <button title="contrast" onClick={() => toggleFilter("contrast(200%)")}>Контраст</button>
-                      <button title="brightness" onClick={() => toggleFilter("brightness(150%)")}>Яркость</button>
+                      <button title="blur" onClick={() => toggleFilter("blur(5px)")}>Blur</button>
+                      <button title="Black & White" onClick={() => toggleFilter("grayscale(100%)")}>W/B</button>
+                      <button title="cuttlefish" onClick={() => toggleFilter("sepia(100%)")}>Cuttlefish</button>
+                      <button title="contrast" onClick={() => toggleFilter("contrast(200%)")}>Contrast</button>
+                      <button title="brightness" onClick={() => toggleFilter("brightness(150%)")}>Brightness</button>
                       <button title="reset" onClick={() => toggleFilter("")}><GrPowerReset /></button>
                     </div>
                   )}
@@ -189,9 +193,9 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
               </h4>
               {!file && (
                 <>
-                  <span className="material-icons-outlined upload-icon">Загрузить изображение</span>
+                  <span className="material-icons-outlined upload-icon">Upload an image</span>
                   <label className="label">
-                    или{" "}
+                    or{" "}
                     <span className="browse-files">
                       <input
                         type="file"
@@ -199,7 +203,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
                         onChange={handleFileChange}
                         style={{ display: "none" }}
                       />
-                      <span className="browse-files-text">выбрать файл</span>
+                      <span className="browse-files-text">select the file</span>
                     </span>
                   </label>
                 </>
@@ -218,10 +222,10 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
               <div className="file-block">
                 <div className="file-info">
                   <div className="file-name-container">
-                    <span className="file-label">Имя:</span>
+                    <span className="file-label">Name:</span>
                     <span className="file-name">{fileName}</span>
                     <span className="separator">|</span>
-                    <span className="file-size">Размер: {fileSize}</span>
+                    <span className="file-size">Size: {fileSize}</span>
                   </div>
                 </div>
                 <button title="Удалить файл" type="button" className="material-icons remove-file-icon" onClick={handleRemoveFile}>
