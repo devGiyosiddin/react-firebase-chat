@@ -376,7 +376,7 @@ const ChatList = () => {
             ...prev,
             run: true
         }));
-    };
+};
 
     return (
         <div className="chatList">
@@ -431,6 +431,7 @@ const ChatList = () => {
                             <MdOutlineSettings />
                             <span>Settings</span>
                         </li>
+                    {/* TODO: Make confirmation to log out */}
                         <button className="logout" onClick={() => auth.signOut()}>
                             Log out
                         </button>
@@ -474,7 +475,7 @@ const ChatList = () => {
                         style={{
                             backgroundColor:
                                 chat.chatId === selectedChatId
-                                    ? 'var(--accent-color)'
+                                    ? 'var(--accent-hover)'
                                     : chat.isSeen
                                     ? 'transparent'
                                     : '#766ac8',

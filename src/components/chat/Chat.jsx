@@ -805,7 +805,7 @@ const Chat = ({ onInfoClick }) => {
                             onClick={() => setOpenFileList(!openFileList)}
                             className="file" 
                         />
-                                
+                                {/* TODO: Close on click outside */}
                         {openFileList && (
                             <div className="icons">
                                 <label htmlFor="file">
@@ -854,11 +854,12 @@ const Chat = ({ onInfoClick }) => {
             {audioFile && (
                 <div className="audioPreview">
                     <audio controls src={audioFile} />
+                    {/* TODO: Delete on click to delete icon */}
                     <button 
                         title="Remove the audio" 
                         className="removeAudioBtn" 
                         onClick={cancelRecording}
-                    >
+                        >
                         <RiDeleteBin6Line size={20} />
                     </button>
                 </div>

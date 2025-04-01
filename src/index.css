@@ -27,6 +27,11 @@
   --gap-2: 1rem;
   --gap-3: 1.5rem;
   --gap-4: 2rem;
+  --modal-border-radius: 10px;
+  --modal-width: 600px;
+
+  /* colors */
+  --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
 * {

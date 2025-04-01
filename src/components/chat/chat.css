@@ -45,10 +45,10 @@
                     font-weight: 300;
                     color: var(--text-color);
                 }
-                .mute-indicator {
-                    font-weight: 300;
-                    color: var(--accent-color);
-                }
+            }
+            .mute-indicator {
+                font-weight: 300;
+                color: var(--accent-hover);
             }
         }
         
@@ -119,10 +119,10 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
                 border-radius: 5px;
-                color: var(--accent-color);
+                color: var(--accent-hover);
                 
                 &:hover {
-                    color: var(--purple);
+                    color: var(--accent-color);
                 }
                 &:active {
                     transform: scale(0.9);
@@ -423,7 +423,7 @@
             padding: 5px 10px;
             
             .file {
-                color: var(--accent-color);
+                color: var(--accent-hover);
                 width: 24px;
                 height: 24px;
                 cursor: pointer;
@@ -478,37 +478,45 @@
                 width: 24px;
                 height: 24px;
                 cursor: pointer;
+                color: var(--accent-color);
+                transition: all 0.4s ease;
+                
+                &:hover {
+                    transform: scale(1.2);
+                    color: var(--accent-color);
+                }
             }
         }
         
         /* MICROPHONE */
         .sendButton.mic-button {
-            background-color: #8774e1;
+            background-color: var(--accent-hover);
             transition: all 0.3s ease;
         }
         
         .sendButton.mic-button:hover {
-            background-color: #7a68d6;
+            background-color: var(--accent-color);
         }
         
         .sendButton.recording {
-            background-color: #ff4c4c;
+            background-color: var(--accent-color);
         }
         
         /* Стили для индикатора записи */
         .recording-indicator {
             display: flex;
             align-items: center;
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: transparent;
             border-radius: 20px;
             padding: 8px 12px;
             margin-right: 8px;
             width: 100%;
             justify-content: space-between;
+            border: 2px solid var(--accent-hover);
         }
         
         .recording-time {
-            color: #ff4c4c;
+            color: var(--accent-hover);
             font-weight: bold;
             margin: 0 10px;
         }
@@ -523,7 +531,7 @@
             width: 3px;
             height: 15px;
             margin: 0 2px;
-            background-color: #ff4c4c;
+            background-color: var(--accent-color);
             border-radius: 3px;
             animation: wave 1s ease-in-out infinite;
         }
@@ -563,15 +571,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: all 0.3s ease;
+            color: var(--danger-btn);
         }
         
         .stop-recording {
-            color: #ff4c4c;
+            color: var(--danger-hover);
             background-color: rgba(255, 76, 76, 0.1) !important;
         }
         
         .cancel-recording {
-            color: #888;
+            color: var(--text-color);
             background-color: rgba(136, 136, 136, 0.1) !important;
         }
         
@@ -585,8 +595,8 @@
         
         /* SEND BUTTON */
         .sendButton {
-            background-color: #364c7f;
             color: #fff;
+            background-color: var(--accent-hover);
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -594,12 +604,12 @@
             transition: background-color 0.3s ease;
             
             &:hover {
-                background-color: #4169e1;
+                background-color: var(--accent-color);
             }
             
             &:disabled {
                 cursor: not-allowed;
-                background-color: #5183feb4;
+                background-color: var(--card-bg);
             }
         }
         
@@ -633,7 +643,7 @@
             top: 10px;
             right: 10px;
             border: none;
-            color: var(--orange);
+            color: var(--danger-hover);
             cursor: pointer;
             font-size: 20px;
             padding: 4px;

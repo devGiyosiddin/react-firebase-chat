@@ -5,6 +5,8 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--accent-color);
     }
     
     .picker {

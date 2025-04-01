@@ -1,6 +1,7 @@
 /* Light Theme (Default) */
 :root[data-theme="light"] {
   --accent-color: #3fc1b0;
+  --accent-hover: rgba(63, 193, 176, 0.7);
   --text-color: #333333;
   --text-color-dark: #000000;
   --text-info: #6b7280;
@@ -26,9 +27,10 @@
 /* Dark Theme */
 :root[data-theme="dark"] {
   --accent-color: #3fc1b0;
+  --accent-hover: rgba(63, 193, 176, 0.525);
   --text-color: #fff;
   --text-color-dark: #000;
-  --text-info: #6b7280;
+  --text-info: #d1d5db;
   --bg-color: #181818;
   --container-color: #212121;
   --icons-color: #aaa;
@@ -37,6 +39,8 @@
   --purple-3: #7261e1;
   --purple-hover: rgba(135, 116, 225, 0.7);
   --btn-blue: #1a73e8;
+  --danger-btn: #dc143c;
+  --danger-hover: rgba(220, 20, 60, 0.7);
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
@@ -51,6 +55,7 @@
 /* Purple Light Theme */
 :root[data-theme="purple-light"] {
   --accent-color: #8774e1;
+  --accent-hover: rgba(135, 116, 225, 0.7);
   --text-color: #3a3347;
   --text-color-dark: #271f34;
   --text-info: #6b6b80;
@@ -76,6 +81,7 @@
 /* Purple Dark Theme */
 :root[data-theme="purple-dark"] {
   --accent-color: #8774e1;
+  --accent-hover: rgba(135, 116, 225, 0.7);
   --text-color: #fff;
   --text-color-dark: #000;
   --text-info: #b8b5c9;
@@ -101,6 +107,7 @@
 /* Orange Light Theme */
 :root[data-theme="orange-light"] {
   --accent-color: #f79f79;
+  --accent-hover: rgba(247, 159, 121, 0.7);
   --text-color: #4a3a30;
   --text-color-dark: #2d2218;
   --text-info: #80766b;
@@ -126,6 +133,7 @@
 /* Orange Dark Theme */
 :root[data-theme="orange-dark"] {
   --accent-color: #f79f79;
+  --accent-hover: rgba(247, 159, 121, 0.7);
   --text-color: #fff;
   --text-color-dark: #000;
   --text-info: #d1c0b4;
@@ -151,6 +159,7 @@
 /* Ocean Blue Theme */
 :root[data-theme="ocean-blue"] {
   --accent-color: #64b5f6;
+  --accent-hover: rgba(100, 181, 246, 0.7);
   --text-color: #f0f8ff;
   --text-color-dark: #000;
   --text-info: #a8c5e0;
@@ -175,7 +184,8 @@
 
 /* Mint Green Theme */
 :root[data-theme="mint-green"] {
-  --accent-color: #64b5f6;
+  --accent-color: #94FFD4;
+  --accent-hover: rgba(148, 255, 212, 0.7);
   --text-color: #2c3e50;
   --text-color-dark: #1a2530;
   --text-info: #607d8b;
@@ -200,7 +210,8 @@
 
 /* Monokai Theme */
 :root[data-theme="monokai"] {
-  --accent-color: #3fc1b0;
+  --accent-color: #529bba;
+  --accent-hover: rgba(82, 155, 186, 0.7);
   --text-color: #f8f8f2;
   --text-color-dark: #000;
   --text-info: #a6e22e;
@@ -225,7 +236,8 @@
 
 /* Nord Theme */
 :root[data-theme="nord"] {
-  --accent-color: #3fc1b0;
+  --accent-color: #a1cdc7;
+  --accent-hover: rgba(161, 205, 199, 0.7);
   --text-color: #eceff4;
   --text-color-dark: #2e3440;
   --text-info: #81a1c1;
@@ -250,7 +262,8 @@
 
 /* Solarized Theme */
 :root[data-theme="solarized"] {
-  --accent-color: #3fc1b0;
+  --accent-color: #073642;
+  --accent-hover: rgba(7, 54, 66, 0.7);
   --text-color: #839496;
   --text-color-dark: #002b36;
   --text-info: #586e75;

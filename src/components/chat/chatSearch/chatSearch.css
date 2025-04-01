@@ -20,12 +20,12 @@
         padding: 6px;
         
         &::placeholder {
-            color: var(--accent-color);
+            color: var(--accent-hover);
         }
         
         &:focus {
             border-radius: 16px;
-            border: 1px solid var(--purple);
+            border: 1px solid var(--accent-color);
         }
     }
     
