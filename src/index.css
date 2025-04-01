@@ -1,32 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 :root {
-  --text-color: #fff;
-  --text-color-dark: #000;
-  --text-info: #6b7280;
-  --bg-color: #181818;
-  --container-color: #212121;
-  --icons-color: #aaa;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #1a73e8;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --success-message: #4BB543;
-  --secondary-textColor: rgba(170, 170, 170, 0.08);
-  --icon-green: #9EDF9C;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #2f3132;
+  /* layers */
+  --btn: 5;
+  --context-menu: 10;
+  --dropdown: 15;
+  --tooltip: 20;
+  --overlay: 30;
+  --overlay-btn: 35; 
+  --modal: 40;
+  --modal-btn: 45;
+  --modal-overlay: 50;
+  --preview: 55;
+  --popover: 60;
+  --banner: 70;
+  --tour-overlay: 75;
+  --tour-tooltip: 80;
+  --toast: 80;
+  --snackbar: 90;
+
+  /* sizes */
+  --btn-size: 2.5rem;
+  --btn-radius: 0.5rem;
+  --btn-padding: 0.5rem 1rem;
+  --gap-1: 0.5rem;
+  --gap-2: 1rem;
+  --gap-3: 1.5rem;
+  --gap-4: 2rem;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 html {
@@ -37,9 +43,10 @@ html {
 body {
   width: 100%;
   height: 100%;
-  color: #fff;
-  overflow-x: hidden;
+  color: var(--text-color);
   background: var(--bg-color);
+  /* overflow-x: hidden; */
+  font-family: 'Montserrat', sans-serif;
 }
 
 #root {
@@ -73,8 +80,8 @@ body {
 .loader {
   width: 85px;
   height: 50px;
-  --g1:conic-gradient(from  90deg at left   3px top   3px,#0000 90deg,#fff 0);
-  --g2:conic-gradient(from -90deg at bottom 3px right 3px,#0000 90deg,#fff 0);
+  --g1:conic-gradient(from  90deg at left   3px top   3px,#0000 90deg,var(--accent-color) 0);
+  --g2:conic-gradient(from -90deg at bottom 3px right 3px,#0000 90deg,var(--accent-color) 0);
   background:var(--g1),var(--g1),var(--g1), var(--g2),var(--g2),var(--g2);
   background-position: left,center,right;
   background-repeat: no-repeat;
@@ -89,9 +96,9 @@ body {
 }
 
 .react-joyride__overlay {
-  z-index: 999;
+  z-index: var(--tour-overlay);
 }
 
 .react-joyride__tooltip {
-  z-index: 1000;
+  z-index: var(--tour-tooltip);
 }
