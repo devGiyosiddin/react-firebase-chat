@@ -19,7 +19,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	color: var(--icons-color);
+	color: var(--accent-color);
 	border-radius: 20px;
 	background-color: var(--card-bg);
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 5px 10px;
@@ -204,7 +204,7 @@
   grid-template-columns: repeat(3, 1fr); /* Три колонки */
   grid-auto-rows: min-content; /* Автоматическая высота строк */
   gap: 10px; /* Отступы между кнопками */
-  z-index: 10;
+  z-index: var(--tooltip);
 }
 
 

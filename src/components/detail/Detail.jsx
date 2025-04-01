@@ -37,7 +37,7 @@ const Detail = ({onChangeState}) => {
             <div className="user">
                 <img src={user?.avatar || "./avatar.png"} alt="" />
                 <h2>{user?.username}</h2>
-                <p>Lorem ipsum dolor sit amet.</p>
+                <p>{user?.bio || "No bio"}</p>
             </div>
             <div className="info">
                 <div className="option" onClick={openItem}>

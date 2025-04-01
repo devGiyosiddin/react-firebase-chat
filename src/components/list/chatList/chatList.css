@@ -12,7 +12,7 @@
         position: relative;        
 
         .searchBar {
-            min-width: 276px;
+            width: 320px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -25,9 +25,9 @@
             
             .searchIcon,
             .clearIcon {
-                width: 24px;
-                height: 24px;
-                color: var(--icons-color);
+                width: 26px;
+                height: 26px;
+                color: var(--accent-color);
                 transition: color 0.3s ease;
             }
             .searchIcon {
@@ -38,11 +38,11 @@
             }
 
             &.focused {
-                border-color: var(--purple);
+                border-color: var(--accent-color);
                 
                 .searchIcon,
                 .clearIcon {
-                    color: var(--purple);
+                    color: var(--accent-color);
                 }
             }
 
@@ -82,7 +82,7 @@
             border-radius: 10px;
             padding: 10px;
             border: 1px solid var(--purple-2);
-            z-index: 1;
+            z-index: var(--dropdown);
             
             li {
                 display: flex;
@@ -187,7 +187,7 @@
                 }
                 .lastMessage {
                     font-size: 12px;
-                    color: var(--icons-color);
+                    color: var(--text-info);
                 }
             }
 

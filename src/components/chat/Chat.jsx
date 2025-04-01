@@ -849,7 +849,8 @@ const Chat = ({ onInfoClick }) => {
                 />
             )}
 
-            {/* Audio preview */}
+                    {/* Audio preview */}
+                    {/* TODO: Fix the audio preview */}
             {audioFile && (
                 <div className="audioPreview">
                     <audio controls src={audioFile} />

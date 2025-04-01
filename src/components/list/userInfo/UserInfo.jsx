@@ -4,6 +4,7 @@ import { useUserStore } from "../../../components/lib/userStore";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { MdOutlineEdit } from "react-icons/md";
 
+// TODO: Реализовать функционал редактирования профиля и стилизации
 const UserInfo = ({ toggleProfile }) => {
     const { currentUser } = useUserStore();
     return (
@@ -19,7 +20,7 @@ const UserInfo = ({ toggleProfile }) => {
                     <FaPaintBrush size={30} className="edit-icon" />
                 </div>
                 <h2 className="username">{currentUser.username}</h2>
-                <p className="status">{currentUser.status || "No status"}</p>
+                <p className="status">{currentUser.bio || "No bio"}</p>
             </div>
         </div>
     );

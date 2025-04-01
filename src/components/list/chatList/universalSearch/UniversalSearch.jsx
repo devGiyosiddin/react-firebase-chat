@@ -4,6 +4,7 @@ import { db, auth } from '../../../lib/firebase';
 import './universalSearch.css';
 import { Search, User, MessageSquare, Star, Plus } from 'lucide-react';
 
+// TODO: Реализовать поиск по чатам
 const UniversalSearch = ({ onSelect, onCreateChat }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState({

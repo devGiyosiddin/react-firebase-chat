@@ -19,7 +19,7 @@
   position: relative;
   height: 2px;
   width: 32px;
-  background-color: var(--icons-color);
+  background-color: var(--accent-color);
   transition: all 0.3s ease-in-out;
 }
 

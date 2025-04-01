@@ -418,6 +418,7 @@ const ChatList = () => {
                         toggleMenu={toggleMenu}
                     />
                 </div>
+                {/* TODO: Close menu on clicked option */}
                 {isMenuOpen && (
                     <ul className="dropdown-menu" ref={menuRef}>
                         <li className="user"
@@ -473,7 +474,7 @@ const ChatList = () => {
                         style={{
                             backgroundColor:
                                 chat.chatId === selectedChatId
-                                    ? '#766ac8'
+                                    ? 'var(--accent-color)'
                                     : chat.isSeen
                                     ? 'transparent'
                                     : '#766ac8',

@@ -1,15 +1,3 @@
-.options-icon {
-    width: 24px;
-    height: 24px;
-    color: var(--icons-color);
-    cursor: pointer;
-    transition: all 0.4s ease;
-
-    &:hover {
-        color: var(--orange);
-    }
-}
-
 .chat-options {
     position: absolute;
     max-width: 210px;
@@ -18,7 +6,7 @@
     background-color: var(--container-color);
     border-radius: 10px;
     padding: 5px;
-    z-index: 100;
+    z-index: var(--dropdown);
     
     .option {
         margin-bottom: 10px;
@@ -32,7 +20,7 @@
             width: 20px;
             height: 20px;
             margin-right: 20px;
-            color: var(--icons-color);
+            color: var(--accent-color);
         }            
         .option-block-icon {
             color: tomato;
@@ -42,7 +30,7 @@
             background-color: var(--secondary-textColor);
         }
         .option-text {
-            color: var(--icons-color);
+            color: var(--accent-color);
         }
     }
 }

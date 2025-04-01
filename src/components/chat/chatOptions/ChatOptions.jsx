@@ -57,8 +57,9 @@ const ChatOptions = ({ onUploadComplete, currentChatId, onSoundSettingChange }) 
     return (
         <div className="chat-options-wrapper" ref={optionsRef}>
             <SlOptionsVertical
-                className="options-icon"
+                className="chatOptions-icon"
                 onClick={toggleOptions}
+                size={24}
             />
             {isVisible && (
                 <div className="chat-options">

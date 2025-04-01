@@ -10,7 +10,7 @@
     border-radius: 16px;
     padding: 4px 8px;
     margin: 8px;
-    z-index: 100;
+    z-index: var(--tooltip);
 
     .search-input {
         flex: 1;
@@ -20,7 +20,7 @@
         padding: 6px;
         
         &::placeholder {
-            color: var(--icons-color);
+            color: var(--accent-color);
         }
         
         &:focus {
@@ -35,7 +35,7 @@
         border: none;
         cursor: pointer;
         font-size: 22px;
-        color: var(--icons-color);
+        color: var(--accent-color);
         margin: 0 10px;
         
         &:hover {
