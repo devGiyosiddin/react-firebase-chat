@@ -211,52 +211,58 @@ const AddUser = ({ setAddMode, handleSelect }) => {
     }, [setAddMode]);
 
     return (
-        <div
-            className="addUser"
-            onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}
-            ref={addUserRef}
-        >
-            <div className="search-container">
-                <input 
-                    type="text" 
-                    autoFocus 
-                    placeholder="Введите имя пользователя" 
-                    value={searchTerm}
-                    onChange={handleInputChange}
-                />
-            </div>
-            
-            <div className="search-results">
-                {searchResults.length > 0 ? (
-                    searchResults.map((result, index) => (
-                        <div 
-                            key={index} 
-                            className={`user-item ${user && user.id === result.id ? 'selected' : ''}`}
-                            onClick={() => handleSelectUser(result)}
-                        >
-                            <div className="detail">
-                                <img src={result.avatar || "./avatar.png"} alt="" />
-                                <span>{result.username}</span>
+        <div className="addUser-modal">
+            <div
+                className="addUser"
+                onKeyDown={(e) => e.key === "Escape" && setAddMode(false)}
+                ref={addUserRef}
+            >
+                <div className="search-container">
+                    <input 
+                        type="text" 
+                        autoFocus 
+                        placeholder="Введите имя пользователя" 
+                        value={searchTerm}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                
+                <div className="search-results">
+                    {searchResults.length > 0 ? (
+                        searchResults.map((result, index) => (
+                            <div 
+                                key={index} 
+                                className={`user-item ${user && user.id === result.id ? 'selected' : ''}`}
+                                onClick={() => handleSelectUser(result)}
+                            >
+                                <div className="detail">
+                                    <img src={result.avatar || "./avatar.png"} alt="" />
+                                    <div className="user-info">
+                                        <span className="username">{result.username}</span>
+                                        <span className="bio">{result.bio}</span>
+                                    </div>
+                                </div>
+                                {user && user.id === result.id && (
+                                    <div className="selected-indicator">✓</div>
+                                )}
                             </div>
-                            {user && user.id === result.id && (
-                                <div className="selected-indicator">✓</div>
-                            )}
+                        ))
+                    ) : (
+                        <div className="no-results">No result</div>
+                    )}
+                </div>
+                
+                {user && (
+                    <div className="selected-user">
+                        <div className="user-detail">
+                            <img src={user.avatar || "./avatar.png"} alt="" />
+                            <span>{user.username}</span>
+                            <span>{user.bio}</span>
                         </div>
-                    ))
-                ) : (
-                    <div className="no-results">No result</div>
+                        <button onClick={handleAdd} className="add-button">Add user</button>
+                    </div>
                 )}
             </div>
-            
-            {user && (
-                <div className="selected-user">
-                    <div className="user-detail">
-                        <img src={user.avatar || "./avatar.png"} alt="" />
-                        <span>{user.username}</span>
-                    </div>
-                    <button onClick={handleAdd} className="add-button">Add user</button>
-                </div>
-            )}
         </div>
     );
 };
