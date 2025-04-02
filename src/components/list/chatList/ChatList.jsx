@@ -355,8 +355,8 @@ const ChatList = () => {
         inputRef.current.focus();
     };
 
-    const filteredChats = chats.filter((c) =>
-        c.user.username.toLowerCase().includes(input.toLowerCase())
+    const filteredChats = chats.filter((chat) =>
+        chat.user.username.toLowerCase().includes(input.toLowerCase())
     );
 
     // Open settings modal
