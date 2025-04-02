@@ -1,4 +1,4 @@
-import './ProfileSettings.css';
+import '.profileSettings.css';
 import { useUserStore } from '../../lib/userStore';
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
