@@ -37,8 +37,8 @@ const ChatList = () => {
     const db = getFirestore();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    
     // Steps for Joyride
     const [tourState, setTourState] = useState({
         run: false,
@@ -143,34 +143,34 @@ const ChatList = () => {
             try {
                 setIsLoading(true);
                 const items = res.data()?.chats || [];
-    
-            const promises = items.map(async (item) => {
+        
+                const promises = items.map(async (item) => {
                     try {
-                const userDocRef = doc(db, 'users', item.receiverId);
-                const userDocSnap = await getDoc(userDocRef);
+                        const userDocRef = doc(db, 'users', item.receiverId);
+                        const userDocSnap = await getDoc(userDocRef);
                         const user = userDocSnap.data() || {};
-    
-                const chatDocRef = doc(db, 'chats', item.chatId);
-                const chatDocSnap = await getDoc(chatDocRef);
-                const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
+        
+                        const chatDocRef = doc(db, 'chats', item.chatId);
+                        const chatDocSnap = await getDoc(chatDocRef);
+                        const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
                         
-                return {
-                    ...item,
-                    user,
+                        return {
+                            ...item,
+                            user,
                             lastMessage: chatData.lastMessage,
-                };
+                        };
                     } catch (error) {
                         console.error("Error fetching chat data:", error);
                         return null;
                     }
-            });
-    
+                });
+        
                 const chatData = (await Promise.all(promises))
                     .filter(chat => chat !== null)
                     .sort((a, b) => {
-                    const aTime = a.updatedAt?.seconds || 0;
-                    const bTime = b.updatedAt?.seconds || 0;
-                    return bTime - aTime;
+                        const aTime = a.updatedAt?.seconds || 0;
+                        const bTime = b.updatedAt?.seconds || 0;
+                        return bTime - aTime;
                     });
         
                 setChats(chatData);
@@ -361,9 +361,10 @@ const ChatList = () => {
         inputRef.current.focus();
     };
 
-    const filteredChats = chats.filter((chat) =>
-        chat.user.username.toLowerCase().includes(input.toLowerCase())
-    );
+    const filteredChats = chats.filter((chat) => {
+        if (!chat?.user?.username) return false;
+        return chat.user.username.toLowerCase().includes(input.toLowerCase());
+    });
 
     // Open settings modal
     const openSettings = () => {
@@ -382,7 +383,7 @@ const ChatList = () => {
             ...prev,
             run: true
         }));
-};
+    };
 
     return (
         <div className="chatList">
@@ -473,53 +474,63 @@ const ChatList = () => {
                 />
             </div>
             <div className="chats">
-                {filteredChats.map((chat, index) => (
-                    <div
-                        className="item"
-                        key={`${chat.chatId}-${index}`}
-                        onClick={() => handleSelect(chat)}
-                        style={{
-                            backgroundColor:
-                                chat.chatId === selectedChatId
-                                    ? 'var(--accent-hover)'
-                                    : chat.isSeen
-                                    ? 'transparent'
-                                    : '#766ac8',
-                        }}
-                    >
-                    <div className="user-avatar">
-                        <img
-                            src={
-                                chat.user.blocked.includes(currentUser.id)
-                                    ? "./avatar.png"
-                                    : chat.user.avatar || "./avatar.png"
-                            }
-                            alt=""
-                        />
-                        <div 
-                            className={`status-indicator ${chat.receiverStatus || 'offline'}`}
-                            title={chat.receiverStatus || 'offline'}
-                        ></div>  
+                {isLoading ? (
+                    <div className="loading-container">
+                        <div className="chat-bubble"></div>
+                        <div className="chat-bubble"></div>
+                        <div className="chat-bubble"></div>
                     </div>
-                        <div className="texts">
-                            <span>
-                                {chat.user.blocked.includes(currentUser.id)
-                                    ? "Blocked"
-                                    : chat.user.username}
-                            </span>
-                            <span className="lastMessage">{chat.lastMessage || 'No message'}</span>
-                        </div>
-                        <button
-                            className="delete-btn"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(chat.chatId);
+                ) : filteredChats.length > 0 ? (
+                    filteredChats.map((chat, index) => (
+                        <div
+                            className="item"
+                            key={`${chat.chatId}-${index}`}
+                            onClick={() => handleSelect(chat)}
+                            style={{
+                                backgroundColor:
+                                    chat.chatId === selectedChatId
+                                        ? 'var(--accent-hover)'
+                                        : chat.isSeen
+                                        ? 'transparent'
+                                        : '#766ac8',
                             }}
                         >
-                            {<FaRegTrashCan />}
-                        </button>
-                    </div>
-                ))}
+                        <div className="user-avatar">
+                            <img
+                                src={
+                                    chat.user.blocked.includes(currentUser.id)
+                                        ? "./avatar.png"
+                                        : chat.user.avatar || "./avatar.png"
+                                }
+                                alt=""
+                            />
+                            <div 
+                                className={`status-indicator ${chat.receiverStatus || 'offline'}`}
+                                title={chat.receiverStatus || 'offline'}
+                            ></div>  
+                        </div>
+                            <div className="texts">
+                                <span>
+                                    {chat.user.blocked.includes(currentUser.id)
+                                        ? "Blocked"
+                                        : chat.user.username}
+                                </span>
+                                <span className="lastMessage">{chat.lastMessage || 'No message'}</span>
+                            </div>
+                            <button
+                                className="delete-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(chat.chatId);
+                                }}
+                            >
+                                {<FaRegTrashCan />}
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-chats">No chats found</div>
+                )}
             </div>
             {addMode && <AddUser setAddMode={setAddMode} handleSelect={handleSelect} />}
             
