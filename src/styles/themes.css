@@ -16,7 +16,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --success-bg: rgba(75, 181, 67, 0.1);
   --secondary-textColor: rgba(120, 120, 120, 0.08);
   --icon-green: #4CAF50;
   --orange: #f79f79;
@@ -44,7 +46,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --success-bg: rgba(75, 181, 67, 0.1);
   --secondary-textColor: rgba(170, 170, 170, 0.08);
   --icon-green: #9EDF9C;
   --orange: #f79f79;
@@ -70,7 +74,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --success-bg: rgba(75, 181, 67, 0.1);
   --secondary-textColor: rgba(135, 116, 225, 0.08);
   --icon-green: #4CAF50;
   --orange: #f79f79;
@@ -96,7 +102,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #ff5252;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --secondary-textColor: rgba(165, 148, 235, 0.08);
   --icon-green: #9EDF9C;
   --orange: #f79f79;
@@ -122,7 +130,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --secondary-textColor: rgba(247, 159, 121, 0.08);
   --icon-green: #4CAF50;
   --orange: #f79f79;
@@ -148,7 +158,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #ff5252;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --secondary-textColor: rgba(247, 177, 144, 0.08);
   --icon-green: #9EDF9C;
   --orange: #f79f79;
@@ -174,7 +186,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #ff5252;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --secondary-textColor: rgba(100, 181, 246, 0.08);
   --icon-green: #9EDF9C;
   --orange: #f79f79;
@@ -200,7 +214,9 @@
   --red-btn: #dc143ccb;
   --red-btn-2: #dc143c88;
   --error-message: #dc143c;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --success-message: #4BB543;
+  --error-bg: rgba(220, 20, 60, 0.1);
   --secondary-textColor: rgba(102, 187, 106, 0.08);
   --icon-green: #4CAF50;
   --orange: #f79f79;
@@ -226,7 +242,9 @@
   --red-btn: #f92672cb;
   --red-btn-2: #f9267288;
   --error-message: #f92672;
+  --error-bg: rgba(249, 38, 114, 0.1);
   --success-message: #a6e22e;
+  --error-bg: rgba(249, 38, 114, 0.1);
   --secondary-textColor: rgba(253, 151, 31, 0.08);
   --icon-green: #a6e22e;
   --orange: #fd971f;
@@ -252,7 +270,9 @@
   --red-btn: #bf616acb;
   --red-btn-2: #bf616a88;
   --error-message: #bf616a;
+  --error-bg: rgba(191, 97, 106, 0.1);
   --success-message: #a3be8c;
+  --error-bg: rgba(191, 97, 106, 0.1);
   --secondary-textColor: rgba(136, 192, 208, 0.08);
   --icon-green: #a3be8c;
   --orange: #d08770;
@@ -278,7 +298,9 @@
   --red-btn: #dc322fcb;
   --red-btn-2: #dc322f88;
   --error-message: #dc322f;
+  --error-bg: rgba(220, 50, 47, 0.1);
   --success-message: #859900;
+  --error-bg: rgba(220, 50, 47, 0.1);
   --secondary-textColor: rgba(42, 161, 152, 0.08);
   --icon-green: #859900;
   --orange: #cb4b16;
