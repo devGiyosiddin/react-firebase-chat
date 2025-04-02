@@ -17,7 +17,7 @@ import { PiMicrophone, PiMicrophoneFill } from "react-icons/pi";
 import { MdOutlineStop } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaCamera, FaStop } from "react-icons/fa";
-import CameraCapture from "./capturePhoto/webcam";
+import CameraCapture from "./capturePhoto/Webcam";
 import { toast } from "react-toastify";
 import ChatSearch from './chatSearch/ChatSearch';
 import { SearchIcon } from 'lucide-react';
