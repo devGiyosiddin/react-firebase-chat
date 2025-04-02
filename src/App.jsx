@@ -29,11 +29,12 @@ const App = () => {
     return () => unSub();
   }, [fetchUserInfo]);
 
+
   function handleChange(newState) {
     setShowDetail(newState);
   }
 
-  if (isLoading) return <div className="wrapper"><div className="loader"></div></div>;
+  if (isLoading) return <div className="loader-wrapper"><div className="loader"></div></div>;
 
   return (
     <div className="container">
