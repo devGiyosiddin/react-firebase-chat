@@ -9,7 +9,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 import { CiCircleRemove } from "react-icons/ci";
-import MenuIcon from "../../icons/menuIcon";
+import MenuIcon from "./menuIcon";
 import { MdOutlineSettings } from "react-icons/md";
 import Joyride from "react-joyride";
 import UserInfo from '../userInfo/UserInfo';
