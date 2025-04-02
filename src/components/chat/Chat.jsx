@@ -21,7 +21,6 @@ import CameraCapture from "./capturePhoto/webcam";
 import { toast } from "react-toastify";
 import ChatSearch from './chatSearch/ChatSearch';
 import { SearchIcon } from 'lucide-react';
-import UniversalSearch from '../list/chatList/universalSearch/UniversalSearch';
 import { format } from "date-fns";
 
 const Chat = ({ onInfoClick }) => {
