@@ -22,20 +22,21 @@
 	color: var(--accent-color);
 	border-radius: 20px;
 	background-color: var(--card-bg);
+	border: 2px solid var(--accent-color);
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 5px 10px;
 	padding: 20px;
 }
 .cancel-icon {
 	width: 24px;
 	height: 24px;
-	color: #7b2cbf;
+	color: var(--accent-hover);
 	cursor: pointer;
 	margin-right: auto;
 	margin-bottom: 10px;
 }
 
 .compact-drag-file-area {
-	border: 2px dashed #7b2cbf;
+	border: 2px dashed var(--accent-hover);
 	border-radius: 20px;
 	margin: 10px 0;
 	padding: 20px;
@@ -53,15 +54,18 @@
 }
 
 .dynamic-message-active {
-	color: green;
+	color: var(--text-color);
 }
 
 .label {
+	display: flex;
+	flex-direction: column;
 	font-size: 14px;
+	color: var(--text-info);
 }
 
 .browse-files-text {
-	color: #7b2cbf;
+	color: var(--text-info);
 	font-weight: bold;
 	cursor: pointer;
 }
@@ -71,7 +75,7 @@
 }
 
 .cannot-upload-message {
-	background-color: #ffc6c4;
+	background-color: var(--error-bg);
 	font-size: 14px;
 	display: flex;
 	align-items: center;
@@ -94,7 +98,7 @@
 .file-info {
 	font-size: 14px;
 	color: #333;
-	background-color: #f9f9f9;
+	background-color: var(--text-info);
 	border-radius: 8px;
 	padding: 8px 12px;
 	margin-top: 10px;
@@ -103,12 +107,12 @@
 
 .file-label {
 	font-weight: bold;
-	color: #555;
+	color: var(text-info);
 	margin-right: 5px;
 }
 
 .file-name {
-	color: #333;
+	color: var(--text-color);
 	font-weight: 500;
 	margin-right: 8px;
 	word-wrap: break-word;
@@ -118,19 +122,19 @@
 
 .separator {
 	margin: 0 8px;
-	color: #ccc;
+	color: var(--accent-color);
 }
 
 .file-size {
-	color: #000;
+	color: var(--text-info);
 	margin-right: 8px;
 }
 
 .remove-file-icon {
 	cursor: pointer;
-	color: #fff;
+	color: var(--danger-btn);
 	border: none;
-	background-color: var(--purple-2);
+	background-color: var(--card-bg);
 	width: 24px;
 	padding: 5px;
 	border-radius: 10px;
@@ -144,12 +148,12 @@
 	width: 0;
 	height: 5px;
 	border-radius: 10px;
-	background-color: #4BB543;
+	background-color: var(--success-bg);
 }
 
 .upload-button {
 	font-family: 'Montserrat';
-	background-color: #7b2cbf;
+	background-color: var(--accent-hover);
 	color: #f7fff7;
 	font-size: 14px;
 	border: none;
@@ -161,7 +165,7 @@
 }
 
 .upload-button:hover {
-	background-color: #5a1996;
+	background-color: var(accent-color);
 }
 .uploaded-image-container {
 	position: relative;
@@ -170,7 +174,7 @@
 .uploaded-image-title {
 	font-size: 18px;
 	margin-bottom: 10px;
-	color: var(--purple-2);
+	color: var(--text-color);
 }
 
 .uploaded-image-preview {
@@ -186,7 +190,7 @@
 	bottom: 0;
 	width: 20px;
 	height: 20px;
-	color: var(--orange);
+	color: var(--accent-color);
 	border-radius: 50%;
 	background-color: var(--purple-2);
 	cursor: pointer;
@@ -195,29 +199,29 @@
 .filter-menu {
   position: absolute;
   left: -10px;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: var(--card-bg);
+  border: 1px solid var(--accent-hover);
   border-radius: 8px;
   padding: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Три колонки */
-  grid-auto-rows: min-content; /* Автоматическая высота строк */
-  gap: 10px; /* Отступы между кнопками */
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: min-content;
+  gap: 10px;
   z-index: var(--tooltip);
 }
 
 
 .filter-menu button {
-  background-color: #7b2cbf;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+	border: none;
+	border-radius: 5px;
+	padding: 5px 10px;
+	cursor: pointer;
+	color: var(--accent-color);
+	transition: background-color 0.3s;
+	background-color: var(--accent-hover);
 }
 
 .filter-menu button:hover {
-  background-color: #5a1996;
+  background-color: var(--accent-color);
 }
