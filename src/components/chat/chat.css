@@ -143,7 +143,7 @@
             padding: 0 17%;
             overscroll-behavior: contain;
             scrollbar-width: thin;
-            scrollbar-color: var(--purple-2) var(--container-color);
+            scrollbar-color: var(--accent-hover) var(--container-color);
             padding-right: calc(17% + 15px);
             box-sizing: border-box;
             
