@@ -140,43 +140,49 @@ const ChatList = () => {
 
     useEffect(() => {
         const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
-            const items = res.data().chats;
+            try {
+                setIsLoading(true);
+                const items = res.data()?.chats || [];
     
-            // Получаем данные с полем `lastMessage` из коллекции `chats`
             const promises = items.map(async (item) => {
-                // Получаем пользователя
+                    try {
                 const userDocRef = doc(db, 'users', item.receiverId);
                 const userDocSnap = await getDoc(userDocRef);
-                const user = userDocSnap.data();
+                        const user = userDocSnap.data() || {};
     
-                // Получаем данные чата
                 const chatDocRef = doc(db, 'chats', item.chatId);
                 const chatDocSnap = await getDoc(chatDocRef);
                 const chatData = chatDocSnap.exists() ? chatDocSnap.data() : {};
-                console.log('chatdata:', chatData);
-                const lastMessage = chatData.lastMessage;
-                console.log(lastMessage)
+                        
                 return {
                     ...item,
                     user,
-                    lastMessage,
+                            lastMessage: chatData.lastMessage,
                 };
+                    } catch (error) {
+                        console.error("Error fetching chat data:", error);
+                        return null;
+                    }
             });
     
-            const chatData = await Promise.all(promises);
-    
-            setChats(
-                chatData.sort((a, b) => {
+                const chatData = (await Promise.all(promises))
+                    .filter(chat => chat !== null)
+                    .sort((a, b) => {
                     const aTime = a.updatedAt?.seconds || 0;
                     const bTime = b.updatedAt?.seconds || 0;
                     return bTime - aTime;
-                })
-            );
+                    });
+        
+                setChats(chatData);
+            } catch (error) {
+                console.error("Error in chat subscription:", error);
+                setChats([]);
+            } finally {
+                setIsLoading(false);
+            }
         });
     
-        return () => {
-            unSub();
-        };
+        return () => unSub();
     }, [currentUser.id]);    
     
     useEffect(() => {
