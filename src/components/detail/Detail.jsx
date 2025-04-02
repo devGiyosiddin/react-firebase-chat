@@ -36,8 +36,8 @@ const Detail = ({onChangeState}) => {
             </span>
             <div className="user">
                 <img src={user?.avatar || "./avatar.png"} alt="" />
-                <h2>{user?.username}</h2>
-                <p>{user?.bio || "No bio"}</p>
+                <h2 className="username">{user?.username}</h2>
+                <p className="bio">{user?.bio || "No bio"}</p>
             </div>
             <div className="info">
                 <div className="option" onClick={openItem}>

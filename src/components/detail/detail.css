@@ -8,12 +8,12 @@
         left: 15px;
         top: 15px;
         cursor: pointer;
-        color: var(--accent-color);
+        color: var(--accent-hover);
         border-radius: 50%;
         transition: all 0.5s ease;
 
         &:hover {
-            color: var(--purple-2);
+            color: var(--accent-color);
             background-color: var(--container-color);
         }
     }
@@ -29,8 +29,23 @@
         img {
             width: 100px;
             height: 100px;
+            cursor: pointer;
             object-fit: cover;
             border-radius: 50%;
+            border: 2px solid var(--accent-color);
+        }
+
+        .username {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .bio {
+            font-size: 14px;
+            color: var(--text-info);
+            text-align: center;
+            font-weight: 300;
         }
     }
 
