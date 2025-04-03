@@ -24,6 +24,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #ffffff;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Dark Theme */
@@ -54,6 +55,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #2f3132;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Purple Light Theme */
@@ -82,6 +84,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #f0ebff;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Purple Dark Theme */
@@ -110,6 +113,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #342a4a;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Orange Light Theme */
@@ -138,6 +142,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #fff0e8;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Orange Dark Theme */
@@ -166,6 +171,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #4a352a;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Ocean Blue Theme */
@@ -194,6 +200,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #2c5885;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Mint Green Theme */
@@ -222,6 +229,7 @@
   --orange: #f79f79;
   --orange-2: #f79f7988;
   --card-bg: #d7ecd7;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Monokai Theme */
@@ -250,6 +258,7 @@
   --orange: #fd971f;
   --orange-2: #fd971f88;
   --card-bg: #49483e;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Nord Theme */
@@ -278,6 +287,7 @@
   --orange: #d08770;
   --orange-2: #d0877088;
   --card-bg: #434c5e;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 /* Solarized Theme */
@@ -306,4 +316,5 @@
   --orange: #cb4b16;
   --orange-2: #cb4b1688;
   --card-bg: #0c4353;
+  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }

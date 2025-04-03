@@ -94,7 +94,7 @@
         .no-results {
             padding: 15px;
             text-align: center;
-            color: #999;
+            color: var(--text-info);
         }
         
         .selected-user {
@@ -134,7 +134,7 @@
                 display: block;
                 margin: 0 auto;
                 background-color: var(--accent-hover);
-                color: white;
+                color: var(--text-color);
                 border: none;
                 padding: 8px 15px;
                 border-radius: 5px;

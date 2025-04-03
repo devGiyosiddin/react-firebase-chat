@@ -5,6 +5,7 @@ import { db } from '../../lib/firebase';
 import { useEffect, useRef, useState } from 'react';
 import { uploadImage } from '../../lib/firebase';
 
+// TODO: Restyle the component UI
 const ProfileSettings = () => {
     const { currentUser } = useUserStore();
     const fileInputRef = useRef(null);

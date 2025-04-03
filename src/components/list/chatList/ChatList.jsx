@@ -492,7 +492,7 @@ const ChatList = () => {
                                         ? 'var(--accent-hover)'
                                         : chat.isSeen
                                         ? 'transparent'
-                                        : '#766ac8',
+                                        : 'var(--new-message-bg)',
                             }}
                         >
                         <div className="user-avatar">
