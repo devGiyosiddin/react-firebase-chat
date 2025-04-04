@@ -6,7 +6,7 @@
 	right: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(118, 106, 200, 0.7);
+	background-color: var(--bg-modal);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -21,27 +21,34 @@
 	flex-direction: column;
 	color: var(--accent-color);
 	border-radius: 20px;
-	background-color: var(--card-bg);
+	background-color: var(--bg-card);
 	border: 2px solid var(--accent-color);
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 5px 10px;
 	padding: 20px;
 }
 .cancel-icon {
-	width: 24px;
-	height: 24px;
-	color: var(--accent-hover);
+	width: 26px;
+	height: auto;
+	border-radius: 10px;
+	color: var(--icon-color);
 	cursor: pointer;
 	margin-right: auto;
 	margin-bottom: 10px;
+
+	&:hover {
+		background-color: var(--bg-modal);
+		color: var(--icons-color-hover);
+	}
 }
 
 .compact-drag-file-area {
-	border: 2px dashed var(--accent-hover);
+	border: 2px dashed var(--border-color);
 	border-radius: 20px;
 	margin: 10px 0;
 	padding: 20px;
 	width: 260px;
 	text-align: center;
+	background-color: var(--bg-nav);
 }
 
 .upload-icon {
@@ -68,6 +75,9 @@
 	color: var(--text-info);
 	font-weight: bold;
 	cursor: pointer;
+	padding: 5px 10px;
+	border-radius: 5px;
+	background-color: var(--primary-hover);
 }
 
 .default-file-input {
@@ -75,14 +85,32 @@
 }
 
 .cannot-upload-message {
-	background-color: var(--error-bg);
+	background-color: var(--bg-nav);
 	font-size: 14px;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	margin: 5px 0;
 	padding: 5px 10px;
 	border-radius: 5px;
-	color: var(--error-message);
+	color: var(--error-color);
+}
+
+.material-icons-outlined {
+	border: 1px solid var(--border-color);
+}
+
+.error-text-wrapper {
+	display: flex;
+}
+
+.cancel-alert-button {
+	height: auto;
+	cursor: pointer;
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: var(--btn-text-color);
+	background-color: var(--error-color);
 }
 
 .file-block {
@@ -97,7 +125,7 @@
 
 .file-info {
 	font-size: 14px;
-	color: #333;
+	color: var(--text-secondary);
 	background-color: var(--text-info);
 	border-radius: 8px;
 	padding: 8px 12px;
@@ -126,18 +154,24 @@
 }
 
 .file-size {
-	color: var(--text-info);
+	color: var(--text-primary);
 	margin-right: 8px;
 }
 
 .remove-file-icon {
 	cursor: pointer;
-	color: var(--danger-btn);
 	border: none;
-	background-color: var(--card-bg);
+	color: var(--icons-color-hover);
 	width: 24px;
 	padding: 5px;
 	border-radius: 10px;
+	background-color: var(--card-bg);
+	transition: all 0.4s ease;
+	
+	&:hover {
+		color: var(--btn-danger);
+		background-color: var(--bg-modal);
+	}
 }
 
 .progress-bar {
@@ -148,12 +182,10 @@
 	width: 0;
 	height: 5px;
 	border-radius: 10px;
-	background-color: var(--success-bg);
+	background-color: var(--success-color);
 }
 
 .upload-button {
-	font-family: 'Montserrat';
-	background-color: var(--accent-hover);
 	color: #f7fff7;
 	font-size: 14px;
 	border: none;
@@ -162,10 +194,11 @@
 	padding: 5px 30px;
 	cursor: pointer;
 	transition: background-color 0.3s;
-}
-
-.upload-button:hover {
-	background-color: var(accent-color);
+	background-color: var(--btn-secondary);
+	
+	&:hover {
+		background-color: var(--accent-orange);
+	}
 }
 .uploaded-image-container {
 	position: relative;

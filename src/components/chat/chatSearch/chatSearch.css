@@ -6,7 +6,7 @@
     height: fit-content;
     display: flex;
     align-items: center;
-    background: var(--card-bg);
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 4px 8px;
     margin: 8px;

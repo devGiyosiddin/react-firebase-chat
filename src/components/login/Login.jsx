@@ -183,10 +183,12 @@ const Login = () => {
                     </form>
                 </div>
             ) : (
+                    // TODO: Add a loading spinner when the image is being uploaded
                 <div className={`item register-item ${!isLogin ? "active" : ""}`}>
                     <h2>Create an Account</h2>
                     <form onSubmit={handleRegister}>
-                        <label htmlFor="file">
+                            <label htmlFor="file">
+                                {/* TODO: Add default image if user don't selected the avatar image */}
                             <img src={avatar.url || "../../../public/avatar.png"} alt="" />
                             <span>Upload an image</span>
                         </label>

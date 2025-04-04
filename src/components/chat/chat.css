@@ -3,9 +3,9 @@
     display: flex;
     flex-direction: column;
     flex: 2;
-    border-left: 1px solid var(--card-bg);
-    border-right: 1px solid var(--card-bg);
-    background-color: var(--chat-bg-color);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    background-color: var(--bg-container);
     border-radius: 10px;
     overflow: hidden;
     
@@ -14,13 +14,13 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #dddddd35;
+        background-color: var(--bg-nav);
+        border-bottom: 1px solid rgba(221, 221, 221, 0.35);
         
         .user {
             display: flex;
             align-items: center;
             gap: 20px;
-            
             
             img {
                 width: 40px;
@@ -28,6 +28,7 @@
                 border-radius: 50%;
                 object-fit: cover;
                 cursor: pointer;
+                border: 1px dashed var(--primary-color);
             }
             
             .texts {
@@ -38,17 +39,19 @@
                 span {
                     font-size: 18px;
                     font-weight: bold;
+                    color: var(--text-primary);
                 }
                 
-                P {
+                p {
                     font-size: 14px;
                     font-weight: 300;
-                    color: var(--text-color);
+                    color: var(--text-secondary);
                 }
             }
+            
             .mute-indicator {
                 font-weight: 300;
-                color: var(--accent-hover);
+                color: var(--primary-hover);
             }
         }
         
@@ -58,24 +61,24 @@
             cursor: pointer;
             
             .chatSearch-icon {
-                color: var(--accent-color);
+                color: var(--primary-color);
                 transition: all 0.3s ease;
                 font-size: 25px;
                 
                 &:hover {
-                    color: var(--accent-color);
+                    color: var(--primary-hover);
                 }
             }
 
             .chatOptions-icon {
                 width: 24px;
                 height: 24px;
-                color: var(--accent-color);
+                color: var(--primary-color);
                 cursor: pointer;
                 transition: all 0.4s ease;
             
                 &:hover {
-                    color: var(--accent-color);
+                    color: var(--primary-hover);
                 }
             }
         }
@@ -98,7 +101,7 @@
             position: absolute;
             top: 70px;
             left: 0;
-            background: var(--card-bg);
+            background: var(--bg-card);
             padding: 4px;
             border-radius: 5px;
             z-index: var(--context-menu);
@@ -108,7 +111,7 @@
                 width: 100%;
                 min-width: 70px;
                 font-size: 14px;
-                color: var(--accent-color);
+                color: var(--primary-color);
                 font-weight: 500;
                 text-align: center;
             }
@@ -119,11 +122,12 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
                 border-radius: 5px;
-                color: var(--accent-hover);
+                color: var(--primary-hover);
                 
                 &:hover {
-                    color: var(--accent-color);
+                    color: var(--primary-color);
                 }
+                
                 &:active {
                     transform: scale(0.9);
                 }
@@ -143,36 +147,36 @@
             padding: 0 17%;
             overscroll-behavior: contain;
             scrollbar-width: thin;
-            scrollbar-color: var(--accent-hover) var(--container-color);
+            scrollbar-color: var(--primary-hover) var(--bg-container);
             padding-right: calc(17% + 15px);
             box-sizing: border-box;
             
             #scrollDownBtn {
-                display: flex;
                 position: fixed;
-                bottom: 80px;
                 right: 60px;
-                z-index: var(--btn);
+                bottom: 80px;
+                display: block;
                 font-size: 18px;
                 border: none;
                 outline: none;
-                color: white;
                 cursor: pointer;
                 padding: 15px;
                 border-radius: 50%;
-                background-color: var(--container-color);
-                transition: all 3s ease;
+                background-color: var(--bg-input);
+                transition: all 0.3s ease;
+                z-index: var(--btn);
+                color: var(--icon-color);
                 
                 &:hover {
-                    background-color: #555;
+                    background-color: var(--bg-nav);
                 }
 
                 svg {
                     width: 20px;
                     height: 20px;
-                    color: var(--accent-color);
                 }
             }
+            
             .message {
                 position: relative;
                 display: flex;
@@ -198,20 +202,23 @@
                     width: 100%;
                     height: auto;
                     border-radius: 10px;
-                    background-color: var(--container-color);
+                    background-color: var(--bg-container);
                     border-radius: 8px;
                 }
+                
                 p {
                     padding: 10px;
                     max-width: max-content;
                     word-wrap: break-word;
                     word-break: break-word;
-                    background-color: var(--container-color);
+                    background-color: var(--message-bg);
+                    color: var(--message-text);
                     border-radius: 8px;
                 }
                 
                 span {
                     font-size: 13px;
+                    color: var(--text-secondary);
                 }
                 
                 .actions {
@@ -233,11 +240,12 @@
                     audio {
                         width: 100%;
                         height: auto;
-                        background-color: var(--accent-color);
+                        background-color: var(--primary-color);
                     }
                     
                     p {
-                        background-color: var(--accent-color);
+                        background-color: var(--primary-color);
+                        color: var(--text-dark);
                         max-width: 100%;
                     }
                 }
@@ -252,11 +260,11 @@
                         gap: 2px;
                         padding: 2px 4px;
                         border-radius: 12px;
-                        background: var(--accent-color);
+                        background: var(--primary-color);
                         font-size: 12px;
                         
                         .count {
-                            color: var(--accent-color);
+                            color: var(--text-dark);
                         }
                     }
                 }
@@ -265,25 +273,25 @@
             /* Search message */
             .highlighted-message {
                 transition: background-color 0.3s ease;
-                background-color: var(--accent-color);
+                background-color: var(--primary-color);
                 box-shadow: 0 0 8px rgba(255, 204, 0, 0.5) !important;
             }
             
             .own.current-search-result {
                 border-left: none;
-                border-right: 3px solid var(--accent-color);
-                /* background-color: rgba(255, 165, 0, 0.4); */
+                border-right: 3px solid var(--primary-color);
                 
                 .texts {
                     padding-left: 15px;
                 }
             }
+            
             .current-search-result:hover {
-                background-color: var(--accent-color);
+                background-color: var(--primary-hover);
             }
             
             .current-search-result {
-                border-left: 3px solid var(--accent-color);
+                border-left: 3px solid var(--primary-color);
             }
             
             .actions {
@@ -305,13 +313,13 @@
             .actions button {
                 background: none;
                 border: none;
-                color: #fff;
+                color: var(--text-primary);
                 cursor: pointer;
                 font-size: 16px;
             }
             
             .actions button:hover {
-                color: var(--accent-hover);
+                color: var(--primary-hover);
             }
             
             .edit-message {
@@ -325,23 +333,23 @@
             .edit-message input {
                 flex: 1;
                 padding: 5px;
-                border: 1px solid var(--accent-hover);
+                border: 1px solid var(--primary-hover);
                 border-radius: 5px;
-                background-color: var(--bg-color);
-                color: var(--text-color);
+                background-color: var(--bg-main);
+                color: var(--text-primary);
             }
             
             .edit-message button {
-                background-color: var(--accent-hover);
+                background-color: var(--primary-hover);
                 border: none;
                 padding: 5px 10px;
-                color: var(--text-color);
+                color: var(--text-dark);
                 cursor: pointer;
                 border-radius: 5px;
             }
             
             .edit-message button:hover {
-                background-color: var(--accent-color);
+                background-color: var(--primary-color);
             }
             
             .context-menu {
@@ -349,10 +357,10 @@
                 display: flex;
                 align-items: center;
                 flex-direction: column;
-                color: #fff;
+                color: var(--text-primary);
                 border-radius: 5px;
                 padding: 10px;
-                background: var(--bg-color);
+                background: var(--bg-nav);
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                 z-index: var(--context-menu);
                 min-width: 150px;
@@ -361,7 +369,7 @@
                 button.option {
                     display: flex;
                     width: 100%;
-                    color: #fff;
+                    color: var(--text-primary);
                     cursor: pointer;
                     border: none;
                     border-radius: 5px;
@@ -370,7 +378,7 @@
                     transition: all 0.3s ease;
                     
                     &:hover {
-                        background: var(--accent-hover);
+                        background: var(--primary-hover);
                         transform: scale(1.05);
                     }
                     
@@ -386,8 +394,8 @@
                     gap: 4px;
                     padding: 8px;
                     border-radius: 10px;
-                    background-color: var(--container-color);
-                    border-top: 1px solid var(--container-color);
+                    background-color: var(--bg-nav);
+                    border-top: 1px solid var(--bg-container);
                     
                     button {
                         padding: 4px;
@@ -399,7 +407,7 @@
                         
                         &:hover {
                             transform: scale(1.2);
-                            background: var(--accent-hover);
+                            background: var(--primary-hover);
                         }
                     }
                 }
@@ -420,26 +428,28 @@
         
         .input-inner {
             position: relative;
+            max-width: 700px;
             display: flex;
+            gap: 10px;
             align-items: center;
             justify-content: space-between;
             border-radius: 10px;
-            background-color: var(--bg-color);
-            max-width: 700px;
+            background-color: var(--bg-main);
             padding: 5px 10px;
             
             .file {
-                color: var(--accent-hover);
+                color: var(--primary-hover);
                 width: 24px;
                 height: 24px;
                 cursor: pointer;
                 transition: all 0.4s ease;
                 
                 &:hover {
-                    color: var(--accent-color);
+                    color: var(--primary-color);
                     transform: scale(1.2);
                 }
             }
+            
             .icons {
                 position: absolute;
                 bottom: 60px;
@@ -449,17 +459,17 @@
                 gap: 20px;
                 padding: 10px;
                 border-radius: 10px;
-                background-color: var(--bg-color);
+                background-color: var(--bg-card);
             }
             
             .file, .camera {
                 cursor: pointer;
                 transition: all 0.4s ease;
-                color: var(--accent-color);
+                color: var(--primary-color);
                 
                 &:hover {
                     transform: scale(1.2);
-                    color: var(--accent-color);
+                    color: var(--primary-hover);
                 }
             }
             
@@ -468,9 +478,9 @@
                 flex: 1;
                 border: none;
                 outline: none;
-                color: #fff;
+                color: var(--text-primary);
                 font-size: 18px;
-                background-color: var(--bg-color);
+                background-color: var(--bg-input);
                 padding: 10px;
                 border-radius: 10px;
                 font-size: 16px;
@@ -484,45 +494,45 @@
                 width: 24px;
                 height: 24px;
                 cursor: pointer;
-                color: var(--accent-color);
+                color: var(--primary-color);
                 transition: all 0.4s ease;
                 
                 &:hover {
                     transform: scale(1.2);
-                    color: var(--accent-color);
+                    color: var(--primary-hover);
                 }
             }
         }
         
         /* MICROPHONE */
         .sendButton.mic-button {
-            background-color: var(--accent-hover);
+            background-color: var(--primary-hover);
             transition: all 0.3s ease;
         }
         
         .sendButton.mic-button:hover {
-            background-color: var(--accent-color);
+            background-color: var(--primary-color);
         }
         
         .sendButton.recording {
-            background-color: var(--accent-color);
+            background-color: var(--primary-color);
         }
         
-        /* Стили для индикатора записи */
+        /* Styles for recording indicator */
         .recording-indicator {
             display: flex;
             align-items: center;
-            background-color: var(--bg-color);
+            background-color: var(--bg-main);
             border-radius: 20px;
             padding: 8px 12px;
             margin-right: 8px;
             width: 100%;
             justify-content: space-between;
-            border: 2px solid var(--accent-hover);
+            border: 2px solid var(--primary-hover);
         }
         
         .recording-time {
-            color: var(--accent-hover);
+            color: var(--primary-hover);
             font-weight: bold;
             margin: 0 10px;
         }
@@ -537,7 +547,7 @@
             width: 3px;
             height: 15px;
             margin: 0 2px;
-            background-color: var(--accent-color);
+            background-color: var(--primary-color);
             border-radius: 3px;
             animation: wave 1s ease-in-out infinite;
         }
@@ -578,16 +588,16 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s ease;
-            color: var(--danger-btn);
+            color: var(--error-color);
         }
         
         .stop-recording {
-            color: var(--danger-hover);
+            color: var(--error-color);
             background-color: rgba(255, 76, 76, 0.1) !important;
         }
         
         .cancel-recording {
-            color: var(--text-color);
+            color: var(--text-primary);
             background-color: rgba(136, 136, 136, 0.1) !important;
         }
         
@@ -601,8 +611,8 @@
         
         /* SEND BUTTON */
         .sendButton {
-            color: var(--text-color);
-            background-color: var(--accent-hover);
+            color: var(--text-dark);
+            background-color: var(--primary-hover);
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -610,12 +620,12 @@
             transition: background-color 0.3s ease;
             
             &:hover {
-                background-color: var(--accent-color);
+                background-color: var(--primary-color);
             }
             
             &:disabled {
                 cursor: not-allowed;
-                background-color: var(--card-bg);
+                background-color: var(--bg-card);
             }
         }
         
@@ -635,7 +645,7 @@
         align-items: center;
         z-index: var(--preview);
         border-radius: 10px;
-        background-color: var(--container-color);
+        background-color: var(--bg-nav);
         
         img {
             width: 100%;
@@ -649,12 +659,17 @@
             top: 10px;
             right: 10px;
             border: none;
-            color: var(--danger-hover);
+            color: var(--error-color);
             cursor: pointer;
             font-size: 20px;
             padding: 4px;
             border-radius: 4px;
-            background-color: var(--container-color);
+            background-color: var(--bg-nav);
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: scale(1.2);
+            }
         }
     }
     
@@ -669,11 +684,11 @@
         align-items: center;
         z-index: var(--preview);
         border-radius: 10px;
-        background-color: var(--container-color);
+        background-color: var(--bg-card);
         gap: 10px;
         
         audio {
-            background-color: var(--accent-color);
+            background-color: var(--primary-hover);
             width: 100%;
             max-width: 500px;
             height: auto;
@@ -681,7 +696,7 @@
         }
         
         button {
-            color: var(--orange);
+            color: var(--accent-orange);
         }
     }
 }
