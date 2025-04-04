@@ -30,66 +30,69 @@ const Detail = ({onChangeState}) => {
     }
 
     return (
-        <div className="detail">
-            <span className="close-icon" onClick={() => onChangeState(false)}>
-                <FaAngleLeft size={28}/>
-            </span>
-            <div className="user">
-                <img src={user?.avatar || "./avatar.png"} alt="" />
-                <h2 className="username">{user?.username}</h2>
-                <p className="bio">{user?.bio || "No bio"}</p>
-            </div>
-            <div className="info">
-                <div className="option" onClick={openItem}>
-                    <div className="title">
-                        <span>Chat settings</span>
-                        <img src="./arrowUp.png" alt="" />
-                    </div>
-                </div>
-                <div className="option" onClick={openItem}>
-                    <div className="title">
-                        <span>Privacy & help</span>
-                        <img src="./arrowUp.png" alt="" />
-                    </div>
-                </div>
-                <div className="option" onClick={openItem}>
-                    <div className="title">
-                        <span>Share photos</span>
-                        <img src="./arrowDown.png" alt="" />
-                    </div>
-                    <div className="photos">
-                        <div className="photoItem">
-                            <div className="photoDetail">
-                                <img src="https://picsum.photos/200" alt="" />
-                                <span>photo_2024_2.png</span>
-                            </div>
-                            <img src="./download.png" alt="" className="icon" />
-                        </div>
-                        <div className="photoItem">
-                            <div className="photoDetail">
-                                <img src="https://picsum.photos/200" alt="" />
-                                <span>photo_2024_2.png</span>
-                            </div>
-                            <img src="./download.png" alt="" className="icon" />
-                        </div>
-                        <div className="photoItem">
-                            <div className="photoDetail">
-                                <img src="https://picsum.photos/200" alt="" />
-                                <span>photo_2024_2.png</span>
-                            </div>
-                            <img src="./download.png" alt="" className="icon" />
-                        </div>
-                    </div>
-                </div>
-                <div className="option" onClick={openItem}>
-                    <div className="title">
-                        <span>Shared files</span>
-                        <img src="./arrowUp.png" alt="" />
-                    </div>
-                </div>
-                <button onClick={handleBlock}>
-                    {isCurrentUserBlocked ? "You are blocked!" : isReceiverBlocked ? 'User blocked' : "Block user"}
+        <div className="detail-wrapper">
+            <div className="detail">
+                <button type="button" className="close-icon" onClick={() => onChangeState(false)}>
+                    <FaAngleLeft size={28}/>
                 </button>
+                {/* TODO: Avatar preview on click on avatar of user */}
+                <div className="user">
+                    <img src={user?.avatar || "./avatar.png"} alt="" />
+                    <h2 className="username">{user?.username}</h2>
+                    <p className="bio">{user?.bio || "No bio"}</p>
+                </div>
+                <div className="info">
+                    <div className="option" onClick={openItem}>
+                        <div className="title">
+                            <span>Chat settings</span>
+                            <img src="./arrowUp.png" alt="" />
+                        </div>
+                    </div>
+                    <div className="option" onClick={openItem}>
+                        <div className="title">
+                            <span>Privacy & help</span>
+                            <img src="./arrowUp.png" alt="" />
+                        </div>
+                    </div>
+                    <div className="option" onClick={openItem}>
+                        <div className="title">
+                            <span>Share photos</span>
+                            <img src="./arrowDown.png" alt="" />
+                        </div>
+                        <div className="photos">
+                            <div className="photoItem">
+                                <div className="photoDetail">
+                                    <img src="https://picsum.photos/200" alt="" />
+                                    <span>photo_2024_2.png</span>
+                                </div>
+                                <img src="./download.png" alt="" className="icon" />
+                            </div>
+                            <div className="photoItem">
+                                <div className="photoDetail">
+                                    <img src="https://picsum.photos/200" alt="" />
+                                    <span>photo_2024_2.png</span>
+                                </div>
+                                <img src="./download.png" alt="" className="icon" />
+                            </div>
+                            <div className="photoItem">
+                                <div className="photoDetail">
+                                    <img src="https://picsum.photos/200" alt="" />
+                                    <span>photo_2024_2.png</span>
+                                </div>
+                                <img src="./download.png" alt="" className="icon" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="option" onClick={openItem}>
+                        <div className="title">
+                            <span>Shared files</span>
+                            <img src="./arrowUp.png" alt="" />
+                        </div>
+                    </div>
+                    <button onClick={handleBlock}>
+                        {isCurrentUserBlocked ? "You are blocked!" : isReceiverBlocked ? 'User blocked' : "Block user"}
+                    </button>
+                </div>
             </div>
         </div>
     )
