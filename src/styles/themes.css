@@ -118,7 +118,7 @@
 }
 
 /* Purple Light Theme - Улучшенная */
-:root[data-theme="purple-light"] {
+:root[data-theme="sepia"] {
   /* Primary colors */
   --primary-color: #8774e1;
   --primary-hover: rgba(135, 116, 225, 0.7);
@@ -178,7 +178,7 @@
 }
 
 /* Purple Dark Theme - Улучшенная */
-:root[data-theme="purple-dark"] {
+:root[data-theme="nord"] {
   /* Primary colors */
   --primary-color: #8774e1;
   --primary-hover: rgba(135, 116, 225, 0.7);
@@ -238,7 +238,7 @@
 }
 
 /* Orange Light Theme - Улучшенная */
-:root[data-theme="orange-light"] {
+:root[data-theme="solarized"] {
   /* Primary colors */
   --primary-color: #f79f79;
   --primary-hover: rgba(247, 159, 121, 0.7);
@@ -299,7 +299,7 @@
 }
 
 /* Orange Dark Theme - Улучшенная */
-:root[data-theme="orange-dark"] {
+:root[data-theme="dracula"] {
   /* Primary colors */
   --primary-color: #f79f79;
   --primary-hover: rgba(247, 159, 121, 0.7);
@@ -360,7 +360,7 @@
 }
 
 /* Ocean Blue Theme - Улучшенная */
-:root[data-theme="ocean-blue"] {
+:root[data-theme="github"] {
   /* Primary colors */
   --primary-color: #64b5f6;
   --primary-hover: rgba(100, 181, 246, 0.7);
@@ -418,7 +418,7 @@
 }
 
 /* Mint Green Theme - Улучшенная */
-:root[data-theme="mint-green"] {
+:root[data-theme="green"] {
   /* Primary colors */
   --primary-color: #66bb6a;
   --primary-hover: rgba(102, 187, 106, 0.7);

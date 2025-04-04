@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { User, Bell, Lock, Moon, Globe, HelpCircle, LogOut, X } from 'lucide-react';
 import ProfileSettings from './profileSettings/ProfileSettings';
 import AppearanceSettings from './appearanceSettings/AppearanceSettings';
+import { useUserStore } from '../lib/userStore';
 
 const Settings = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('profile');
+  const {currentUser} = useUserStore();
   
   const renderContent = () => {
     switch(activeTab) {

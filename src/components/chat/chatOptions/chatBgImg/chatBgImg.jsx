@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 import { uploadImage, saveBackgroundImageUrl } from "../../../lib/firebase";
 import "./chatBgImg.css";
 
-const MAX_FILE_SIZE_MB = 5; // Максимальный размер файла в мегабайтах
-const ALLOWED_TYPES = ["image/jpeg", "image/png"]; // Разрешённые типы файлов
+const MAX_FILE_SIZE_MB = 5;
+const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
 const ChatBgImg = ({ chatId, onUploadComplete }) => {
   const [file, setFile] = useState(null);

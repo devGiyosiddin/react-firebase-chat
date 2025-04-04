@@ -52,7 +52,7 @@ const Chat = ({ onInfoClick }) => {
     const [editingMessage, setEditingMessage] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [contextMenu, setContextMenu] = useState(null);
-    const [currentChatId, setCurrentChatId] = useState('1234');
+    const [currentChatId, setCurrentChatId] = useState('');
     const currentUserId = auth.currentUser.uid;
     const [ openSearch, setOpenSearch] = useState(false);
     const [lastMessageId, setLastMessageId] = useState(null);
