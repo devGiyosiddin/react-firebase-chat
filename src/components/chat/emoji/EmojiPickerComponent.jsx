@@ -1,6 +1,5 @@
 import './emojiPicker.css';
 import { useCallback, memo, forwardRef, useState, Suspense, useEffect } from "react";
-import { Theme } from "emoji-picker-react";
 import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker from "emoji-picker-react";
 
@@ -48,7 +47,6 @@ const EmojiPickerComponent = forwardRef(({ onEmojiSelect, isOpen, setIsOpen }, r
         <Suspense fallback={<div>Loading...</div>}>
           <MemoizedEmojiPicker
             onEmojiClick={handleEmojiClick}
-            theme={Theme.DARK}
           />
         </Suspense>
       )}

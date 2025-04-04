@@ -1,320 +1,604 @@
 /* Light Theme (Default) */
 :root[data-theme="light"] {
-  --accent-color: #3fc1b0;
-  --accent-hover: rgba(63, 193, 176, 0.7);
-  --text-color: #333333;
-  --text-color-dark: #000000;
-  --text-info: #6b7280;
-  --bg-color: #f5f5f5;
-  --container-color: #ffffff;
-  --icons-color: #666666;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #1a73e8;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --success-bg: rgba(75, 181, 67, 0.1);
-  --secondary-textColor: rgba(120, 120, 120, 0.08);
-  --icon-green: #4CAF50;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #ffffff;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #3fc1b0;
+  --primary-hover: rgba(63, 193, 176, 0.7);
+  
+  /* Text colors */
+  --text-primary: #333333;
+  --text-secondary: #6b7280;
+  --text-dark: #000000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
+  --bg-blur: blur(19px) saturate(180%);
+  --bg-main: #fafafa;
+  --bg-input: #ecedef;
+  --bg-card: #f2f3f5;
+  --bg-nav: #e4e5e9;
+  --bg-chat: #a8bbbb;
+  --bg-modal: rgba(0,0,0, 0.1);
+  --btn-bg-focus: rgba(63, 193, 176, 0.105);
+  --btn-bg-hover: rgba(63, 193, 176, 0.401);
+  --selected-chat-bg: rgba(63, 193, 176, 0.412);
+  --unseen-chat-bg: rgba(47, 137, 185, 0.538);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(63, 193, 176, 0.412);
+  
+  /* Message elements */
+  --message-bg: #ffffff;
+  --message-text: #333333;
+  --message-secondary-bg: rgba(120, 120, 120, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(63, 193, 176, 0.2) 0%, rgba(63, 193, 176, 0.8) 100%);
+  
+  /* Interactive elements */
+  --icon-color: #000000aa;
+  --icon-color-hover: #000000;
+  --btn-text-color: #fff;
+  --btn-primary: #3fc1b0;
+  --btn-primary-hover: rgba(63, 193, 176, 0.7);
+  --btn-secondary: #1a73e8;
+  --btn-secondary-hover: rgb(26, 115, 232, 0.6);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #dc143c;
+  --success-color: #4BB543;
+  --status-green: #4CAF50;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #766ac8;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f79f7988;
 }
 
-/* Dark Theme */
+/* Dark Theme - Улучшенная */
 :root[data-theme="dark"] {
-  --accent-color: #3fc1b0;
-  --accent-hover: rgba(63, 193, 176, 0.525);
-  --text-color: #fff;
-  --text-color-dark: #000;
-  --text-info: #d1d5db;
-  --bg-color: #181818;
-  --container-color: #212121;
-  --icons-color: #aaa;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #1a73e8;
-  --danger-btn: #dc143c;
-  --danger-hover: rgba(220, 20, 60, 0.7);
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --success-bg: rgba(75, 181, 67, 0.1);
-  --secondary-textColor: rgba(170, 170, 170, 0.08);
-  --icon-green: #9EDF9C;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #2f3132;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #3fc1b0;
+  --primary-hover: rgba(63, 193, 176, 0.525);
+  
+  /* Text colors */
+  --text-primary: #f0f0f0;
+  --text-secondary: #d1d5db;
+  --text-dark: #000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(0deg, #111111 0%, #2d2d2d 100%);
+  --bg-blur: blur(19px) saturate(140%);
+  --bg-main: #181818;
+  --bg-container: #212121;
+  --bg-input: #2c2c2c;
+  --bg-card: #2f3132;
+  --bg-nav: #252525;
+  --bg-chat: #1e2627;
+  --bg-modal: rgba(0,0,0, 0.3);
+  --bg-error: rgba(220, 20, 60, 0.15);
+  --bg-success: rgba(75, 181, 67, 0.15);
+  --btn-bg-focus: rgba(63, 193, 176, 0.15);
+  --btn-bg-hover: rgba(63, 193, 176, 0.3);
+  --selected-chat-bg: rgba(63, 193, 176, 0.3);
+  --unseen-chat-bg: rgba(47, 137, 185, 0.4);
+  --bg-option-hover: rgba(63, 193, 176, 0.25);
+  
+  /* Message elements */
+  --message-bg: #212121;
+  --message-text: #f0f0f0;
+  --message-secondary-bg: rgba(170, 170, 170, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(63, 193, 176, 0.3) 0%, rgba(63, 193, 176, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: #aaaaaa;
+  --icon-color-hover: #ffffff;
+  --btn-text-color: #ffffff;
+  --btn-primary: #3fc1b0;
+  --btn-primary-hover: rgba(63, 193, 176, 0.7);
+  --btn-secondary: #1a73e8;
+  --btn-secondary-hover: rgb(26, 115, 232, 0.8);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #ff5252;
+  --success-color: #4BB543;
+  --status-green: #9EDF9C;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #766ac8;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f79f7988;
 }
 
-/* Purple Light Theme */
+/* Purple Light Theme - Улучшенная */
 :root[data-theme="purple-light"] {
-  --accent-color: #8774e1;
-  --accent-hover: rgba(135, 116, 225, 0.7);
-  --text-color: #3a3347;
-  --text-color-dark: #271f34;
-  --text-info: #6b6b80;
-  --bg-color: #f8f6ff;
-  --container-color: #ffffff;
-  --icons-color: #8774e1;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #8774e1;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --success-bg: rgba(75, 181, 67, 0.1);
-  --secondary-textColor: rgba(135, 116, 225, 0.08);
-  --icon-green: #4CAF50;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #f0ebff;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #8774e1;
+  --primary-hover: rgba(135, 116, 225, 0.7);
+  
+  /* Text colors */
+  --text-primary: #3a3347;
+  --text-secondary: #6b6b80;
+  --text-dark: #271f34;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #e9dfff 0%, #d8cbff 100%);
+  --bg-blur: blur(19px) saturate(150%);
+  --bg-main: #f8f6ff;
+  --bg-container: #ffffff;
+  --bg-input: #f0ebff;
+  --bg-card: #f0ebff;
+  --bg-nav: #e6e0ff;
+  --bg-chat: #e1d9fa;
+  --bg-modal: rgba(135, 116, 225, 0.1);
+  --btn-bg-focus: rgba(135, 116, 225, 0.12);
+  --btn-bg-hover: rgba(135, 116, 225, 0.25);
+  --selected-chat-bg: rgba(135, 116, 225, 0.3);
+  --unseen-chat-bg: rgba(123, 97, 255, 0.25);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(135, 116, 225, 0.2);
+  
+  /* Message elements */
+  --message-bg: #f0ebff;
+  --message-text: #3a3347;
+  --message-secondary-bg: rgba(135, 116, 225, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(135, 116, 225, 0.3) 0%, rgba(135, 116, 225, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(135, 116, 225, 0.8);
+  --icon-color-hover: #8774e1;
+  --btn-text-color: #fff;
+  --btn-primary: #8774e1;
+  --btn-primary-hover: rgba(135, 116, 225, 0.8);
+  --btn-secondary: #8774e1;
+  --btn-secondary-hover: rgba(135, 116, 225, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #dc143c;
+  --success-color: #4BB543;
+  --status-green: #4CAF50;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #a895ff;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f79f7988;
 }
 
-/* Purple Dark Theme */
+/* Purple Dark Theme - Улучшенная */
 :root[data-theme="purple-dark"] {
-  --accent-color: #8774e1;
-  --accent-hover: rgba(135, 116, 225, 0.7);
-  --text-color: #fff;
-  --text-color-dark: #000;
-  --text-info: #b8b5c9;
-  --bg-color: #22192e;
-  --container-color: #2d2440;
-  --icons-color: #a594eb;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #8774e1;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #ff5252;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --secondary-textColor: rgba(165, 148, 235, 0.08);
-  --icon-green: #9EDF9C;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #342a4a;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #8774e1;
+  --primary-hover: rgba(135, 116, 225, 0.7);
+  
+  /* Text colors */
+  --text-primary: #f2f0ff;
+  --text-secondary: #b8b5c9;
+  --text-dark: #000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #2a1f3d 0%, #3a2a59 100%);
+  --bg-blur: blur(19px) saturate(140%);
+  --bg-main: #22192e;
+  --bg-container: #2d2440;
+  --bg-input: #342a4a;
+  --bg-card: #342a4a;
+  --bg-nav: #2a2037;
+  --bg-chat: #36294f;
+  --bg-modal: rgba(0, 0, 0, 0.2);
+  --btn-bg-focus: rgba(135, 116, 225, 0.15);
+  --btn-bg-hover: rgba(135, 116, 225, 0.3);
+  --selected-chat-bg: rgba(135, 116, 225, 0.4);
+  --unseen-chat-bg: rgba(123, 97, 255, 0.35);
+  --bg-error: rgba(220, 20, 60, 0.15);
+  --bg-success: rgba(75, 181, 67, 0.15);
+  --bg-option-hover: rgba(135, 116, 225, 0.3);
+  
+  /* Message elements */
+  --message-bg: #342a4a;
+  --message-text: #f2f0ff;
+  --message-secondary-bg: rgba(165, 148, 235, 0.1);
+  --new-message-bg: linear-gradient(90deg, rgba(135, 116, 225, 0.4) 0%, rgba(135, 116, 225, 0.8) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(165, 148, 235, 0.9);
+  --icon-color-hover: #a594eb;
+  --btn-text-color: #fff;
+  --btn-primary: #8774e1;
+  --btn-primary-hover: rgba(135, 116, 225, 0.8);
+  --btn-secondary: #8774e1;
+  --btn-secondary-hover: rgba(135, 116, 225, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #ff5252;
+  --success-color: #4BB543;
+  --status-green: #9EDF9C;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #a594eb;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f79f7988;
 }
 
-/* Orange Light Theme */
+/* Orange Light Theme - Улучшенная */
 :root[data-theme="orange-light"] {
-  --accent-color: #f79f79;
-  --accent-hover: rgba(247, 159, 121, 0.7);
-  --text-color: #4a3a30;
-  --text-color-dark: #2d2218;
-  --text-info: #80766b;
-  --bg-color: #fff8f5;
-  --container-color: #ffffff;
-  --icons-color: #f79f79;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #f79f79;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --secondary-textColor: rgba(247, 159, 121, 0.08);
-  --icon-green: #4CAF50;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #fff0e8;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #f79f79;
+  --primary-hover: rgba(247, 159, 121, 0.7);
+  
+  /* Text colors */
+  --text-primary: #4a3a30;
+  --text-secondary: #80766b;
+  --text-dark: #2d2218;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #ffefe7 0%, #ffe0cf 100%);
+  --bg-blur: blur(19px) saturate(150%);
+  --bg-main: #fff8f5;
+  --bg-container: #ffffff;
+  --bg-input: #fff0e8;
+  --bg-card: #fff0e8;
+  --bg-nav: #ffeadd;
+  --bg-chat: #ffe6d6;
+  --bg-modal: rgba(247, 159, 121, 0.1);
+  --btn-bg-focus: rgba(247, 159, 121, 0.12);
+  --btn-bg-hover: rgba(247, 159, 121, 0.25);
+  --selected-chat-bg: rgba(247, 159, 121, 0.3);
+  --unseen-chat-bg: rgba(255, 142, 97, 0.25);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(247, 159, 121, 0.2);
+  
+  /* Message elements */
+  --message-bg: #fff0e8;
+  --message-text: #4a3a30;
+  --message-secondary-bg: rgba(247, 159, 121, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(247, 159, 121, 0.3) 0%, rgba(247, 159, 121, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(247, 159, 121, 0.8);
+  --icon-color-hover: #f79f79;
+  --btn-text-color: #fff;
+  --btn-primary: #f79f79;
+  --btn-primary-hover: rgba(247, 159, 121, 0.8);
+  --btn-secondary: #f79f79;
+  --btn-secondary-hover: rgba(247, 159, 121, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #dc143c;
+  --success-color: #4BB543;
+  --status-green: #4CAF50;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #766ac8;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #ffb396;
+  --accent-orange-dark: #e6835d;
 }
 
-/* Orange Dark Theme */
+/* Orange Dark Theme - Улучшенная */
 :root[data-theme="orange-dark"] {
-  --accent-color: #f79f79;
-  --accent-hover: rgba(247, 159, 121, 0.7);
-  --text-color: #fff;
-  --text-color-dark: #000;
-  --text-info: #d1c0b4;
-  --bg-color: #2e211a;
-  --container-color: #3d2c22;
-  --icons-color: #f7b190;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #f79f79;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #ff5252;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --secondary-textColor: rgba(247, 177, 144, 0.08);
-  --icon-green: #9EDF9C;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #4a352a;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #f79f79;
+  --primary-hover: rgba(247, 159, 121, 0.7);
+  
+  /* Text colors */
+  --text-primary: #fff6f2;
+  --text-secondary: #d1c0b4;
+  --text-dark: #000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #3d2c22 0%, #4a352a 100%);
+  --bg-blur: blur(19px) saturate(140%);
+  --bg-main: #2e211a;
+  --bg-container: #3d2c22;
+  --bg-input: #4a352a;
+  --bg-card: #4a352a;
+  --bg-nav: #362419;
+  --bg-chat: #52392e;
+  --bg-modal: rgba(0, 0, 0, 0.2);
+  --btn-bg-focus: rgba(247, 159, 121, 0.15);
+  --btn-bg-hover: rgba(247, 159, 121, 0.3);
+  --selected-chat-bg: rgba(247, 159, 121, 0.4);
+  --unseen-chat-bg: rgba(255, 142, 97, 0.35);
+  --bg-error: rgba(220, 20, 60, 0.15);
+  --bg-success: rgba(75, 181, 67, 0.15);
+  --bg-option-hover: rgba(247, 159, 121, 0.3);
+  
+  /* Message elements */
+  --message-bg: #4a352a;
+  --message-text: #fff6f2;
+  --message-secondary-bg: rgba(247, 177, 144, 0.1);
+  --new-message-bg: linear-gradient(90deg, rgba(247, 159, 121, 0.4) 0%, rgba(247, 159, 121, 0.8) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(247, 177, 144, 0.9);
+  --icon-color-hover: #f7b190;
+  --btn-text-color: #fff;
+  --btn-primary: #f79f79;
+  --btn-primary-hover: rgba(247, 159, 121, 0.8);
+  --btn-secondary: #f79f79;
+  --btn-secondary-hover: rgba(247, 159, 121, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #ff5252;
+  --success-color: #4BB543;
+  --status-green: #9EDF9C;
+  
+  /* Accent colors */
+  --accent-purple: #8774e1;
+  --accent-purple-light: #766ac8;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f7b190;
+  --accent-orange-dark: #e6835d;
 }
 
-/* Ocean Blue Theme */
+/* Ocean Blue Theme - Улучшенная */
 :root[data-theme="ocean-blue"] {
-  --accent-color: #64b5f6;
-  --accent-hover: rgba(100, 181, 246, 0.7);
-  --text-color: #f0f8ff;
-  --text-color-dark: #000;
-  --text-info: #a8c5e0;
-  --bg-color: #1a3b5d;
-  --container-color: #234b76;
-  --icons-color: #64b5f6;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #64b5f6;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #ff5252;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --secondary-textColor: rgba(100, 181, 246, 0.08);
-  --icon-green: #9EDF9C;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #2c5885;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #64b5f6;
+  --primary-hover: rgba(100, 181, 246, 0.7);
+  
+  /* Text colors */
+  --text-primary: #f0f8ff;
+  --text-secondary: #a8c5e0;
+  --text-dark: #000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #1a3b5d 0%, #234b76 100%);
+  --bg-blur: blur(19px) saturate(140%);
+  --bg-main: #1a3b5d;
+  --bg-container: #234b76;
+  --bg-input: #2c5885;
+  --bg-card: #2c5885;
+  --bg-nav: #1d3f63;
+  --bg-chat: #285180;
+  --bg-modal: rgba(0, 0, 0, 0.2);
+  --btn-bg-focus: rgba(100, 181, 246, 0.15);
+  --btn-bg-hover: rgba(100, 181, 246, 0.3);
+  --selected-chat-bg: rgba(100, 181, 246, 0.4);
+  --unseen-chat-bg: rgba(79, 152, 209, 0.35);
+  --bg-error: rgba(220, 20, 60, 0.15);
+  --bg-success: rgba(75, 181, 67, 0.15);
+  --bg-option-hover: rgba(100, 181, 246, 0.3);
+  
+  /* Message elements */
+  --message-bg: #2c5885;
+  --message-text: #f0f8ff;
+  --message-secondary-bg: rgba(100, 181, 246, 0.1);
+  --new-message-bg: linear-gradient(90deg, rgba(100, 181, 246, 0.4) 0%, rgba(100, 181, 246, 0.8) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(141, 198, 245, 0.9);
+  --icon-color-hover: #8dc6f5;
+  --btn-text-color: #fff;
+  --btn-primary: #64b5f6;
+  --btn-primary-hover: rgba(100, 181, 246, 0.8);
+  --btn-secondary: #64b5f6;
+  --btn-secondary-hover: rgba(100, 181, 246, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #ff5252;
+  --success-color: #4BB543;
+  --status-green: #9EDF9C;
+  
+  /* Accent colors */
+  --accent-blue: #64b5f6;
+  --accent-blue-light: #8dc6f5;
+  --accent-blue-dark: #4a9fe8;
+  --accent-blue-hover: rgba(100, 181, 246, 0.7);
 }
 
-/* Mint Green Theme */
+/* Mint Green Theme - Улучшенная */
 :root[data-theme="mint-green"] {
-  --accent-color: #94FFD4;
-  --accent-hover: rgba(148, 255, 212, 0.7);
-  --text-color: #2c3e50;
-  --text-color-dark: #1a2530;
-  --text-info: #607d8b;
-  --bg-color: #e8f5e9;
-  --container-color: #ffffff;
-  --icons-color: #66bb6a;
-  --purple: #8774e1;
-  --purple-2: #766ac8;
-  --purple-3: #7261e1;
-  --purple-hover: rgba(135, 116, 225, 0.7);
-  --btn-blue: #66bb6a;
-  --red-btn: #dc143ccb;
-  --red-btn-2: #dc143c88;
-  --error-message: #dc143c;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --success-message: #4BB543;
-  --error-bg: rgba(220, 20, 60, 0.1);
-  --secondary-textColor: rgba(102, 187, 106, 0.08);
-  --icon-green: #4CAF50;
-  --orange: #f79f79;
-  --orange-2: #f79f7988;
-  --card-bg: #d7ecd7;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+  /* Primary colors */
+  --primary-color: #66bb6a;
+  --primary-hover: rgba(102, 187, 106, 0.7);
+  
+  /* Text colors */
+  --text-primary: #2c3e50;
+  --text-secondary: #607d8b;
+  --text-dark: #1a2530;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #e8f5e9 0%, #d7ecd7 100%);
+  --bg-blur: blur(19px) saturate(150%);
+  --bg-main: #e8f5e9;
+  --bg-container: #ffffff;
+  --bg-input: #d7ecd7;
+  --bg-card: #d7ecd7;
+  --bg-nav: #dff2e0;
+  --bg-chat: #cfe9cf;
+  --bg-modal: rgba(102, 187, 106, 0.1);
+  --btn-bg-focus: rgba(102, 187, 106, 0.12);
+  --btn-bg-hover: rgba(102, 187, 106, 0.25);
+  --selected-chat-bg: rgba(102, 187, 106, 0.3);
+  --unseen-chat-bg: rgba(83, 168, 87, 0.25);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(102, 187, 106, 0.2);
+  
+  /* Message elements */
+  --message-bg: #d7ecd7;
+  --message-text: #2c3e50;
+  --message-secondary-bg: rgba(102, 187, 106, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(102, 187, 106, 0.3) 0%, rgba(102, 187, 106, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(102, 187, 106, 0.8);
+  --icon-color-hover: #66bb6a;
+  --btn-text-color: #fff;
+  --btn-primary: #66bb6a;
+  --btn-primary-hover: rgba(102, 187, 106, 0.8);
+  --btn-secondary: #66bb6a;
+  --btn-secondary-hover: rgba(102, 187, 106, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #dc143c;
+  --success-color: #4BB543;
+  --status-green: #4CAF50;
+  
+  /* Accent colors */
+  --accent-green: #66bb6a;
+  --accent-green-light: #8ccc8f;
+  --accent-green-dark: #4c9a4f;
+  --accent-green-hover: rgba(102, 187, 106, 0.7);
 }
 
-/* Monokai Theme */
-:root[data-theme="monokai"] {
-  --accent-color: #529bba;
-  --accent-hover: rgba(82, 155, 186, 0.7);
-  --text-color: #f8f8f2;
-  --text-color-dark: #000;
-  --text-info: #a6e22e;
-  --bg-color: #272822;
-  --container-color: #3e3d32;
-  --icons-color: #fd971f;
-  --purple: #ae81ff;
-  --purple-2: #9d74e6;
-  --purple-3: #8c61d9;
-  --purple-hover: rgba(174, 129, 255, 0.7);
-  --btn-blue: #66d9ef;
-  --red-btn: #f92672cb;
-  --red-btn-2: #f9267288;
-  --error-message: #f92672;
-  --error-bg: rgba(249, 38, 114, 0.1);
-  --success-message: #a6e22e;
-  --error-bg: rgba(249, 38, 114, 0.1);
-  --secondary-textColor: rgba(253, 151, 31, 0.08);
-  --icon-green: #a6e22e;
-  --orange: #fd971f;
-  --orange-2: #fd971f88;
-  --card-bg: #49483e;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+/* Новая тема: Sunset Theme */
+:root[data-theme="sunset"] {
+  /* Primary colors */
+  --primary-color: #ff7e5f;
+  --primary-hover: rgba(255, 126, 95, 0.7);
+  
+  /* Text colors */
+  --text-primary: #333333;
+  --text-secondary: #6e6e6e;
+  --text-dark: #1a1a1a;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #feb47b 0%, #ff7e5f 100%);
+  --bg-blur: blur(19px) saturate(160%);
+  --bg-main: #fff9f5;
+  --bg-container: #ffffff;
+  --bg-input: #fff2eb;
+  --bg-card: #fff2eb;
+  --bg-nav: #ffede5;
+  --bg-chat: #ffe8de;
+  --bg-modal: rgba(255, 126, 95, 0.1);
+  --btn-bg-focus: rgba(255, 126, 95, 0.12);
+  --btn-bg-hover: rgba(255, 126, 95, 0.25);
+  --selected-chat-bg: rgba(255, 126, 95, 0.3);
+  --unseen-chat-bg: rgba(255, 109, 74, 0.25);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(255, 126, 95, 0.2);
+  
+  /* Message elements */
+  --message-bg: #fff2eb;
+  --message-text: #333333;
+  --message-secondary-bg: rgba(255, 126, 95, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(255, 126, 95, 0.3) 0%, rgba(255, 126, 95, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(255, 126, 95, 0.8);
+  --icon-color-hover: #ff7e5f;
+  --btn-text-color: #fff;
+  --btn-primary: #ff7e5f;
+  --btn-primary-hover: rgba(255, 126, 95, 0.8);
+  --btn-secondary: #feb47b;
+  --btn-secondary-hover: rgba(254, 180, 123, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #dc143c;
+  --success-color: #4BB543;
+  --status-green: #4CAF50;
+  
+  /* Accent colors */
+  --accent-orange: #ff7e5f;
+  --accent-orange-light: #ff9e85;
+  --accent-orange-dark: #e66a4c;
+  --accent-gold: #feb47b;
+  --accent-gold-light: #ffc696;
+  --accent-gold-dark: #e99e69;
 }
 
-/* Nord Theme */
-:root[data-theme="nord"] {
-  --accent-color: #a1cdc7;
-  --accent-hover: rgba(161, 205, 199, 0.7);
-  --text-color: #eceff4;
-  --text-color-dark: #2e3440;
-  --text-info: #81a1c1;
-  --bg-color: #2e3440;
-  --container-color: #3b4252;
-  --icons-color: #88c0d0;
-  --purple: #b48ead;
-  --purple-2: #a579a4;
-  --purple-3: #9a6d9a;
-  --purple-hover: rgba(180, 142, 173, 0.7);
-  --btn-blue: #5e81ac;
-  --red-btn: #bf616acb;
-  --red-btn-2: #bf616a88;
-  --error-message: #bf616a;
-  --error-bg: rgba(191, 97, 106, 0.1);
-  --success-message: #a3be8c;
-  --error-bg: rgba(191, 97, 106, 0.1);
-  --secondary-textColor: rgba(136, 192, 208, 0.08);
-  --icon-green: #a3be8c;
-  --orange: #d08770;
-  --orange-2: #d0877088;
-  --card-bg: #434c5e;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
-}
-
-/* Solarized Theme */
-:root[data-theme="solarized"] {
-  --accent-color: #073642;
-  --accent-hover: rgba(7, 54, 66, 0.7);
-  --text-color: #839496;
-  --text-color-dark: #002b36;
-  --text-info: #586e75;
-  --bg-color: #002b36;
-  --container-color: #073642;
-  --icons-color: #2aa198;
-  --purple: #6c71c4;
-  --purple-2: #5e62b2;
-  --purple-3: #5158a8;
-  --purple-hover: rgba(108, 113, 196, 0.7);
-  --btn-blue: #268bd2;
-  --red-btn: #dc322fcb;
-  --red-btn-2: #dc322f88;
-  --error-message: #dc322f;
-  --error-bg: rgba(220, 50, 47, 0.1);
-  --success-message: #859900;
-  --error-bg: rgba(220, 50, 47, 0.1);
-  --secondary-textColor: rgba(42, 161, 152, 0.08);
-  --icon-green: #859900;
-  --orange: #cb4b16;
-  --orange-2: #cb4b1688;
-  --card-bg: #0c4353;
-  --new-message-bg: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
+/* Новая тема: Night Sky */
+:root[data-theme="night-sky"] {
+  /* Primary colors */
+  --primary-color: #536dfe;
+  --primary-hover: rgba(83, 109, 254, 0.7);
+  
+  /* Text colors */
+  --text-primary: #f0f2ff;
+  --text-secondary: #bbc1ff;
+  --text-dark: #000;
+  
+  /* Background colors */
+  --bg-img: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  --bg-blur: blur(19px) saturate(130%);
+  --bg-main: #0f2027;
+  --bg-container: #1a2e38;
+  --bg-input: #203a43;
+  --bg-card: #203a43;
+  --bg-nav: #132730;
+  --bg-chat: #1d333c;
+  --bg-modal: rgba(0, 0, 0, 0.3);
+  --btn-bg-focus: rgba(83, 109, 254, 0.15);
+  --btn-bg-hover: rgba(83, 109, 254, 0.3);
+  --selected-chat-bg: rgba(83, 109, 254, 0.4);
+  --unseen-chat-bg: rgba(83, 109, 254, 0.25);
+  --bg-error: rgba(220, 20, 60, 0.1);
+  --bg-success: rgba(75, 181, 67, 0.1);
+  --bg-option-hover: rgba(83, 109, 254, 0.2);
+  
+  /* Message elements */
+  --message-bg: #203a43;
+  --message-text: #f0f2ff;
+  --message-secondary-bg: rgba(83, 109, 254, 0.08);
+  --new-message-bg: linear-gradient(90deg, rgba(83, 109, 254, 0.3) 0%, rgba(83, 109, 254, 0.7) 100%);
+  
+  /* Interactive elements */
+  --icon-color: rgba(83, 109, 254, 0.8);
+  --icon-color-hover: #536dfe;
+  --btn-text-color: #fff;
+  --btn-primary: #536dfe;
+  --btn-primary-hover: rgba(83, 109, 254, 0.8);
+  --btn-secondary: #536dfe;
+  --btn-secondary-hover: rgba(83, 109, 254, 0.7);
+  --btn-danger: #dc143ccb;
+  --btn-danger-hover: #dc143c88;
+  
+  /* Status colors */
+  --error-color: #ff5252;
+  --success-color: #4BB543;
+  --status-green: #9EDF9C;
+  
+  /* Accent colors */
+  --accent-blue: #536dfe;
+  --accent-blue-light: #7583ff;
+  --accent-blue-dark: #3b5bf6;
+  --accent-blue-hover: rgba(83, 109, 254, 0.7);
+  --accent-purple: #8774e1;
+  --accent-purple-light: #766ac8;
+  --accent-purple-dark: #7261e1;
+  --accent-purple-hover: rgba(135, 116, 225, 0.7);
+  --accent-orange: #f79f79;
+  --accent-orange-light: #f79f7988;
+  --accent-orange-dark: #e6835d;
+  --accent-gold: #feb47b;
+  --accent-gold-light: #ffc696;
+  --accent-gold-dark: #e99e69;
 }

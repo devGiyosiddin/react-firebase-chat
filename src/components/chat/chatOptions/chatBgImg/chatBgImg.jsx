@@ -161,7 +161,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
     <>
       <div className="option" onClick={() => setIsFormVisible(!isFormVisible)}>
         <IoImagesOutline className="option-icon" />
-        {isFormVisible ? "Закрыть форму" : "Изображение фона"}
+        {isFormVisible ? "Close window" : "Bg chat image"}
       </div>
       {isFormVisible && (
         <div className="compact-form-container">
@@ -188,7 +188,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
                     style={{ filter: currentFilter }} // Применяем фильтр
                   />
                   <FaPaintbrush
-                    title="Изменить изображение"
+                    title="Change filter"
                     className="changeImg"
                     onClick={() => setIsFilterMenuVisible(!isFilterMenuVisible)} // Открываем/закрываем меню фильтров
                   />
@@ -205,7 +205,7 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
                 </div>
               )}
               <h4 className={file ? "dynamic-message-active" : "dynamic-message"}>
-                {file ? "Файл успешно добавлен ✅" : "Перетащите файл сюда"}
+                {file ? "File dropped ✅" : "Drag and drop the file here"}
               </h4>
               {!file && (
                 <>
@@ -228,9 +228,11 @@ const ChatBgImg = ({ chatId, onUploadComplete }) => {
             {error && (
               <div className="cannot-upload-message">
                 <span className="material-icons-outlined">error</span>
-                {error}
-                <span className="material-icons-outlined cancel-alert-button" onClick={() => setError("")}>
-                  cancel
+                <span className="error-text-wrapper">
+                  {error}
+                  <span className="material-icons-outlined cancel-alert-button" onClick={() => setError("")}>
+                    cancel
+                  </span>
                 </span>
               </div>
             )}

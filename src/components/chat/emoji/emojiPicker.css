@@ -6,13 +6,14 @@
         height: 20px;
         cursor: pointer;
         transition: all 0.3s ease;
-        color: var(--accent-color);
+        color: var(--primary-hover);
     }
     
+    /* TODO: Fix emoji picker bg color scwitch theme */
     .picker {
         position: absolute;
         bottom: 50px;
         border-radius: 10px;
-        background-color: grey;
+        background-color: var(--bg-modal);
     }
 }

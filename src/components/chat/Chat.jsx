@@ -644,7 +644,8 @@ const Chat = ({ onInfoClick }) => {
                     id="center-bgImg" 
                     className="center" 
                     style={{ 
-                        backgroundImage: bgImgUrl ? `url(${bgImgUrl})` : `url('../../../public/chat-bg-img.jpg')`, 
+                        // backgroundImage: bgImgUrl ? `url(${bgImgUrl})` : `url('../../../public/chat-bg-img.jpg')`,
+                        backgroundColor: 'var(--bg-chat)',
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat"

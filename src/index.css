@@ -20,6 +20,7 @@
   --snackbar: 90;
 
   /* sizes */
+  --icon-size: 1.5rem;
   --btn-size: 2.5rem;
   --btn-radius: 0.5rem;
   --btn-padding: 0.5rem 1rem;
@@ -29,9 +30,6 @@
   --gap-4: 2rem;
   --modal-border-radius: 10px;
   --modal-width: 600px;
-
-  /* colors */
-  --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -48,10 +46,12 @@ html {
 body {
   width: 100%;
   height: 100%;
-  color: var(--text-color);
-  background: var(--bg-color);
-  /* overflow-x: hidden; */
+  color: var(--text-primary);
+  background: var(--bg-main);
+  /* background-image: var(--bg-main-img); */
+  overflow: hidden;
   font-family: 'Montserrat', sans-serif;
+
 }
 
 #root {
@@ -67,7 +67,7 @@ body {
   width: 100%;
   max-width: 1680px;
   min-height: 100%; 
-  background: var(--container-color);
+  /* background: var(--container-color); */
   margin: 0 auto;
   border-radius: 12px;
   backdrop-filter: blur(19px) saturate(180%);
@@ -85,8 +85,8 @@ body {
 .loader {
   width: 85px;
   height: 50px;
-  --g1:conic-gradient(from  90deg at left   3px top   3px,#0000 90deg,var(--accent-color) 0);
-  --g2:conic-gradient(from -90deg at bottom 3px right 3px,#0000 90deg,var(--accent-color) 0);
+  --g1:conic-gradient(from  90deg at left   3px top   3px,#0000 90deg,var(--primary-color) 0);
+  --g2:conic-gradient(from -90deg at bottom 3px right 3px,#0000 90deg,var(--primary-color) 0);
   background:var(--g1),var(--g1),var(--g1), var(--g2),var(--g2),var(--g2);
   background-position: left,center,right;
   background-repeat: no-repeat;

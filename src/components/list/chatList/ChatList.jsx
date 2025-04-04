@@ -15,6 +15,7 @@ import Joyride from "react-joyride";
 import UserInfo from '../userInfo/UserInfo';
 import Settings from "../../settings/Settings";
 import UniversalSearch from './universalSearch/UniversalSearch';
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 const ChatList = () => {
     const [chats, setChats] = useState([]);
@@ -399,15 +400,16 @@ const ChatList = () => {
                 styles={{
                     options: {
                         zIndex: 1000,
-                        primaryColor: '#766ac8',
-                        backgroundColor: 'var(--container-color)',
-                        textColor: '#fff',
+                        primaryColor: 'var(--primary-color)',
+                        backgroundColor: 'var(--bg-main)',
+                        textColor: 'var(--text-primary)',
                     },
                     buttonNext: {
-                        backgroundColor: 'var(--purple)',
+                        backgroundColor: 'var(--btn-secondary)',
                     },
                     buttonBack: {
-                        color: 'var(--red-btn)',
+                        color: 'var(--icon-color)',
+                        bgcolor: 'var(--bg-main)',
                     }
                 }}
                 locale={{
@@ -420,7 +422,7 @@ const ChatList = () => {
             />
             <div className="search">
                 <div ref={menuButtonRef} className="menu-button">
-                    <MenuIcon
+                <MenuIcon
                         isOpen={isMenuOpen}
                         toggleMenu={toggleMenu}
                     />
@@ -465,13 +467,12 @@ const ChatList = () => {
                     />
                     {input && <CiCircleRemove className="clearIcon" onClick={clearInput} />}
                 </div>
-                <img
-                    src={addMode ? "./minus.png" : "./plus.png"}
-                    alt=""
-                    className="add"
+                <button
                     ref={addRef}
                     onClick={() => setAddMode(prev => !prev)}
-                />
+                    className="add-button">
+                    {!addMode ? <PlusIcon className="add-btn-icon" /> : <MinusIcon className="add-btn-icon" />}
+                </button>
             </div>
             <div className="chats">
                 {isLoading ? (
@@ -489,10 +490,10 @@ const ChatList = () => {
                             style={{
                                 backgroundColor:
                                     chat.chatId === selectedChatId
-                                        ? 'var(--accent-hover)'
+                                        ? 'var(--selected-chat-bg)'
                                         : chat.isSeen
                                         ? 'transparent'
-                                        : 'var(--new-message-bg)',
+                                        : 'var(--selected-chat-bg)',
                             }}
                         >
                         <div className="user-avatar">

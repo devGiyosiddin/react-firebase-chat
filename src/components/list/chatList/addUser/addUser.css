@@ -4,7 +4,7 @@
     top: 0;
     width: 100vw;
     height: 100vh;
-    background: var(--modal-bg);
+    background: var(--bg-modal);
     z-index: var(--modal);
     display: flex;
     align-items: center;
@@ -16,8 +16,9 @@
         max-width: var(--modal-width);
         height: max-content;
         border-radius: var(--modal-border-radius);
+        background: var(--bg-nav);
         backdrop-filter: blur(19px) saturate(180%);
-        background-color: var(--bg-color);
+        border: 1px solid var(--primary-hover);
         margin: auto;
         padding: 15px;
         z-index: var(--btn);
@@ -29,9 +30,9 @@
                 width: 100%;
                 padding: 10px;
                 border-radius: 5px;
-                outline: var(--accent-color) solid 2px;
-                background-color: var(--bg-color);
-                color: var(--text-color);
+                outline: var(--primary-color) solid 2px;
+                background-color: var(--border-color);
+                color: var(--text-primary);
             }
         }
         
@@ -39,7 +40,7 @@
             max-height: 200px;
             overflow-y: auto;
             margin-bottom: 15px;
-            border: 1px solid var(--accent-color);
+            border: 1px solid var(--primary-color);
             border-radius: 5px;
             
             .user-item {
@@ -49,11 +50,13 @@
                 padding: 10px;
                 cursor: pointer;
                 transition: background-color 0.2s;
+                border-radius: 5px;
                 
                 .detail {
                     display: flex;
                     align-items: center;
                     gap: 20px;
+                    background: transparent;
                     
                     img {
                         width: 50px;
@@ -82,11 +85,11 @@
                 }
                 
                 &:hover {
-                    background-color: var(--accent-hover);
+                    background-color: var(--bg-nav);
                 }
                 
                 &.selected {
-                    background-color: var(--accent-color);
+                    background-color: var(--primary-hover);
                 }
             }
         }
@@ -94,11 +97,10 @@
         .no-results {
             padding: 15px;
             text-align: center;
-            color: var(--text-info);
+            color: var(--text-secondary);
         }
         
         .selected-user {
-            background-color: var(--bg-color);
             padding: 15px;
             border-radius: 5px;
             margin-top: 10px;
@@ -118,11 +120,11 @@
                     height: 200px;
                     object-fit: cover;
                     border-radius: 20px;
-                    border: 2px dashed var(--accent-color);
+                    border: 2px dashed var(--primary-color);
                 }
                 
                 span {
-                    color: var(--text-color);
+                    color: var(--text-primary);
                     font-weight: bold;
                     font-size: 16px;
                     font-family: monospace;
@@ -133,16 +135,16 @@
                 width: 50%;
                 display: block;
                 margin: 0 auto;
-                background-color: var(--accent-hover);
-                color: var(--text-color);
+                color: var(--btn-text-color);
                 border: none;
                 padding: 8px 15px;
-                border-radius: 5px;
                 cursor: pointer;
+                border-radius: 5px;
+                background-color: var(--btn-primary);
                 transition: background-color 0.2s;
                 
                 &:hover {
-                    background-color: var(--accent-color);
+                    background-color: var(--btn-primary-hover);
                 }
             }
             
