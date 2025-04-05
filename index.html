@@ -11,5 +11,36 @@
     <div id="root">
     </div>
     <script type="module" src="./src/main.jsx"></script>
+    <script>
+      import { auth, db } from "./components/lib/firebase";
+      import { doc, getDoc } from "firebase/firestore";
+      const currentUserId = auth?.currentUser?.uid;
+      const [userSettings, setUserSettings] = useState(null);
+      const [selectedTheme, setSelectedTheme] = useState('light');
+      useEffect(() => {
+      const loadUserSettings = async () => {
+        try {
+          if (currentUserId) {
+            const userRef = doc(db, 'users', currentUserId);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              setUserSettings(userData.settings || {});
+              setSelectedTheme(userData.settings.selectedTheme || 'light');
+            }
+          }
+        } catch (error) {
+          console.error("Ошибка при загрузке настроек:", error);
+        }
+      };
+
+      loadUserSettings();
+    }, [currentUserId]);
+
+    useEffect(() => {
+      document.documentElement.setAttribute('data-theme', selectedTheme);
+  }, [selectedTheme]);
+    </script>
   </body>
 </html>
