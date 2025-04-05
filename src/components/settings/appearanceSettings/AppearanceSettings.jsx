@@ -18,24 +18,29 @@ const AppearanceSettings = () => {
 
   const backgrounds = ['#ffffff', '#f7fafc', '#edf2f7', '#e2e8f0'];
 
-  const [selectedTheme, setSelectedTheme] = useState('light');
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    // Initialize from localStorage for instant loading
+    return localStorage.getItem('app-theme') || 'light';
+  });
   const [selectedBackground, setSelectedBackground] = useState(0);
   const [fontSize, setFontSize] = useState(16);
   const currentUserId = auth?.currentUser?.uid;
 
-  // Загружаем настройки при первом рендере
+  // Load settings on first render
   useEffect(() => {
     if (currentUserId) {
       loadUserSettings();
     }
   }, [currentUserId]);
 
-  // Применяем тему в HTML при изменении выбранной темы
+  // Apply theme to HTML when selected theme changes
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', selectedTheme);
+    // Save to localStorage for instant access on page refresh
+    localStorage.setItem('app-theme', selectedTheme);
   }, [selectedTheme]);
 
-  // Загружаем настройки пользователя из Firestore
+  // Load user settings from Firestore
   const loadUserSettings = async () => {
     try {
       const userRef = doc(db, 'users', currentUserId);
@@ -53,7 +58,7 @@ const AppearanceSettings = () => {
     }
   };
 
-  // Обновляем настройки пользователя в Firestore
+  // Update user settings in Firestore
   const updateUserSettings = async () => {
     try {
       const userRef = doc(db, 'users', currentUserId);
@@ -70,7 +75,7 @@ const AppearanceSettings = () => {
     }
   };
 
-  // Сбрасываем настройки к дефолтным
+  // Reset settings to defaults
   const handleReset = async () => {
     const defaultSettings = {
       selectedTheme: 'light',
@@ -80,6 +85,10 @@ const AppearanceSettings = () => {
     setSelectedTheme(defaultSettings.selectedTheme);
     setSelectedBackground(defaultSettings.selectedBackground);
     setFontSize(defaultSettings.fontSize);
+    
+    // Update localStorage for immediate effect
+    localStorage.setItem('app-theme', defaultSettings.selectedTheme);
+    
     try {
       await updateDoc(doc(db, 'users', currentUserId), {
         settings: defaultSettings

@@ -16,48 +16,57 @@ const App = () => {
   const [showDetail, setShowDetail] = useState(false);
   const currentUserId = auth?.currentUser?.uid;
   const [userSettings, setUserSettings] = useState(null);
-  const [selectedTheme, setSelectedTheme] = useState('light');
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    // Get theme from localStorage on initial render
+    return localStorage.getItem('app-theme') || 'light';
+  });
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchUserInfo(user.uid);
         console.log("user", user.uid);
-        
       } else {
         fetchUserInfo(null);
         console.log("no user");
       }
     });
-
     return () => unSub();
   }, [fetchUserInfo]);
-  
+ 
   useEffect(() => {
     const loadUserSettings = async () => {
       try {
         if (currentUserId) {
           const userRef = doc(db, 'users', currentUserId);
           const userDoc = await getDoc(userRef);
-
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUserSettings(userData.settings || {});
-            setSelectedTheme(userData.settings.selectedTheme || 'light');
+            
+            // Get theme from Firestore
+            const themeFromServer = userData.settings?.selectedTheme || 'light';
+            
+            // Update theme only if it's different from current
+            if (themeFromServer !== selectedTheme) {
+              setSelectedTheme(themeFromServer);
+            }
           }
         }
       } catch (error) {
         console.error("Ошибка при загрузке настроек:", error);
       }
     };
-
     loadUserSettings();
-  }, [currentUserId]);
+  }, [currentUserId, selectedTheme]);
 
   useEffect(() => {
+    // Save theme to localStorage whenever it changes
+    localStorage.setItem('app-theme', selectedTheme);
+    
+    // Apply theme to document
     document.documentElement.setAttribute('data-theme', selectedTheme);
-}, [selectedTheme]);
-
+  }, [selectedTheme]);
 
   function handleChange(newState) {
     setShowDetail(newState);
