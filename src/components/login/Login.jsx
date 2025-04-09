@@ -33,7 +33,7 @@ const Login = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) navigate();
+            if (user) navigate("/"); // Add explicit path to navigate to home
         });
 
         return () => unsubscribe();
@@ -73,11 +73,11 @@ const Login = () => {
     const handlePasswordChange = (e) => {
         const password = e.target.value;
 
-            setPasswordRules({
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                number: /\d/.test(password),
-            });
+        setPasswordRules({
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            number: /\d/.test(password),
+        });
     };
     const isValid = passwordRules.length && passwordRules.uppercase && passwordRules.number;
     const isInvalid = !isValid && passwordRules.length;
@@ -104,8 +104,18 @@ const Login = () => {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             console.log("User UID:", res.user.uid);
     
-            const imgUrl = await upload(avatar.file);
-            console.log("Uploaded image URL:", imgUrl);
+            let imgUrl = "/avatar.png"; // Default image URL
+            
+            // Only upload if there's an actual file selected
+            if (avatar.file) {
+                try {
+                    imgUrl = await upload(avatar.file);
+                    console.log("Uploaded image URL:", imgUrl);
+                } catch (uploadErr) {
+                    console.error("Error uploading image:", uploadErr);
+                    // Continue with default image if upload fails
+                }
+            }
     
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
@@ -114,12 +124,16 @@ const Login = () => {
                 id: res.user.uid,
                 blocked: [],
             });
-            console.log("User data saved:", { username, email });  // Логируем сохранённые данные без аватара
+            console.log("User data saved:", { username, email });
     
             await setDoc(doc(db, "userchats", res.user.uid), { chats: [] });
     
-            toast.success("Account created successfully! You can login now.");
-            setIsLogin(true);
+            toast.success("Account created successfully!");
+            
+            // Automatically log in the user after registration
+            await signInWithEmailAndPassword(auth, email, password);
+            
+            // The onAuthStateChanged hook will handle the navigation
         } catch (err) {
             if (err.code === "auth/email-already-in-use") {
                 toast.error("This email is already registered. Please use another email or login.");
@@ -183,16 +197,20 @@ const Login = () => {
                     </form>
                 </div>
             ) : (
-                    // TODO: Add a loading spinner when the image is being uploaded
                 <div className={`item register-item ${!isLogin ? "active" : ""}`}>
                     <h2>Create an Account</h2>
                     <form onSubmit={handleRegister}>
-                            <label htmlFor="file">
-                                {/* TODO: Add default image if user don't selected the avatar image */}
-                            <img src={avatar.url || "../../../public/avatar.png"} alt="" />
+                        <label htmlFor="file">
+                            <img src={avatar.url || "/avatar.png"} alt="Avatar" />
                             <span>Upload an image</span>
                         </label>
-                        <input required type="file" id="file" style={{ display: "none" }} onChange={handleAvatar} />
+                        <input 
+                            type="file" 
+                            id="file" 
+                            style={{ display: "none" }} 
+                            onChange={handleAvatar} 
+                            // Remove required attribute to make it optional
+                        />
 
                         <input
                             required
