@@ -696,6 +696,9 @@
         }
         
         button {
+            display: block;
+            cursor: pointer;
+            border: none;
             color: var(--accent-orange);
         }
     }

@@ -506,6 +506,9 @@ const Chat = ({ onInfoClick }) => {
             url: null,
         });
     }
+    const removeAudio = () => {
+        setAudioFile(null);
+    }
 
     const removeText = () => {
         setText(prev => prev.slice(0, -1));
@@ -888,16 +891,14 @@ const Chat = ({ onInfoClick }) => {
                 />
             )}
 
-                    {/* Audio preview */}
-                    {/* TODO: Fix the audio preview */}
+            {/* Audio preview */}
             {audioFile && (
                 <div className="audioPreview">
-                    <audio controls src={audioFile} />
-                    {/* TODO: Delete on click to delete icon */}
+                    <audio controls src={URL.createObjectURL(audioFile)} />
                     <button 
                         title="Remove the audio" 
                         className="removeAudioBtn" 
-                        onClick={cancelRecording}
+                        onClick={removeAudio}
                         >
                         <RiDeleteBin6Line size={20} />
                     </button>
