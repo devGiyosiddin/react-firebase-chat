@@ -2,11 +2,12 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { useChatStore } from "../lib/chatStore";
 import { db } from "../lib/firebase";
 import { useUserStore } from "../lib/userStore";
-import { FaAngleLeft } from "react-icons/fa6";
+import { ChevronLeft, CircleX } from "lucide-react";
+import { useState } from "react";
 import "./detail.css";
 
 const Detail = ({onChangeState}) => {
-
+    const [showAvatarPreview, setShowAvatarPreview] = useState(false);
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock } = useChatStore();
     const { currentUser } = useUserStore();
 
@@ -29,15 +30,28 @@ const Detail = ({onChangeState}) => {
         }
     }
 
+    const handleAvatarClick = () => {
+        setShowAvatarPreview(true);
+    }
+
+    const closeAvatarPreview = () => {
+        setShowAvatarPreview(false);
+    }
+
     return (
         <div className="detail-wrapper">
             <div className="detail">
                 <button type="button" className="close-icon" onClick={() => onChangeState(false)}>
-                    <FaAngleLeft size={28}/>
+                    <ChevronLeft size={28}/>
                 </button>
-                {/* TODO: Avatar preview on click on avatar of user */}
+                
                 <div className="user">
-                    <img src={user?.avatar || "./avatar.png"} alt="" />
+                    <img 
+                        src={user?.avatar || "./avatar.png"} 
+                        alt="" 
+                        onClick={handleAvatarClick}
+                        className="avatar-image" 
+                    />
                     <h2 className="username">{user?.username}</h2>
                     <p className="bio">{user?.bio || "No bio"}</p>
                 </div>
@@ -94,6 +108,22 @@ const Detail = ({onChangeState}) => {
                     </button>
                 </div>
             </div>
+
+            {/* Avatar Preview Modal */}
+            {showAvatarPreview && (
+                <div className="avatar-preview-overlay" onClick={closeAvatarPreview}>
+                    <div className="avatar-preview-container" onClick={(e) => e.stopPropagation()}>
+                        <button className="avatar-preview-close" onClick={closeAvatarPreview}>
+                            <CircleX size={24} />
+                        </button>
+                        <img 
+                            src={user?.avatar || "./avatar.png"} 
+                            alt={`${user?.username}'s avatar`} 
+                            className="avatar-preview-image" 
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

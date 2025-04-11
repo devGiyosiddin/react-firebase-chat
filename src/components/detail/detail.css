@@ -166,3 +166,63 @@
         }
     }
 }
+
+
+.user img.avatar-image {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.user img.avatar-image:hover {
+  opacity: 0.9;
+}
+
+.avatar-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-card);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--modal);
+}
+
+.avatar-preview-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-preview-close {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 10px;
+  z-index: var(--modal-btn);
+}
+
+/* For smaller screens, adjust the close button position */
+@media (max-width: 768px) {
+  .avatar-preview-close {
+    top: -40px;
+    right: 0;
+  }
+}
