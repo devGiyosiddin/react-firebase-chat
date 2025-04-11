@@ -844,7 +844,6 @@ const Chat = ({ onInfoClick }) => {
                             onClick={() => setOpenFileList(!openFileList)}
                             className="file" 
                         />
-                                {/* TODO: Close on click outside */}
                         {openFileList && (
                                     <div className="icons"
                                     ref={openFileListRef}>
