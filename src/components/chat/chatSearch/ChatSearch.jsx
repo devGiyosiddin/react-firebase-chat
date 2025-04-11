@@ -10,9 +10,6 @@ function ChatSearch({ onSearch }) {
     onSearch(query);
   };
 
-
-  // TODO: Close the search input when clicking outside of it
-
   return (
     <div className="chat-search-container">
       <input

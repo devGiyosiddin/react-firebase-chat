@@ -54,7 +54,8 @@ const Chat = ({ onInfoClick }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [currentChatId, setCurrentChatId] = useState('');
     const currentUserId = auth.currentUser.uid;
-    const [ openSearch, setOpenSearch] = useState(false);
+    const [openSearch, setOpenSearch] = useState(false);
+    const openSearchRef = useRef(null);
     const [lastMessageId, setLastMessageId] = useState(null);
     const recordingTimerRef = useRef(null);
     const [filteredMessages, setFilteredMessages] = useState([]);
@@ -609,6 +610,23 @@ const Chat = ({ onInfoClick }) => {
             toast.error('Failed to add reaction');
         }
     };
+    
+    const handleOutsideClick = (e) => {
+        if (openSearchRef.current && !openSearchRef.current.contains(e.target)) {
+            setOpenSearch(false);
+        }
+    };
+    
+    useEffect(() => {
+        if (openSearch) {
+            document.addEventListener("mousedown", handleOutsideClick);
+        } else {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, [openSearch]);
 
     return (
         <div className="chat">
@@ -653,6 +671,8 @@ const Chat = ({ onInfoClick }) => {
                 >
                 
                 {/* Search messages */}
+                <div className="chatSearch"
+                    ref={openSearchRef}>
                 { openSearch &&  <ChatSearch onSearch={handleSearch} /> }    
                 {searchActive && filteredMessages.length > 0 && (
                     <div className="search-navigation">
@@ -660,7 +680,8 @@ const Chat = ({ onInfoClick }) => {
                         <button onClick={() => navigateSearchResults('prev')}>▲</button>
                         <button onClick={() => navigateSearchResults('next')}>▼</button>
                     </div>
-                )}
+                )}      
+                </div>
 
                 <div className="messages" ref={messagesRef} onClick={closeContextMenu}>
                     {chat?.messages?.map(message => {
