@@ -3,8 +3,10 @@
     display: flex;
     align-items: center;
     gap: 100px;
-    background-color: var(--bg-blur);
-    background-image: var(--bg-img);
+    background: var(--bg-blur);
+    background-image: url('../../../public/logiin-bg-img.png');
+    background-size: cover;
+    background-position: center;
 
     .item {
         flex: 1;
