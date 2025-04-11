@@ -39,6 +39,7 @@ const ChatList = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [confirmModal, setConfirmModal] = useState(false);
 
     // Steps for Joyride
     const [tourState, setTourState] = useState({
@@ -440,10 +441,22 @@ const ChatList = () => {
                             <MdOutlineSettings />
                             <span>Settings</span>
                         </li>
-                    {/* TODO: Make confirmation to log out */}
-                        <button className="logout" onClick={() => auth.signOut()}>
+                        <button className="logout" onClick={() => setConfirmModal(true)}>
                             Log out
                         </button>
+                        {confirmModal && (
+                            <div className="confirm-modal">
+                                <div className="modal-content">
+                                    <p>Are you sure you want to log out?</p>
+                                    <div className="modal-buttons">
+                                        <button className='cancel-btn'
+                                            onClick={() => setConfirmModal(false)}>No</button>
+                                        <button className='confirm-btn'
+                                            onClick={() => auth.signOut()}>Yes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </ul>
                 )}
                 {/* TODO: Implement universal search */}
