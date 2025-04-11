@@ -9,11 +9,18 @@
         color: var(--primary-hover);
     }
     
-    /* TODO: Fix emoji picker bg color scwitch theme */
     .picker {
         position: absolute;
         bottom: 50px;
         border-radius: 10px;
         background-color: var(--bg-modal);
+        backdrop-filter: blur(19px) saturate(180%);
+
+        .epr-main, .epr-emoji-category-label {
+            background: transparent;
+        }
+        .epr_b8hfyo {
+            scrollbar-color: var(--primary-hover) var(--bg-container);
+        }
     }
 }
