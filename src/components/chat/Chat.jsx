@@ -28,6 +28,7 @@ const Chat = ({ onInfoClick }) => {
     const [open, setOpen] = useState(false);
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const [openFileList, setOpenFileList] = useState(false);
+    const openFileListRef = useRef(null);
     const [text, setText] = useState("");
     const [img, setImg] = useState({
         file: null,
@@ -628,6 +629,23 @@ const Chat = ({ onInfoClick }) => {
         };
     }, [openSearch]);
 
+    const handleOutsideClickFieldset = (e) => {
+        if (openFileListRef.current && !openFileListRef.current.contains(e.target)) {
+            setOpenFileList(false);
+        }
+    };
+    
+    useEffect(() => {
+        if (openFileList) {
+            document.addEventListener("mousedown", handleOutsideClickFieldset);
+        } else {
+            document.removeEventListener("mousedown", handleOutsideClickFieldset);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClickFieldset);
+        };
+    }, [openFileList]);
+
     return (
         <div className="chat">
             <div className="top">
@@ -828,7 +846,8 @@ const Chat = ({ onInfoClick }) => {
                         />
                                 {/* TODO: Close on click outside */}
                         {openFileList && (
-                            <div className="icons">
+                                    <div className="icons"
+                                    ref={openFileListRef}>
                                 <label htmlFor="file">
                                     <MdOutlineInsertDriveFile className="file" size={20} />
                                 </label>
