@@ -450,7 +450,10 @@ const ChatList = () => {
                                     <p>Are you sure you want to log out?</p>
                                     <div className="modal-buttons">
                                         <button className='cancel-btn'
-                                            onClick={() => setConfirmModal(false)}>No</button>
+                                            onClick={() => {
+                                                setConfirmModal(false);
+                                                setIsMenuOpen(false);
+                                            } }>No</button>
                                         <button className='confirm-btn'
                                             onClick={() => auth.signOut()}>Yes</button>
                                     </div>
