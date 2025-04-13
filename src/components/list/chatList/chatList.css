@@ -281,6 +281,7 @@
         background-color: var(--bg-card);
         padding: 15px;
         border-radius: var(--modal-border-radius);
+        box-shadow: 0 0 13px 1px var(--primary-color);
         
         p {
             font-size: 16px;
@@ -289,6 +290,7 @@
         }
         .modal-buttons{
             display: flex;
+            justify-content: flex-end;
             gap: 15px;
 
             button {
