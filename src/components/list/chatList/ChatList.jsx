@@ -124,6 +124,7 @@ const ChatList = () => {
     // Toggle profile modal
     const toggleProfile = () => {
         setIsProfileOpen((prev) => !prev);
+        setIsMenuOpen(false);
     };
 
     // Показать меню и задать позицию
@@ -371,6 +372,7 @@ const ChatList = () => {
     // Open settings modal
     const openSettings = () => {
         setIsSettingsOpen(true);
+        setIsMenuOpen(false);
     };
 
     // Close settings modal
