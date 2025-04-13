@@ -9,6 +9,7 @@
     align-items: center;
     z-index: var(--modal);
     background: var(--bg-modal);
+    backdrop-filter: var(--bg-blur);
     
     .userInfo {
         padding: 20px;
