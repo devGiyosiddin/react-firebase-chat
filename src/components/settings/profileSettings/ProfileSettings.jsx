@@ -5,7 +5,6 @@ import { db } from '../../lib/firebase';
 import { useEffect, useRef, useState } from 'react';
 import { uploadImage } from '../../lib/firebase';
 
-// TODO: Restyle the component UI
 const ProfileSettings = () => {
     const { currentUser } = useUserStore();
     const fileInputRef = useRef(null);
@@ -189,14 +188,24 @@ const ProfileSettings = () => {
     return (
         <div className="profile-settings">
             <h2 className="profile-settings__heading">Profile Settings</h2>
+            
             <div className="profile-settings__section">
-                <div className="profile-settings__photo-area">
-                    <img 
-                        src={avatar || "/avatar.png"} 
-                        alt="User Avatar" 
-                        className="profile-settings__photo" 
-                    />
-                    <div>
+                <div className="profile-settings__container">
+                    {/* Photo Area */}
+                    <div className="profile-settings__photo-area">
+                        <div className="profile-settings__photo-container">
+                            <img 
+                                src={avatar || "/avatar.png"} 
+                                alt="User Avatar" 
+                                className="profile-settings__photo" 
+                            />
+                            <div className="profile-settings__photo-overlay">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
+                        </div>
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -209,75 +218,91 @@ const ProfileSettings = () => {
                             onClick={handlePhotoButtonClick}
                             disabled={isUploading}
                         >
-                            {isUploading ? 'Uploading...' : 'Change Photo'}
+                            {isUploading ? (
+                                <>
+                                    <span className="profile-settings__loading"></span>
+                                    Uploading...
+                                </>
+                            ) : 'Change Photo'}
                         </button>
                         <p className="profile-settings__photo-info">JPG, GIF or PNG. Max size 5MB</p>
                     </div>
-                </div>
-     
-                <div className="profile-settings__form">
-                    <div className="profile-settings__form-field">
-                        <label className="profile-settings__label">First Name</label>
-                        <input
-                            type="text"
-                            className="profile-settings__input"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                        />
-                    </div>
-                    <div className="profile-settings__form-field">
-                        <label className="profile-settings__label">Username</label>
-                        <input
-                            type="text"
-                            className="profile-settings__input"
-                            value={username}
-                            onChange={handleUsernameChange}
-                        />
-                        {username && (
-                            <div className="profile-settings__input-message">
-                                {checkingUsername ? (
-                                    <span>Checking availability...</span>
-                                ) : !usernameAvailable ? (
-                                    <span className="profile-settings__input-error">
-                                        Username unavailable or invalid (min 3 chars, alphanumeric)
-                                    </span>
-                                ) : (
-                                    <span className="profile-settings__input-success">
-                                        Username available
-                                    </span>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                    <div className="profile-settings__form-field">
-                        <label className="profile-settings__label">Email</label>
-                        <input
-                            type="email"
-                            className="profile-settings__input"
-                            value={email}
-                            disabled // Email typically shouldn't be changed easily
-                        />
-                    </div>
-                    <div className="profile-settings__form-field">
-                        <label className="profile-settings__label">Phone Number</label>
-                        <input
-                            type="tel"
-                            className="profile-settings__input"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                        />
-                    </div>
-                    <div className="profile-settings__form-field profile-settings__form-field--full">
-                        <label className="profile-settings__label">Bio</label>
-                        <textarea
-                            className="profile-settings__textarea"
-                            value={bio}
-                            onChange={(e) => setBio(e.target.value)}
-                        ></textarea>
+                    
+                    {/* Form Area */}
+                    <div className="profile-settings__form">
+                        <div className="profile-settings__form-field">
+                            <label className="profile-settings__label">First Name</label>
+                            <input
+                                type="text"
+                                className="profile-settings__input"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                placeholder="Your first name"
+                            />
+                        </div>
+                        
+                        <div className="profile-settings__form-field">
+                            <label className="profile-settings__label">Username</label>
+                            <input
+                                type="text"
+                                className="profile-settings__input"
+                                value={username}
+                                onChange={handleUsernameChange}
+                                placeholder="Your username"
+                            />
+                            {username && (
+                                <div className="profile-settings__input-message">
+                                    {checkingUsername ? (
+                                        <span>Checking availability...</span>
+                                    ) : !usernameAvailable ? (
+                                        <span className="profile-settings__input-error">
+                                            Username unavailable or invalid (min 3 chars, alphanumeric)
+                                        </span>
+                                    ) : (
+                                        <span className="profile-settings__input-success">
+                                            Username available
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="profile-settings__form-field">
+                            <label className="profile-settings__label">Email</label>
+                            <input
+                                type="email"
+                                className="profile-settings__input"
+                                value={email}
+                                disabled
+                                placeholder="Your email"
+                            />
+                        </div>
+                        
+                        <div className="profile-settings__form-field">
+                            <label className="profile-settings__label">Phone Number</label>
+                            <input
+                                type="tel"
+                                className="profile-settings__input"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="Your phone number"
+                            />
+                        </div>
+                        
+                        <div className="profile-settings__form-field profile-settings__form-field--full">
+                            <label className="profile-settings__label">Bio</label>
+                            <textarea
+                                className="profile-settings__textarea"
+                                value={bio}
+                                onChange={(e) => setBio(e.target.value)}
+                                placeholder="Tell us about yourself..."
+                            ></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
-   
+            
+            {/* Actions */}
             <div className="profile-settings__actions">
                 <button 
                     className="profile-settings__button profile-settings__button--cancel"
@@ -291,7 +316,12 @@ const ProfileSettings = () => {
                     onClick={handleSaveChanges}
                     disabled={!formChanged || !usernameAvailable || checkingUsername}
                 >
-                    Save Changes
+                    {checkingUsername ? (
+                        <>
+                            <span className="profile-settings__loading"></span>
+                            Checking...
+                        </>
+                    ) : 'Save Changes'}
                 </button>
             </div>
         </div>
