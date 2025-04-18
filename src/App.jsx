@@ -18,7 +18,7 @@ const App = () => {
   const [userSettings, setUserSettings] = useState(null);
   const [selectedTheme, setSelectedTheme] = useState(() => {
     // Get theme from localStorage on initial render
-    return localStorage.getItem('app-theme') || 'light';
+    return localStorage.getItem("app-theme") || "light";
   });
 
   useEffect(() => {
@@ -33,20 +33,20 @@ const App = () => {
     });
     return () => unSub();
   }, [fetchUserInfo]);
- 
+
   useEffect(() => {
     const loadUserSettings = async () => {
       try {
         if (currentUserId) {
-          const userRef = doc(db, 'users', currentUserId);
+          const userRef = doc(db, "users", currentUserId);
           const userDoc = await getDoc(userRef);
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUserSettings(userData.settings || {});
-            
+
             // Get theme from Firestore
-            const themeFromServer = userData.settings?.selectedTheme || 'light';
-            
+            const themeFromServer = userData.settings?.selectedTheme || "light";
+
             // Update theme only if it's different from current
             if (themeFromServer !== selectedTheme) {
               setSelectedTheme(themeFromServer);
@@ -62,24 +62,31 @@ const App = () => {
 
   useEffect(() => {
     // Save theme to localStorage whenever it changes
-    localStorage.setItem('app-theme', selectedTheme);
-    
+    localStorage.setItem("app-theme", selectedTheme);
+
     // Apply theme to document
-    document.documentElement.setAttribute('data-theme', selectedTheme);
+    document.documentElement.setAttribute("data-theme", selectedTheme);
   }, [selectedTheme]);
 
   function handleChange(newState) {
     setShowDetail(newState);
   }
 
-  if (isLoading) return <div className="loader-wrapper"><div className="loader"></div></div>;
+  if (isLoading)
+    return (
+      <div className="loader-wrapper">
+        <div className="loader"></div>
+      </div>
+    );
 
   return (
     <div className="container">
       {currentUser ? (
         <>
           <List />
-          {chatId && <Chat onInfoClick={() => setShowDetail(prev => !prev)} />}
+          {chatId && (
+            <Chat onInfoClick={() => setShowDetail((prev) => !prev)} />
+          )}
           {chatId && showDetail && <Detail onChangeState={handleChange} />}
         </>
       ) : (

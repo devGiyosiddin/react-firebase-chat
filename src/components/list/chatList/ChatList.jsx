@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../../lib/userStore";
 import { auth } from "../../lib/firebase";
-import { doc, getDoc, onSnapshot, updateDoc, getFirestore } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc, getFirestore, addDoc, collection } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -20,7 +20,6 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 const ChatList = () => {
     const [chats, setChats] = useState([]);
     const [addMode, setAddMode] = useState(false);
-    const [input, setInput] = useState('');
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [isFocused, setIsFocused] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,13 +32,12 @@ const ChatList = () => {
     const addRef = useRef(null);
     const menuButtonRef = useRef(null);
     const { chatId, changeChat } = useChatStore();
-    const inputRef = useRef(null);
-    const searchInputRef = useRef(null);
     const db = getFirestore();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [confirmModal, setConfirmModal] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     // Steps for Joyride
     const [tourState, setTourState] = useState({
@@ -356,18 +354,19 @@ const ChatList = () => {
         }
     };
 
-    const clearInput = () => {
-        setInput('');
-    };
-
     const handleIconClick = () => {
-        inputRef.current.focus();
+        setIsSearchOpen(true);
     };
 
-    const filteredChats = chats.filter((chat) => {
-        if (!chat?.user?.username) return false;
-        return chat.user.username.toLowerCase().includes(input.toLowerCase());
-    });
+    const handleSearchSelect = (result) => {
+        if (result.type === 'chat') {
+            handleSelect(result);
+        } else if (result.type === 'user') {
+            // Handle creating new chat or opening existing chat with user
+            handleCreateChat(result);
+        }
+        setIsSearchOpen(false);
+    };
 
     // Open settings modal
     const openSettings = () => {
@@ -387,6 +386,22 @@ const ChatList = () => {
             ...prev,
             run: true
         }));
+    };
+
+    const handleCreateChat = async (user) => {
+        try {
+            const newChatRef = await addDoc(collection(db, "chats"), {
+                participants: [currentUser.uid, user.uid],
+                lastMessage: "",
+                lastMessageTime: new Date(),
+                createdAt: new Date()
+            });
+            
+            changeChat(newChatRef.id);
+            setIsSearchOpen(false);
+        } catch (error) {
+            console.error("Error creating chat:", error);
+        }
     };
 
     return (
@@ -464,32 +479,37 @@ const ChatList = () => {
                         )}
                     </ul>
                 )}
-                {/* TODO: Implement universal search */}
-                {/* <UniversalSearch
-                    inputRef={searchInputRef}
-                    setInput={setInput}
-                    input={input}
-                    handleSelect={handleSelect}
-                    filteredChats={filteredChats}
-                /> */}
-                <div className={`searchBar ${isFocused ? 'focused' : ''}`}>
-                    <IoMdSearch onClick={handleIconClick} className="searchIcon" />
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        value={input}
-                        ref={inputRef}
-                        onChange={(e) => setInput(e.target.value)}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                {isSearchOpen && (
+                    <div className="universal-search-overlay">
+                        <UniversalSearch 
+                            onSelect={handleSearchSelect}
+                            onCreateChat={handleCreateChat}
+                        />
+                        <button 
+                            className="close-search-button"
+                            onClick={() => setIsSearchOpen(false)}
+                        >
+                            <CiCircleRemove />
+                        </button>
+                    </div>
+                )}
+                <div className="chatList__search">
+                    <UniversalSearch 
+                        onSelect={handleSearchSelect}
+                        onCreateChat={handleCreateChat}
                     />
-                    {input && <CiCircleRemove className="clearIcon" onClick={clearInput} />}
                 </div>
                 <button
                     ref={addRef}
                     onClick={() => setAddMode(prev => !prev)}
                     className="add-button">
                     {!addMode ? <PlusIcon className="add-btn-icon" /> : <MinusIcon className="add-btn-icon" />}
+                </button>
+                <button 
+                    className="search-button" 
+                    onClick={handleIconClick}
+                >
+                    <IoMdSearch />
                 </button>
             </div>
             <div className="chats">
@@ -499,8 +519,8 @@ const ChatList = () => {
                         <div className="chat-bubble"></div>
                         <div className="chat-bubble"></div>
                     </div>
-                ) : filteredChats.length > 0 ? (
-                    filteredChats.map((chat, index) => (
+                ) : chats.length > 0 ? (
+                    chats.map((chat, index) => (
                         <div
                             className="item"
                             key={`${chat.chatId}-${index}`}

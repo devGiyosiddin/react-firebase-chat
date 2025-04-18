@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import './universalSearch.css';
-import { Search, User, MessageSquare, Star, Plus } from 'lucide-react';
+import { Search, User, MessageSquare, X } from 'lucide-react';
 
-// TODO: Реализовать поиск по чатам
 const UniversalSearch = ({ onSelect, onCreateChat }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState({
@@ -24,64 +23,69 @@ const UniversalSearch = ({ onSelect, onCreateChat }) => {
 
         const queryLower = query.toLowerCase();
         
-        // Поиск существующих чатов
-        const chatsQuery = query(
-            collection(db, 'chats'),
-            where('participants', 'array-contains', currentUser.uid)
-        );
-        
-        // Поиск всех пользователей
-        const usersQuery = query(
-            collection(db, 'users'),
-            where('username', '>=', queryLower),
-            where('username', '<=', queryLower + '\uf8ff')
-        );
+        try {
+            // Search existing chats
+            const chatsRef = collection(db, 'chats');
+            const chatsQuery = query(chatsRef, where('participants', 'array-contains', currentUser.uid));
+            const chatsSnapshot = await getDocs(chatsQuery);
 
-        const [chatsSnapshot, usersSnapshot] = await Promise.all([
-            getDocs(chatsQuery),
-            getDocs(usersQuery)
-        ]);
+            // Search users
+            const usersRef = collection(db, 'users');
+            const usersQuery = query(
+                usersRef,
+                where('username', '>=', queryLower),
+                where('username', '<=', queryLower + '\uf8ff')
+            );
+            const usersSnapshot = await getDocs(usersQuery);
 
-        // Обработка результатов
-        const chats = [];
-        const messages = [];
-        const existingUsers = new Set();
+            const chats = [];
+            const messages = [];
+            const existingUsers = new Set();
 
-        chatsSnapshot.forEach(doc => {
-            const chatData = doc.data();
-            if (chatData.lastMessage?.toLowerCase().includes(queryLower)) {
-                chats.push({ id: doc.id, ...chatData });
-            }
-            
-            chatData.messages?.forEach(msg => {
-                if (msg.text?.toLowerCase().includes(queryLower)) {
-                    messages.push({
-                        chatId: doc.id,
-                        chatName: chatData.name,
-                        ...msg
+            // Process chats and messages
+            chatsSnapshot.forEach(doc => {
+                const chatData = doc.data();
+                if (chatData.lastMessage?.toLowerCase().includes(queryLower)) {
+                    chats.push({ id: doc.id, type: 'chat', ...chatData });
+                }
+                
+                // Search in messages
+                if (chatData.messages) {
+                    chatData.messages.forEach(msg => {
+                        if (msg.text?.toLowerCase().includes(queryLower)) {
+                            messages.push({
+                                chatId: doc.id,
+                                type: 'message',
+                                chatName: chatData.name,
+                                ...msg
+                            });
+                        }
                     });
+                }
+
+                chatData.participants.forEach(uid => existingUsers.add(uid));
+            });
+
+            // Process users
+            const users = [];
+            const newUsers = [];
+
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                if (userData.uid !== currentUser.uid) {
+                    const user = { id: doc.id, type: 'user', ...userData };
+                    if (existingUsers.has(userData.uid)) {
+                        users.push(user);
+                    } else {
+                        newUsers.push(user);
+                    }
                 }
             });
 
-            chatData.participants.forEach(uid => existingUsers.add(uid));
-        });
-
-        // Разделение пользователей на существующие и новые
-        const users = [];
-        const newUsers = [];
-
-        usersSnapshot.forEach(doc => {
-            const userData = doc.data();
-            if (userData.uid !== currentUser.uid) {
-                if (existingUsers.has(userData.uid)) {
-                    users.push({ id: doc.id, ...userData });
-                } else {
-                    newUsers.push({ id: doc.id, ...userData });
-                }
-            }
-        });
-
-        setResults({ users, messages, chats, newUsers });
+            setResults({ users, messages, chats, newUsers });
+        } catch (error) {
+            console.error("Error searching:", error);
+        }
     };
 
     useEffect(() => {
@@ -92,104 +96,105 @@ const UniversalSearch = ({ onSelect, onCreateChat }) => {
         return () => clearTimeout(debounceTimer);
     }, [searchQuery]);
 
+    const handleResultClick = (result) => {
+        if (result.type === 'user' && !result.chatId) {
+            onCreateChat(result);
+        } else {
+            onSelect(result);
+        }
+        setSearchQuery('');
+    };
+
+    const getFilteredResults = () => {
+        if (activeFilter === 'all') {
+            return [
+                ...results.chats,
+                ...results.messages,
+                ...results.users,
+                ...results.newUsers
+            ];
+        }
+        return results[activeFilter] || [];
+    };
+
     return (
         <div className="universal-search">
             <div className="search-input-container">
                 <Search className="search-icon" />
                 <input
                     type="text"
-                    placeholder="Search messages, users, or chats..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search messages, users, or chats..."
+                    className="search-input"
                 />
+                {searchQuery && (
+                    <button className="clear-button" onClick={() => setSearchQuery('')}>
+                        <X size={18} />
+                    </button>
+                )}
+            </div>
+
+            {searchQuery && (
                 <div className="search-filters">
                     <button
-                        className={activeFilter === 'all' ? 'active' : ''}
+                        className={`filter-button ${activeFilter === 'all' ? 'active' : ''}`}
                         onClick={() => setActiveFilter('all')}
                     >
                         All
                     </button>
                     <button
-                        className={activeFilter === 'users' ? 'active' : ''}
+                        className={`filter-button ${activeFilter === 'chats' ? 'active' : ''}`}
+                        onClick={() => setActiveFilter('chats')}
+                    >
+                        Chats
+                    </button>
+                    <button
+                        className={`filter-button ${activeFilter === 'users' ? 'active' : ''}`}
                         onClick={() => setActiveFilter('users')}
                     >
                         Users
                     </button>
                     <button
-                        className={activeFilter === 'messages' ? 'active' : ''}
+                        className={`filter-button ${activeFilter === 'messages' ? 'active' : ''}`}
                         onClick={() => setActiveFilter('messages')}
                     >
                         Messages
                     </button>
                 </div>
-            </div>
+            )}
 
-            <div className="search-results">
-                {(activeFilter === 'all' || activeFilter === 'users') && (
-                    <>
-                        {results.users.length > 0 && (
-                            <div className="results-section">
-                                <h3>Existing Contacts</h3>
-                                {results.users.map(user => (
-                                    <div
-                                        key={user.id}
-                                        className="result-item"
-                                        onClick={() => onSelect('user', user)}
-                                    >
-                                        <User className="result-icon" />
-                                        <span>{user.username}</span>
-                                    </div>
-                                ))}
+            {searchQuery && (
+                <div className="search-results">
+                    {getFilteredResults().map((result, index) => (
+                        <div
+                            key={`${result.type}-${result.id || index}`}
+                            className="search-result-item"
+                            onClick={() => handleResultClick(result)}
+                        >
+                            <div className="result-icon">
+                                {result.type === 'user' ? (
+                                    <User size={18} />
+                                ) : result.type === 'message' ? (
+                                    <MessageSquare size={18} />
+                                ) : (
+                                    <MessageSquare size={18} />
+                                )}
                             </div>
-                        )}
-
-                        {results.newUsers.length > 0 && (
-                            <div className="results-section">
-                                <h3>New Users</h3>
-                                {results.newUsers.map(user => (
-                                    <div
-                                        key={user.id}
-                                        className="result-item"
-                                    >
-                                        <User className="result-icon" />
-                                        <span>{user.username}</span>
-                                        <button
-                                            className="add-user-btn"
-                                            onClick={() => onCreateChat(user)}
-                                        >
-                                            <Plus size={16} />
-                                            Add
-                                        </button>
-                                    </div>
-                                ))}
+                            <div className="result-content">
+                                <div className="result-title">
+                                    {result.type === 'user' ? result.username :
+                                     result.type === 'message' ? result.chatName :
+                                     result.name || 'Unnamed Chat'}
+                                </div>
+                                {result.type === 'message' && (
+                                    <div className="result-subtitle">{result.text}</div>
+                                )}
                             </div>
-                        )}
-                    </>
-                )}
-
-                {(activeFilter === 'all' || activeFilter === 'messages') && (
-                    <>
-                        {results.messages.length > 0 && (
-                            <div className="results-section">
-                                <h3>Messages</h3>
-                                {results.messages.map((message, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="result-item"
-                                        onClick={() => onSelect('message', message)}
-                                    >
-                                        <MessageSquare className="result-icon" />
-                                        <div className="message-preview">
-                                            <span className="chat-name">{message.chatName}</span>
-                                            <p>{message.text}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
