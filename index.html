@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -8,13 +8,12 @@
     <title>CyreX Dev Chat App</title>
   </head>
   <body>
-    <div id="root">
-    </div>
+    <div id="root"></div>
     <script type="module" src="./src/main.jsx"></script>
     <script>
-      const savedTheme = localStorage.getItem('app-theme');
+      const savedTheme = localStorage.getItem("app-theme");
       if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute("data-theme", savedTheme);
       }
     </script>
   </body>
